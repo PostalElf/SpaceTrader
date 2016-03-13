@@ -70,11 +70,11 @@
 
         Select Case e
             Case eResource.Metals, eResource.Chemicals : Return ePlanetRole.Mining
-            Case eResource.Weapons, eResource.Electronics : Return ePlanetRole.Industrial
-            Case eResource.Savants, eResource.Blueprints : Return ePlanetRole.Research
+            Case eResource.Ammunition, eResource.Missiles : Return ePlanetRole.Industrial
+            Case eResource.Savants, eResource.Machines : Return ePlanetRole.Research
             Case eResource.Slaves, eResource.Azoth : Return ePlanetRole.Prison
-            Case eResource.Food, eResource.Plants : Return ePlanetRole.Agarian
-            Case eResource.Art, eResource.Media : Return ePlanetRole.Cultural
+            Case eResource.Food, eResource.Water : Return ePlanetRole.Agarian
+            Case eResource.Bandwidth, eResource.Media : Return ePlanetRole.Cultural
             Case Else
                 MsgBox("buildRole error!")
                 Return Nothing

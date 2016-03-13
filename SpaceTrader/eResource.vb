@@ -1,14 +1,14 @@
 ﻿Public Enum eResource
     Metals = 1
     Chemicals
-    Weapons
-    Electronics
+    Ammunition
+    Missiles
     Savants
-    Blueprints
+    Machines
     Slaves
     Azoth
     Food
-    Plants
-    Art
+    Water
+    Bandwidth
     Media
 End Enum

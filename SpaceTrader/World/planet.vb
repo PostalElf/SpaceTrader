@@ -158,7 +158,7 @@
         Next
         Console.WriteLine(indd & "Prices:")
         For Each product As eResource In constants.resourceArray
-            Console.WriteLine(inddd & "└ " & fakeTab(product.ToString & ":", ftLen2) & getProductPrice(product))
+            Console.WriteLine(inddd & "└ " & fakeTab(product.ToString & ":", ftLen2) & getProductPriceBuy(product) & "/" & getProductPriceSell(product))
         Next
     End Sub
 
@@ -180,9 +180,12 @@
     Private habitation As String
     Private productsExport As New List(Of eResource)
     Private productsPrices As New Dictionary(Of eResource, Integer)
-    Friend Function getProductPrice(ByVal product As eResource) As Integer
+    Friend Function getProductPriceSell(ByVal product As eResource) As Integer
         Dim total As Integer = productsPrices(product)
-        If productsExport.Contains(product) Then total *= 0.75
+        If productsExport.Contains(product) Then total /= 2
         Return total
+    End Function
+    Friend Function getProductPriceBuy(ByVal product As eResource) As Integer
+        Return getProductPriceSell(product) * 0.75
     End Function
 End Class

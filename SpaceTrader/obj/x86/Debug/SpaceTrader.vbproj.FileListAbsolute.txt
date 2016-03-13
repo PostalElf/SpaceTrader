@@ -1,0 +1,8 @@
+E:\Visual Studio Projects\SpaceTrader\SpaceTrader\bin\Debug\SpaceTrader.exe
+E:\Visual Studio Projects\SpaceTrader\SpaceTrader\bin\Debug\SpaceTrader.pdb
+E:\Visual Studio Projects\SpaceTrader\SpaceTrader\bin\Debug\SpaceTrader.xml
+E:\Visual Studio Projects\SpaceTrader\SpaceTrader\obj\x86\Debug\SpaceTrader.Resources.resources
+E:\Visual Studio Projects\SpaceTrader\SpaceTrader\obj\x86\Debug\SpaceTrader.vbproj.GenerateResource.Cache
+E:\Visual Studio Projects\SpaceTrader\SpaceTrader\obj\x86\Debug\SpaceTrader.exe
+E:\Visual Studio Projects\SpaceTrader\SpaceTrader\obj\x86\Debug\SpaceTrader.xml
+E:\Visual Studio Projects\SpaceTrader\SpaceTrader\obj\x86\Debug\SpaceTrader.pdb

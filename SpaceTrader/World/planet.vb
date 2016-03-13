@@ -1,7 +1,7 @@
 ﻿Public Class planet
     Public Sub New()
         For Each r In constants.resourceArray
-            importNeeds.Add(r, 0)
+            productsPrices.Add(r, 100)
         Next
     End Sub
     Friend Shared Function build(ByRef star As star, ByVal planetNumber As Integer, ByRef r As Random) As planet
@@ -16,17 +16,18 @@
                     'no export, imports x2
                     For n = 1 To 2
                         Dim import As eResource = constants.resourceArray(r.Next(constants.resourceArray.Length))
-                        .importNeeds(import) += 1
+                        .productsPrices(import) += 50
                     Next
                 Case "Commercial"
                     'export random, import normal
                     Dim e As eResource = constants.resourceArray(r.Next(constants.resourceArray.Length))
-                    .exportProducts.Add(e)
-                    .importNeeds(buildImport(r)) += 1
+                    .productsExport.Add(e)
+                    .productsPrices(buildImport(r)) += 50
                 Case Else
                     'prefix based on export, import normal
-                    .exportProducts.Add(constants.getEnumFromString(export, constants.resourceArray))
-                    .importNeeds(buildImport(r)) += 1
+                    Dim e As eResource = constants.getEnumFromString(export, constants.resourceArray)
+                    .productsExport.Add(e)
+                    .productsPrices(buildImport(r)) += 50
             End Select
             .role = buildRole(export)
             .type = buildType(r)
@@ -145,18 +146,19 @@
         Dim indd As String = vbSpace(indent + 1)
         Dim inddd As String = vbSpace(indent + 2)
         Const ftLen As Integer = 10
+        Const ftLen2 As Integer = 13
 
         Console.WriteLine(ind & name)
         Console.WriteLine(indd & fakeTab("Role:", ftLen) & role.ToString)
         Console.WriteLine(indd & fakeTab("Type:", ftLen) & type.ToString)
         Console.WriteLine(indd & fakeTab("Habitat:", ftLen) & habitation)
-        Console.WriteLine(indd & "Imports:")
-        For Each import In importNeeds
-            If import.Value <> eImportNeed.None Then Console.WriteLine(inddd & "└ " & import.Key.ToString & " (" & import.Value.ToString & ")")
-        Next
         Console.WriteLine(indd & "Exports:")
-        For Each export In exportProducts
+        For Each export In productsExport
             Console.WriteLine(inddd & "└ " & export.ToString)
+        Next
+        Console.WriteLine(indd & "Prices:")
+        For Each product As eResource In constants.resourceArray
+            Console.WriteLine(inddd & "└ " & fakeTab(product.ToString & ":", ftLen2) & getProductPrice(product))
         Next
     End Sub
 
@@ -176,6 +178,11 @@
     Private role As ePlanetRole
     Private type As ePlanetType
     Private habitation As String
-    Private exportProducts As New List(Of eResource)
-    Private importNeeds As New Dictionary(Of eResource, eImportNeed)
+    Private productsExport As New List(Of eResource)
+    Private productsPrices As New Dictionary(Of eResource, Integer)
+    Friend Function getProductPrice(ByVal product As eResource) As Integer
+        Dim total As Integer = productsPrices(product)
+        If productsExport.Contains(product) Then total *= 0.75
+        Return total
+    End Function
 End Class

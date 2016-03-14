@@ -10,7 +10,7 @@
         Return withSign(speed) & " sublight speed, " & withSign(dodge) & " dodge"
     End Function
     Friend Overrides Sub tickTravel()
-        If ship.isJump = False Then
+        If ship.travelByJump = False Then
             _isActive = useResource()
         End If
     End Sub

@@ -9,7 +9,7 @@
         Return withSign(jumpSpeed) & " jump speed"
     End Function
     Friend Overrides Sub tickTravel()
-        If ship.isJump = True Then
+        If ship.travelByJump = True Then
             _isActive = useResource()
         End If
     End Sub

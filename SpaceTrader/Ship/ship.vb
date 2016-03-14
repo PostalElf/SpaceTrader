@@ -133,20 +133,20 @@
         End Select
     End Function
 
-    Private _isJump As Boolean = True
-    Friend ReadOnly Property isJump As Boolean
+    Private _travelByJump As Boolean = True
+    Friend ReadOnly Property travelByJump As Boolean
         Get
-            Return _isJump
+            Return _travelByJump
         End Get
     End Property
     Friend Sub tickTravel()
         Dim totalSpeed As Integer = 0
         For Each hc In hullComponents
             hc.tickTravel()
-            If isJump = True AndAlso TypeOf hc Is hcJumpDrive Then
+            If travelByJump = True AndAlso TypeOf hc Is hcJumpDrive Then
                 Dim j As hcJumpDrive = CType(hc, hcJumpDrive)
                 If j.isActive = True Then totalSpeed += j.jumpSpeed
-            ElseIf isJump = False AndAlso TypeOf hc Is hcEngine Then
+            ElseIf travelByJump = False AndAlso TypeOf hc Is hcEngine Then
                 Dim e As hcEngine = CType(hc, hcEngine)
                 If e.isActive = True Then totalSpeed += e.speed
             End If

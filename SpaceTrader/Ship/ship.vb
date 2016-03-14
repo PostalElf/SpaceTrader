@@ -4,6 +4,9 @@
             resources.Add(r, 0)
             resourcesMax.Add(r, 100)
         Next
+        For Each t As Type In constants.hcTypeList
+            hullComponents.Add(t, New List(Of hullComponent))
+        Next
     End Sub
     Friend Shared Function build(ByRef player As player, ByVal type As eShipType) As ship
         Dim ship As New ship
@@ -82,13 +85,17 @@
         Dim ind As String = vbSpace(indent) & prefix
 
         Dim ftlen As Integer = 0
-        For Each hc In hullComponents
-            If hc.name.Length > ftlen Then ftlen = hc.name.Length
+        For Each kvp In hullComponents
+            For Each hc In kvp.Value
+                If hc.name.Length > ftlen Then ftlen = hc.name.Length
+            Next
         Next
         ftlen += 3
 
-        For Each hc In hullComponents
-            Console.WriteLine(ind & fakeTab(hc.name & ":", ftlen) & hc.consoleDescription & " " & hc.consoleResourceDescription)
+        For Each kvp In hullComponents
+            For Each hc In kvp.Value
+                Console.WriteLine(ind & fakeTab(hc.name & ":", ftlen) & hc.consoleDescription & " " & hc.consoleResourceDescription)
+            Next
         Next
     End Sub
     Private mustRefresh As Boolean = False
@@ -98,17 +105,15 @@
 
 
         'iterate through hullComponents
-        For Each hc In hullComponents
-            If TypeOf hc Is hcDefence Then
-                Dim d As hcDefence = CType(hc, hcDefence)
-                If d.type = eDefenceType.Armour Then armourMax += d.value
-                If d.type = eDefenceType.Shields Then shieldsMax += d.value
-            ElseIf TypeOf hc Is hcCargo Then
-                Dim c As hcCargo = CType(hc, hcCargo)
-                resourcesMax(c.resource) += c.value
-            End If
+        For Each hc In hullComponents(GetType(hcDefence))
+            Dim d As hcDefence = CType(hc, hcDefence)
+            If d.type = eDefenceType.Armour Then armourMax += d.value
+            If d.type = eDefenceType.Shields Then shieldsMax += d.value
         Next
-
+        For Each hc In hullComponents(GetType(hcCargo))
+            Dim c As hcCargo = CType(hc, hcCargo)
+            resourcesMax(c.resource) += c.value
+        Next
 
         'flag
         mustRefresh = False
@@ -139,15 +144,17 @@
     Friend ReadOnly Property travelSpeed As Integer
         Get
             Dim totalSpeed As Integer = 0
-            For Each hc In hullComponents
-                If travelByJump = True AndAlso TypeOf hc Is hcJumpDrive Then
+            If travelByJump = True Then
+                For Each hc In hullComponents(GetType(hcJumpDrive))
                     Dim j As hcJumpDrive = CType(hc, hcJumpDrive)
                     If j.isActive = True Then totalSpeed += j.jumpSpeed
-                ElseIf travelByJump = False AndAlso TypeOf hc Is hcEngine Then
+                Next
+            Else
+                For Each hc In hullComponents(GetType(hcEngine))
                     Dim e As hcEngine = CType(hc, hcEngine)
                     If e.isActive = True Then totalSpeed += e.speed
-                End If
-            Next
+                Next
+            End If
             Return totalSpeed
         End Get
     End Property
@@ -158,13 +165,17 @@
     End Property
     Friend Sub tickTravel()
         Dim totalSpeed As Integer = 0
-        For Each hc In hullComponents
-            hc.tickTravel()
+        For Each kvp In hullComponents
+            For Each hc In kvp.Value
+                hc.tickTravel()
+            Next
         Next
     End Sub
     Friend Sub tickIdle()
-        For Each hc In hullComponents
-            hc.tickIdle()
+        For Each kvp In hullComponents
+            For Each hc In kvp.Value
+                hc.tickIdle()
+            Next
         Next
     End Sub
 
@@ -175,11 +186,9 @@
     Private ReadOnly Property dodge As Integer
         Get
             Dim total As Integer = 0
-            For Each hc In hullComponents
-                If TypeOf hc Is hcEngine Then
-                    Dim e As hcEngine = CType(hc, hcEngine)
-                    If e.isActive = True Then total += e.dodge
-                End If
+            For Each hc In hullComponents(GetType(hcEngine))
+                Dim e As hcEngine = CType(hc, hcEngine)
+                If e.isActive = True Then total += e.dodge
             Next
             Return total
         End Get
@@ -208,13 +217,15 @@
         alert.Add("Ship Destruction", _name & " was destroyed!", 0)
     End Sub
 
-    Private hullComponents As New List(Of hullComponent)
+    Private hullComponents As New Dictionary(Of Type, List(Of hullComponent))
     Private hullSpaceMax As Integer
     Private ReadOnly Property hullSpaceOccupied As Integer
         Get
             Dim total As Integer = 0
-            For Each hc In hullComponents
-                total += hc.size
+            For Each kvp In hullComponents
+                For Each hc In kvp.Value
+                    total += hc.size
+                Next
             Next
             Return total
         End Get
@@ -225,15 +236,16 @@
         End Get
     End Property
     Friend Sub addComponent(ByRef hc As hullComponent)
-        hullComponents.Add(hc)
+        hullComponents(hc.GetType).Add(hc)
         hc.ship = Me
         mustRefresh = True
     End Sub
     Friend Sub removeComponent(ByRef hc As hullComponent)
-        If hullComponents.Contains(hc) = False Then Exit Sub
+        If hullComponents.ContainsKey(hc.GetType) = False Then Exit Sub
+        If hullComponents(hc.GetType).Contains(hc) = False Then Exit Sub
 
         hc.ship = Nothing
-        hullComponents.Remove(hc)
+        hullComponents(hc.GetType).Remove(hc)
         mustRefresh = True
     End Sub
 
@@ -249,28 +261,26 @@
         resources(resource) += value
     End Sub
     Friend Sub allLoadResource()
-        For Each hc In hullComponents
-            hc.loadResource()
+        For Each kvp In hullComponents
+            For Each hc In kvp.Value
+                hc.loadResource()
+            Next
         Next
     End Sub
     Private Function getCrew() As List(Of crew)
         Dim total As New List(Of crew)
-        For Each hc In hullComponents
-            If TypeOf hc Is hcCrewQuarters Then
-                Dim cq As hcCrewQuarters = CType(hc, hcCrewQuarters)
-                total.AddRange(cq.crewList)
-            End If
+        For Each hc In hullComponents(GetType(hcCrewQuarters))
+            Dim cq As hcCrewQuarters = CType(hc, hcCrewQuarters)
+            total.AddRange(cq.crewList)
         Next
         Return total
     End Function
     Friend Function addCrew(ByRef crew As crew) As Boolean
-        For Each hc In hullComponents
-            If TypeOf hc Is hcCrewQuarters Then
-                Dim cq As hcCrewQuarters = CType(hc, hcCrewQuarters)
-                If cq.crewEmpty > 0 Then
-                    cq.addCrew(crew)
-                    Return True
-                End If
+        For Each hc In hullComponents(GetType(hcCrewQuarters))
+            Dim cq As hcCrewQuarters = CType(hc, hcCrewQuarters)
+            If cq.crewEmpty > 0 Then
+                cq.addCrew(crew)
+                Return True
             End If
         Next
         Return False

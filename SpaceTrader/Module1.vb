@@ -19,7 +19,7 @@
         ship.addComponent(New hcEngine("Z-23 Moonbeam Engines", 5, 5, 1, eResource.Chemicals, 5))
         ship.addComponent(New hcJumpDrive("Whirlwind Jumpdrive", 5, 50, eResource.Azoth, 5))
         ship.addComponent(New hcCrewQuarters("Crew Cabin", 5, 5, eResource.Food, 1))
-        ship.loadResourceAll()
+        ship.allLoadResource()
 
         While True
             Console.Clear()

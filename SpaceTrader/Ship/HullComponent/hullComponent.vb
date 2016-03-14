@@ -42,6 +42,7 @@
     End Sub
     Friend Sub loadResource()
         If resourceSlot = Nothing Then Exit Sub
+        If resourceQtyRemaining >= 100 Then Exit Sub
         If ship.addResourceCheck(resourceSlot, -1) = False Then
             alert.Add("Load Failure", name & " was unable to load " & resourceSlot.ToString & " from the cargo bay.", 5)
             Exit Sub

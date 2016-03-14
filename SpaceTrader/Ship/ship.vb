@@ -25,24 +25,24 @@
         Select Case type
             Case eShipType.Corvette
                 hullSpaceMax = 20
-                damageShieldsMax = 5
-                damageArmourMax = 10
+                shieldsMax = 5
+                armourMax = 10
             Case eShipType.Frigate
                 hullSpaceMax = 50
-                damageShieldsMax = 10
-                damageArmourMax = 10
+                shieldsMax = 10
+                armourMax = 10
             Case eShipType.Crusier
                 hullSpaceMax = 75
-                damageShieldsMax = 20
-                damageArmourMax = 10
+                shieldsMax = 20
+                armourMax = 10
             Case eShipType.Destroyer
                 hullSpaceMax = 100
-                damageShieldsMax = 20
-                damageArmourMax = 20
+                shieldsMax = 20
+                armourMax = 20
             Case eShipType.Dreadnought
                 hullSpaceMax = 150
-                damageShieldsMax = 20
-                damageArmourMax = 40
+                shieldsMax = 20
+                armourMax = 40
         End Select
     End Sub
     Private Shared shipNames As New List(Of String)
@@ -57,8 +57,8 @@
 
         Console.WriteLine(ind & name)
         Console.WriteLine(indd & fakeTab("Credits:", ftlen) & "¥" & player.credits.ToString("N0"))
-        Console.WriteLine(indd & fakeTab("Shields:", ftlen) & damageShields & "/" & damageShieldsMax)
-        Console.WriteLine(indd & fakeTab("Armour:", ftlen) & damageArmour & "/" & damageArmourMax)
+        Console.WriteLine(indd & fakeTab("Shields:", ftlen) & shields & "/" & shieldsMax)
+        Console.WriteLine(indd & fakeTab("Armour:", ftlen) & armour & "/" & armourMax)
 
         Console.WriteLine(indd & fakeTab("Hull:", ftlen) & hullSpaceOccupied & "/" & hullSpaceMax)
         consoleReportHullComponents(indent + 2, "└ ")
@@ -99,8 +99,8 @@
         For Each hc In hullComponents
             If TypeOf hc Is hcDefence Then
                 Dim d As hcDefence = CType(hc, hcDefence)
-                If d.type = eDefenceType.Armour Then damageArmourMax += d.value
-                If d.type = eDefenceType.Shields Then damageShieldsMax += d.value
+                If d.type = eDefenceType.Armour Then armourMax += d.value
+                If d.type = eDefenceType.Shields Then shieldsMax += d.value
             ElseIf TypeOf hc Is hcCargo Then
                 Dim c As hcCargo = CType(hc, hcCargo)
                 resourcesMax(c.resource) += c.value
@@ -158,28 +158,40 @@
         Next
     End Sub
 
-    Private damageShields As Integer
-    Private damageShieldsMax As Integer
-    Private damageArmour As Integer
-    Private damageArmourMax As Integer
+    Private shields As Integer
+    Private shieldsMax As Integer
+    Private armour As Integer
+    Private armourMax As Integer
+    Private ReadOnly Property dodge As Integer
+        Get
+            Dim total As Integer = 0
+            For Each hc In hullComponents
+                If TypeOf hc Is hcEngine Then
+                    Dim e As hcEngine = CType(hc, hcEngine)
+                    If e.isActive = True Then total += e.dodge
+                End If
+            Next
+            Return total
+        End Get
+    End Property
     Friend Sub fullRepair()
-        damageShields = damageShieldsMax
-        damageArmour = damageArmourMax
+        shields = shieldsMax
+        armour = armourMax
     End Sub
     Friend Sub addDamage(ByVal damage As Integer, ByVal damageType As eDamageType)
-        If damageShields > 0 Then
-            damageShields -= damage
-            If damageShields < 0 Then
-                damage = damageShields * -1
-                damageShields = 0
+        If shields > 0 Then
+            shields -= damage
+            If shields < 0 Then
+                damage = shields * -1
+                shields = 0
                 alert.Add("Shields Down", name & "'s shields are down.", 2)
             Else
-                alert.Add("Shields", name & " has " & damageShields & " shields remaining.", 2)
+                alert.Add("Shields", name & " has " & shields & " shields remaining.", 2)
             End If
         End If
         If damage > 0 Then
-            damageArmour -= damage
-            If damageArmour <= 0 Then destroy() Else alert.Add("Armour", name & " has " & damageArmour & " armour remaining.", 2)
+            armour -= damage
+            If armour <= 0 Then destroy() Else alert.Add("Armour", name & " has " & armour & " armour remaining.", 2)
         End If
     End Sub
     Private Sub destroy()

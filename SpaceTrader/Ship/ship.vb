@@ -59,8 +59,18 @@
         Console.WriteLine(indd & fakeTab("Credits:", ftlen) & "¥" & player.credits.ToString("N0"))
         Console.WriteLine(indd & fakeTab("Shields:", ftlen) & damageShields & "/" & damageShieldsMax)
         Console.WriteLine(indd & fakeTab("Armour:", ftlen) & damageArmour & "/" & damageArmourMax)
+
         Console.WriteLine(indd & fakeTab("Hull:", ftlen) & hullSpaceOccupied & "/" & hullSpaceMax)
         consoleReportHullComponents(indent + 2, "└ ")
+
+        Dim crewList As List(Of crew) = getCrew()
+        If crewList.Count > 0 Then
+            Console.WriteLine(indd & "Crew:")
+            For Each crew In crewList
+                Console.WriteLine(inddd & "└ " & crew.name)
+            Next
+        End If
+
         Console.WriteLine(indd & "Cargo Bay:")
         For Each r In constants.resourceArray
             Console.WriteLine(inddd & "└ " & fakeTab(r.ToString & ":", 13) & resources(r) & "/" & resourcesMax(r))
@@ -79,28 +89,6 @@
             Console.WriteLine(ind & fakeTab(hc.name & ":", ftlen) & hc.consoleDescription & " " & hc.consoleResourceDescription)
         Next
     End Sub
-
-    Private _name As String
-    Friend ReadOnly Property name As String
-        Get
-            Return getTypePrefix() & " " & _name
-        End Get
-    End Property
-    Private player As player
-    Private type As eShipType
-    Private Function getTypePrefix() As String
-        Select Case type
-            Case eShipType.Corvette : Return "Cv."
-            Case eShipType.Frigate : Return "Fr."
-            Case eShipType.Crusier : Return "Cr."
-            Case eShipType.Destroyer : Return "De."
-            Case eShipType.Dreadnought : Return "Dr."
-            Case Else
-                MsgBox("getTypePrefix: type not recognised.")
-                Return Nothing
-        End Select
-    End Function
-
     Private mustRefresh As Boolean = False
     Private Sub refresh()
         'reset all variables
@@ -123,6 +111,27 @@
         'flag
         mustRefresh = False
     End Sub
+
+    Private _name As String
+    Friend ReadOnly Property name As String
+        Get
+            Return getTypePrefix() & " " & _name
+        End Get
+    End Property
+    Private player As player
+    Private type As eShipType
+    Private Function getTypePrefix() As String
+        Select Case type
+            Case eShipType.Corvette : Return "Cv."
+            Case eShipType.Frigate : Return "Fr."
+            Case eShipType.Crusier : Return "Cr."
+            Case eShipType.Destroyer : Return "De."
+            Case eShipType.Dreadnought : Return "Dr."
+            Case Else
+                MsgBox("getTypePrefix: type not recognised.")
+                Return Nothing
+        End Select
+    End Function
 
     Private _isJump As Boolean = True
     Friend ReadOnly Property isJump As Boolean
@@ -222,4 +231,26 @@
             hc.loadResource()
         Next
     End Sub
+    Private Function getCrew() As List(Of crew)
+        Dim total As New List(Of crew)
+        For Each hc In hullComponents
+            If TypeOf hc Is hcCrewQuarters Then
+                Dim cq As hcCrewQuarters = CType(hc, hcCrewQuarters)
+                total.AddRange(cq.crewList)
+            End If
+        Next
+        Return total
+    End Function
+    Friend Function addCrew(ByRef crew As crew) As Boolean
+        For Each hc In hullComponents
+            If TypeOf hc Is hcCrewQuarters Then
+                Dim cq As hcCrewQuarters = CType(hc, hcCrewQuarters)
+                If cq.crewEmpty > 0 Then
+                    cq.addCrew(crew)
+                    Return True
+                End If
+            End If
+        Next
+        Return False
+    End Function
 End Class

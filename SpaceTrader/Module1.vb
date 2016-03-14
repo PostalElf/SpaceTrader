@@ -20,6 +20,7 @@
         ship.addComponent(New hcJumpDrive("Whirlwind Jumpdrive", 5, 50, eResource.Azoth, 5))
         ship.addComponent(New hcCrewQuarters("Crew Cabin", 5, 5, eResource.Food, 1))
         ship.allLoadResource()
+        ship.addCrew(crew.build)
 
         While True
             Console.Clear()

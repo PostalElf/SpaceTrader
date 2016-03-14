@@ -59,6 +59,8 @@
         Console.WriteLine(indd & fakeTab("Credits:", ftlen) & "¥" & player.credits.ToString("N0"))
         Console.WriteLine(indd & fakeTab("Shields:", ftlen) & shields & "/" & shieldsMax)
         Console.WriteLine(indd & fakeTab("Armour:", ftlen) & armour & "/" & armourMax)
+        Console.Write(indd & fakeTab("Speed:", ftlen) & travelSpeed & " ")
+        If travelByJump = True Then Console.WriteLine("jump") Else Console.WriteLine("sublight")
 
         Console.WriteLine(indd & fakeTab("Hull:", ftlen) & hullSpaceOccupied & "/" & hullSpaceMax)
         consoleReportHullComponents(indent + 2, "└ ")
@@ -134,6 +136,21 @@
     End Function
 
     Private _travelByJump As Boolean = True
+    Friend ReadOnly Property travelSpeed As Integer
+        Get
+            Dim totalSpeed As Integer = 0
+            For Each hc In hullComponents
+                If travelByJump = True AndAlso TypeOf hc Is hcJumpDrive Then
+                    Dim j As hcJumpDrive = CType(hc, hcJumpDrive)
+                    If j.isActive = True Then totalSpeed += j.jumpSpeed
+                ElseIf travelByJump = False AndAlso TypeOf hc Is hcEngine Then
+                    Dim e As hcEngine = CType(hc, hcEngine)
+                    If e.isActive = True Then totalSpeed += e.speed
+                End If
+            Next
+            Return totalSpeed
+        End Get
+    End Property
     Friend ReadOnly Property travelByJump As Boolean
         Get
             Return _travelByJump
@@ -143,13 +160,6 @@
         Dim totalSpeed As Integer = 0
         For Each hc In hullComponents
             hc.tickTravel()
-            If travelByJump = True AndAlso TypeOf hc Is hcJumpDrive Then
-                Dim j As hcJumpDrive = CType(hc, hcJumpDrive)
-                If j.isActive = True Then totalSpeed += j.jumpSpeed
-            ElseIf travelByJump = False AndAlso TypeOf hc Is hcEngine Then
-                Dim e As hcEngine = CType(hc, hcEngine)
-                If e.isActive = True Then totalSpeed += e.speed
-            End If
         Next
     End Sub
     Friend Sub tickIdle()

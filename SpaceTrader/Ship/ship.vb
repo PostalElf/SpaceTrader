@@ -2,7 +2,7 @@
     Public Sub New()
         For Each r In constants.resourceArray
             resources.Add(r, 0)
-            resourcesMax.Add(r, 100)
+            resourcesMaxBase.Add(r, 10)
         Next
         For Each t As Type In constants.hcTypeList
             hullComponents.Add(t, New List(Of hullComponent))
@@ -20,11 +20,6 @@
         Return ship
     End Function
     Private Sub buildDefaultShip()
-        For Each r In constants.resourceArray
-            resourcesMax(r) = 10
-        Next
-
-
         Select Case type
             Case eShipType.Corvette
                 hullSpaceMaxBase = 20
@@ -252,7 +247,16 @@
     End Sub
 
     Private resources As New Dictionary(Of eResource, Integer)
-    Private resourcesMax As New Dictionary(Of eResource, Integer)
+    Private resourcesMaxBase As New Dictionary(Of eResource, Integer)
+    Private ReadOnly Property resourcesMax(ByVal resource As eResource)
+        Get
+            Dim total As Integer = resourcesMaxBase(resource)
+            For Each hc As hcCargo In hullComponents(GetType(hcCargo))
+                If hc.resource = resource Then total += hc.value
+            Next
+            Return total
+        End Get
+    End Property
     Friend Function addResourceCheck(ByVal resource As eResource, ByVal value As Integer) As Boolean
         If resources(resource) + value > resourcesMax(resource) Then Return False
         If resources(resource) + value < 0 Then Return False

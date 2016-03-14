@@ -27,25 +27,25 @@
 
         Select Case type
             Case eShipType.Corvette
-                hullSpaceMax = 20
-                shieldsMax = 5
-                armourMax = 10
+                hullSpaceMaxBase = 20
+                shieldsMaxBase = 5
+                armourMaxBase = 10
             Case eShipType.Frigate
-                hullSpaceMax = 50
-                shieldsMax = 10
-                armourMax = 10
+                hullSpaceMaxBase = 50
+                shieldsMaxBase = 10
+                armourMaxBase = 10
             Case eShipType.Crusier
-                hullSpaceMax = 75
-                shieldsMax = 20
-                armourMax = 10
+                hullSpaceMaxBase = 75
+                shieldsMaxBase = 20
+                armourMaxBase = 10
             Case eShipType.Destroyer
-                hullSpaceMax = 100
-                shieldsMax = 20
-                armourMax = 20
+                hullSpaceMaxBase = 100
+                shieldsMaxBase = 20
+                armourMaxBase = 20
             Case eShipType.Dreadnought
-                hullSpaceMax = 150
-                shieldsMax = 20
-                armourMax = 40
+                hullSpaceMaxBase = 150
+                shieldsMaxBase = 20
+                armourMaxBase = 40
         End Select
     End Sub
     Private Shared shipNames As New List(Of String)
@@ -56,16 +56,14 @@
         Dim inddd As String = vbSpace(indent + 2)
         Const ftlen As Integer = 10
 
-        If mustRefresh = True Then refresh()
-
         Console.WriteLine(ind & name)
         Console.WriteLine(indd & fakeTab("Credits:", ftlen) & "¥" & player.credits.ToString("N0"))
         Console.WriteLine(indd & fakeTab("Shields:", ftlen) & shields & "/" & shieldsMax)
-        Console.WriteLine(indd & fakeTab("Armour:", ftlen) & armour & "/" & armourMax)
+        Console.WriteLine(indd & fakeTab("Armour:", ftlen) & armour & "/" & armourMaxBase)
         Console.Write(indd & fakeTab("Speed:", ftlen) & travelSpeed & " ")
         If travelByJump = True Then Console.WriteLine("jump") Else Console.WriteLine("sublight")
 
-        Console.WriteLine(indd & fakeTab("Hull:", ftlen) & hullSpaceOccupied & "/" & hullSpaceMax)
+        Console.WriteLine(indd & fakeTab("Hull:", ftlen) & hullSpaceOccupied & "/" & hullSpaceMaxBase)
         consoleReportHullComponents(indent + 2, "└ ")
 
         Dim crewList As List(Of crew) = getCrew()
@@ -98,26 +96,6 @@
             Next
         Next
     End Sub
-    Private mustRefresh As Boolean = False
-    Private Sub refresh()
-        'reset all variables
-        buildDefaultShip()
-
-
-        'iterate through hullComponents
-        For Each hc In hullComponents(GetType(hcDefence))
-            Dim d As hcDefence = CType(hc, hcDefence)
-            If d.type = eDefenceType.Armour Then armourMax += d.value
-            If d.type = eDefenceType.Shields Then shieldsMax += d.value
-        Next
-        For Each hc In hullComponents(GetType(hcCargo))
-            Dim c As hcCargo = CType(hc, hcCargo)
-            resourcesMax(c.resource) += c.value
-        Next
-
-        'flag
-        mustRefresh = False
-    End Sub
 
     Private _name As String
     Friend ReadOnly Property name As String
@@ -141,6 +119,11 @@
     End Function
 
     Private _travelByJump As Boolean = True
+    Friend ReadOnly Property travelByJump As Boolean
+        Get
+            Return _travelByJump
+        End Get
+    End Property
     Friend ReadOnly Property travelSpeed As Integer
         Get
             Dim totalSpeed As Integer = 0
@@ -156,11 +139,6 @@
                 Next
             End If
             Return totalSpeed
-        End Get
-    End Property
-    Friend ReadOnly Property travelByJump As Boolean
-        Get
-            Return _travelByJump
         End Get
     End Property
     Friend Sub tickTravel()
@@ -180,22 +158,39 @@
     End Sub
 
     Private shields As Integer
-    Private shieldsMax As Integer
+    Private shieldsMaxBase As Integer
+    Private ReadOnly Property shieldsMax As Integer
+        Get
+            Dim total As Integer = shieldsMaxBase
+            For Each hc As hcDefence In hullComponents(GetType(hcDefence))
+                If hc.type = eDefenceType.Shields Then total += hc.value
+            Next
+            Return total
+        End Get
+    End Property
     Private armour As Integer
-    Private armourMax As Integer
+    Private armourMaxBase As Integer
+    Private ReadOnly Property armourMax As Integer
+        Get
+            Dim total As Integer = armourMaxBase
+            For Each hc As hcDefence In hullComponents(GetType(hcDefence))
+                If hc.type = eDefenceType.Armour Then total += hc.value
+            Next
+            Return total
+        End Get
+    End Property
     Private ReadOnly Property dodge As Integer
         Get
             Dim total As Integer = 0
-            For Each hc In hullComponents(GetType(hcEngine))
-                Dim e As hcEngine = CType(hc, hcEngine)
-                If e.isActive = True Then total += e.dodge
+            For Each hc As hcEngine In hullComponents(GetType(hcEngine))
+                If hc.isActive = True Then total += hc.dodge
             Next
             Return total
         End Get
     End Property
     Friend Sub fullRepair()
         shields = shieldsMax
-        armour = armourMax
+        armour = armourMaxBase
     End Sub
     Friend Sub addDamage(ByVal damage As Integer, ByVal damageType As eDamageType)
         If shields > 0 Then
@@ -218,7 +213,16 @@
     End Sub
 
     Private hullComponents As New Dictionary(Of Type, List(Of hullComponent))
-    Private hullSpaceMax As Integer
+    Private hullSpaceMaxBase As Integer
+    Private ReadOnly Property hullSpaceMax As Integer
+        Get
+            Dim total As Integer = hullSpaceMaxBase
+            For Each hc As hcDefence In hullComponents(GetType(hcDefence))
+                If hc.type = eDefenceType.Shields Then total += hc.value
+            Next
+            Return total
+        End Get
+    End Property
     Private ReadOnly Property hullSpaceOccupied As Integer
         Get
             Dim total As Integer = 0
@@ -232,13 +236,12 @@
     End Property
     Private ReadOnly Property hullSpaceEmpty As Integer
         Get
-            Return hullSpaceMax - hullSpaceOccupied
+            Return hullSpaceMaxBase - hullSpaceOccupied
         End Get
     End Property
     Friend Sub addComponent(ByRef hc As hullComponent)
         hullComponents(hc.GetType).Add(hc)
         hc.ship = Me
-        mustRefresh = True
     End Sub
     Friend Sub removeComponent(ByRef hc As hullComponent)
         If hullComponents.ContainsKey(hc.GetType) = False Then Exit Sub
@@ -246,7 +249,6 @@
 
         hc.ship = Nothing
         hullComponents(hc.GetType).Remove(hc)
-        mustRefresh = True
     End Sub
 
     Private resources As New Dictionary(Of eResource, Integer)

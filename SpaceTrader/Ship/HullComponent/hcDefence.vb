@@ -7,7 +7,7 @@
         value = aValue
     End Sub
     Friend Overrides Function consoleDescription() As String
-        Return value & " " & type.ToString
+        Return withSign(value) & " " & type.ToString
     End Function
 
     Friend type As eDefenceType

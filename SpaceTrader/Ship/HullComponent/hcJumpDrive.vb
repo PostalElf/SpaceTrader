@@ -6,7 +6,7 @@
         _jumpSpeed = aJumpSpeed
     End Sub
     Friend Overrides Function consoleDescription() As String
-        Return _jumpSpeed & " jump speed"
+        Return withSign(jumpSpeed) & " jump speed"
     End Function
     Friend Overrides Sub tickTravel()
         If ship.isJump = True Then

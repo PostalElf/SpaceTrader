@@ -6,9 +6,8 @@
         value = aValue
     End Sub
     Friend Overrides Function consoleDescription() As String
-        Return resource.ToString & " " & withSign(value) & " capacity"
+        Return withSign(value) & " " & resource.ToString & " capacity"
     End Function
-
 
     Friend resource As eResource
     Friend value As Integer

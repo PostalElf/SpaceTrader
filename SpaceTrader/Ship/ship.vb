@@ -11,22 +11,38 @@
             ._name = getRandomAndRemove(shipNames, "data/shipnames.txt")
             .player = player
             .type = type
-            .buildDefaultShip(type)
+            .buildDefaultShip()
+            .fullRepair()
         End With
         Return ship
     End Function
-    Private Sub buildDefaultShip(ByVal type As eShipType)
+    Private Sub buildDefaultShip()
+        For Each r In constants.resourceArray
+            resourcesMax(r) = 10
+        Next
+
+
         Select Case type
             Case eShipType.Corvette
                 hullSpaceMax = 20
+                damageShieldsMax = 5
+                damageArmourMax = 10
             Case eShipType.Frigate
                 hullSpaceMax = 50
+                damageShieldsMax = 10
+                damageArmourMax = 10
             Case eShipType.Crusier
                 hullSpaceMax = 75
+                damageShieldsMax = 20
+                damageArmourMax = 10
             Case eShipType.Destroyer
                 hullSpaceMax = 100
+                damageShieldsMax = 20
+                damageArmourMax = 20
             Case eShipType.Dreadnought
                 hullSpaceMax = 150
+                damageShieldsMax = 20
+                damageArmourMax = 40
         End Select
     End Sub
     Private Shared shipNames As New List(Of String)
@@ -38,7 +54,9 @@
         Const ftlen As Integer = 10
 
         Console.WriteLine(ind & name)
-        Console.WriteLine(indd & fakeTab("Defences:", ftlen) & damageShields & " Shields + " & damageArmour & " Armour")
+        Console.WriteLine(indd & fakeTab("Credits:", ftlen) & "¥" & player.credits.ToString("N0"))
+        Console.WriteLine(indd & fakeTab("Shields:", ftlen) & damageShields & "/" & damageShieldsMax)
+        Console.WriteLine(indd & fakeTab("Armour:", ftlen) & damageArmour & "/" & damageArmourMax)
         Console.WriteLine(indd & fakeTab("Hull:", ftlen) & hullSpaceOccupied & "/" & hullSpaceMax)
         For Each hc In hullComponents
             hc.consoleReport(indent + 2, "└ ")
@@ -73,11 +91,7 @@
     Private mustRefresh As Boolean = False
     Private Sub refresh()
         'reset all variables
-        damageShieldsMax = 0
-        damageArmourMax = 0
-        For Each r In constants.resourceArray
-            resourcesMax(r) = 0
-        Next
+        buildDefaultShip()
 
 
         'iterate through hullComponents
@@ -101,6 +115,10 @@
     Private damageShieldsMax As Integer
     Private damageArmour As Integer
     Private damageArmourMax As Integer
+    Friend Sub fullRepair()
+        damageShields = damageShieldsMax
+        damageArmour = damageArmourMax
+    End Sub
     Friend Sub addDamage(ByVal damage As Integer, ByVal damageType As eDamageType)
         If damageShields > 0 Then
             damageShields -= damage

@@ -6,6 +6,10 @@
     Public Overrides Function ToString() As String
         Return name & ": " & consoleDescription()
     End Function
+    Friend Function consoleResourceDescription() As String
+        If resourceSlot = Nothing Then Return Nothing
+        Return "[" & resourceSlot.ToString & " " & resourceQtyRemaining & "%]"
+    End Function
     Friend MustOverride Function consoleDescription() As String
 
     Protected _name As String
@@ -21,6 +25,12 @@
             Return _size
         End Get
     End Property
+    Friend Overridable Sub tickTravel()
+        'handle in subclass if necessary
+    End Sub
+    Friend Overridable Sub tickIdle()
+        'handle in subclass if necessary
+    End Sub
 
     Private resourceSlot As eResource
     Private resourceQtyRemaining As Integer

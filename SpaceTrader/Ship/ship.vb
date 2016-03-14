@@ -76,7 +76,7 @@
         ftlen += 3
 
         For Each hc In hullComponents
-            Console.WriteLine(ind & fakeTab(hc.name & ":", ftlen) & hc.consoleDescription)
+            Console.WriteLine(ind & fakeTab(hc.name & ":", ftlen) & hc.consoleDescription & " " & hc.consoleResourceDescription)
         Next
     End Sub
 
@@ -122,6 +122,31 @@
 
         'flag
         mustRefresh = False
+    End Sub
+
+    Private _isJump As Boolean = True
+    Friend ReadOnly Property isJump As Boolean
+        Get
+            Return _isJump
+        End Get
+    End Property
+    Friend Sub tickTravel()
+        Dim totalSpeed As Integer = 0
+        For Each hc In hullComponents
+            hc.tickTravel()
+            If isJump = True AndAlso TypeOf hc Is hcJumpDrive Then
+                Dim j As hcJumpDrive = CType(hc, hcJumpDrive)
+                If j.isActive = True Then totalSpeed += j.jumpSpeed
+            ElseIf isJump = False AndAlso TypeOf hc Is hcEngine Then
+                Dim e As hcEngine = CType(hc, hcEngine)
+                If e.isActive = True Then totalSpeed += e.speed
+            End If
+        Next
+    End Sub
+    Friend Sub tickIdle()
+        For Each hc In hullComponents
+            hc.tickIdle()
+        Next
     End Sub
 
     Private damageShields As Integer

@@ -7,14 +7,22 @@
         resourceProductionTimerMax = aResourceProductionTimerMax
     End Sub
     Friend Overrides Function consoleDescription() As String
-        Return "produces " & resourceProductionQty & " " & resourceProduction.ToString & " per " & resourceProductionTimerMax
+        Return withSign(resourceProductionQty) & " " & resourceProduction.ToString & " per " & resourceProductionTimerMax & " ticks"
     End Function
+    Friend Overrides Sub tickTravel()
+        resourceProductionTick()
+    End Sub
+    Friend Overrides Sub tickIdle()
+        resourceProductionTick()
+    End Sub
 
     Private resourceProduction As eResource
     Private resourceProductionQty As Integer
     Private resourceProductionTimer As Integer
     Private resourceProductionTimerMax As Integer
     Private Sub resourceProductionTick()
+        If useResource() = False Then Exit Sub
+
         resourceProductionTimer += 1
         If resourceProductionTimer >= resourceProductionTimerMax Then
             resourceProductionTimer = 0

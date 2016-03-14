@@ -1,0 +1,35 @@
+﻿Public Class hcEngine
+    Inherits hullComponent
+    Friend Sub New(ByVal aName As String, ByVal aSize As Integer, ByVal aSpeed As Integer, ByVal aDodge As Integer)
+        MyBase.New(aName, aSize)
+        _speed = aSpeed
+        _dodge = aDodge
+    End Sub
+    Friend Overrides Function consoleDescription() As String
+        Return withSign(speed) & " sublight speed, " & withSign(dodge) & " dodge"
+    End Function
+    Friend Overrides Sub tickTravel()
+        If ship.isJump = False Then
+            _isActive = useResource()
+        End If
+    End Sub
+
+    Private _isActive As Boolean
+    Friend ReadOnly Property isActive As Boolean
+        Get
+            Return _isActive
+        End Get
+    End Property
+    Private _speed As Integer
+    Friend ReadOnly Property speed As Integer
+        Get
+            Return _speed
+        End Get
+    End Property
+    Private _dodge As Integer
+    Friend ReadOnly Property dodge As Integer
+        Get
+            Return _dodge
+        End Get
+    End Property
+End Class

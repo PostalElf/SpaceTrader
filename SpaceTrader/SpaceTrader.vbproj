@@ -89,10 +89,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Dev\valve.vb" />
+    <Compile Include="Ship\crew.vb" />
     <Compile Include="Ship\eDamageType.vb" />
     <Compile Include="Ship\eDefenceType.vb" />
     <Compile Include="Ship\eShipType.vb" />
     <Compile Include="Ship\HullComponent\hcCargo.vb" />
+    <Compile Include="Ship\HullComponent\hcCrewQuarters.vb" />
     <Compile Include="Ship\HullComponent\hcDefence.vb" />
     <Compile Include="Ship\HullComponent\hcEngine.vb" />
     <Compile Include="Ship\HullComponent\hcJumpDrive.vb" />

@@ -1,7 +1,8 @@
 ﻿Public Class hcProducer
     Inherits hullComponent
-    Friend Sub New(ByVal aName As String, ByVal aSize As Integer, ByVal aResourceProduction As eResource, ByVal aResourceProductionQty As Integer, ByVal aResourceProductionTimerMax As Integer)
-        MyBase.New(aName, aSize)
+    Friend Sub New(ByVal aName As String, ByVal aSize As Integer, ByVal aResourceProduction As eResource, ByVal aResourceProductionQty As Integer, ByVal aResourceProductionTimerMax As Integer, _
+                   Optional ByVal aResourceSlot As eResource = Nothing, Optional ByVal aResourceQtyPerUse As Integer = 0)
+        MyBase.New(aName, aSize, aResourceSlot, aResourceQtyPerUse)
         resourceProduction = aResourceProduction
         resourceProductionQty = aResourceProductionQty
         resourceProductionTimerMax = aResourceProductionTimerMax

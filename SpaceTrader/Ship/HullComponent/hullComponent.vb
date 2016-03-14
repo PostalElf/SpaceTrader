@@ -1,7 +1,8 @@
 ﻿Public MustInherit Class hullComponent
-    Friend Sub New(ByVal aName As String, ByVal aSize As Integer)
+    Friend Sub New(ByVal aName As String, ByVal aSize As Integer, ByVal aResourceSlot As eResource, ByVal aResourceQtyPerUse As Integer)
         _name = aName
         _size = aSize
+        If aResourceSlot <> Nothing AndAlso aResourceQtyPerUse <> 0 Then setResourceSlot(aResourceSlot, aResourceQtyPerUse)
     End Sub
     Public Overrides Function ToString() As String
         Return name & ": " & consoleDescription()

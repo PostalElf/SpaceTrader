@@ -1,7 +1,8 @@
 ﻿Public Class hcWeapon
     Inherits hullComponent
-    Friend Sub New(ByVal aName As String, ByVal aSize As Integer, ByVal aDamage As Integer, ByVal aDamageType As eDamageType)
-        MyBase.New(aName, aSize)
+    Friend Sub New(ByVal aName As String, ByVal aSize As Integer, ByVal aDamage As Integer, ByVal aDamageType As eDamageType, _
+                   Optional ByVal aResourceSlot As eResource = Nothing, Optional ByVal aResourceQtyPerUse As Integer = 0)
+        MyBase.New(aName, aSize, aResourceSlot, aResourceQtyPerUse)
         damage = aDamage
         damageType = aDamageType
     End Sub

@@ -1,7 +1,8 @@
 ﻿Public Class hcEngine
     Inherits hullComponent
-    Friend Sub New(ByVal aName As String, ByVal aSize As Integer, ByVal aSpeed As Integer, ByVal aDodge As Integer)
-        MyBase.New(aName, aSize)
+    Friend Sub New(ByVal aName As String, ByVal aSize As Integer, ByVal aSpeed As Integer, ByVal aDodge As Integer, _
+                   Optional ByVal aResourceSlot As eResource = Nothing, Optional ByVal aResourceQtyPerUse As Integer = 0)
+        MyBase.New(aName, aSize, aResourceSlot, aResourceQtyPerUse)
         _speed = aSpeed
         _dodge = aDodge
     End Sub

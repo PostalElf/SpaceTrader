@@ -217,4 +217,9 @@
     Friend Sub addResource(ByVal resource As eResource, ByVal value As Integer)
         resources(resource) += value
     End Sub
+    Friend Sub loadResourceAll()
+        For Each hc In hullComponents
+            hc.loadResource()
+        Next
+    End Sub
 End Class

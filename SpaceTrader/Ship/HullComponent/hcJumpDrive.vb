@@ -1,7 +1,8 @@
 ﻿Public Class hcJumpDrive
     Inherits hullComponent
-    Friend Sub New(ByVal aName As String, ByVal aSize As Integer, ByVal aJumpSpeed As Integer)
-        MyBase.New(aName, aSize)
+    Friend Sub New(ByVal aName As String, ByVal aSize As Integer, ByVal aJumpSpeed As Integer, _
+                   Optional ByVal aResourceSlot As eResource = Nothing, Optional ByVal aResourceQtyPerUse As Integer = 0)
+        MyBase.New(aName, aSize, aResourceSlot, aResourceQtyPerUse)
         _jumpSpeed = aJumpSpeed
     End Sub
     Friend Overrides Function consoleDescription() As String

@@ -1,11 +1,19 @@
 ﻿Public MustInherit Class hullComponent
-    Friend Sub consoleReport(ByVal indent As Integer, Optional ByVal prefix As String = "")
-        Dim ind As String = vbSpace(indent) & prefix
-
-        Console.WriteLine(ind & name)
+    Friend Sub New(ByVal aName As String, ByVal aSize As Integer)
+        _name = aName
+        _size = aSize
     End Sub
+    Public Overrides Function ToString() As String
+        Return name & ": " & consoleDescription()
+    End Function
+    Friend MustOverride Function consoleDescription() As String
 
-    Private name As String
+    Protected _name As String
+    Friend ReadOnly Property name As String
+        Get
+            Return _name
+        End Get
+    End Property
     Friend ship As ship
     Protected _size As Integer
     Friend ReadOnly Property size As Integer
@@ -17,6 +25,10 @@
     Private resourceSlot As eResource
     Private resourceQtyRemaining As Integer
     Private resourceQtyPerUse As Integer
+    Friend Sub setResourceSlot(ByVal aResourceSlot As eResource, ByVal aResourceQtyPerUse As Integer)
+        resourceSlot = aResourceSlot
+        resourceQtyPerUse = aResourceQtyPerUse
+    End Sub
     Friend Sub loadResource()
         If resourceSlot = Nothing Then Exit Sub
         If ship.addResourceCheck(resourceSlot, -1) = False Then

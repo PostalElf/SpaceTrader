@@ -6,7 +6,10 @@
         Console.WriteLine()
 
         Dim player As New player
+        player.addCredits(10000)
         Dim ship As ship = ship.build(player, eShipType.Corvette)
+        ship.addComponent(New hcWeapon("Chaingun", 5, 1, eDamageType.Ballistic))
+        ship.addComponent(New hcCargo("Gaol", 5, eResource.Slaves, 30))
         ship.consoleReport(0)
         Console.ReadLine()
     End Sub

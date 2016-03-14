@@ -53,17 +53,30 @@
         Dim inddd As String = vbSpace(indent + 2)
         Const ftlen As Integer = 10
 
+        If mustRefresh = True Then refresh()
+
         Console.WriteLine(ind & name)
         Console.WriteLine(indd & fakeTab("Credits:", ftlen) & "¥" & player.credits.ToString("N0"))
         Console.WriteLine(indd & fakeTab("Shields:", ftlen) & damageShields & "/" & damageShieldsMax)
         Console.WriteLine(indd & fakeTab("Armour:", ftlen) & damageArmour & "/" & damageArmourMax)
         Console.WriteLine(indd & fakeTab("Hull:", ftlen) & hullSpaceOccupied & "/" & hullSpaceMax)
-        For Each hc In hullComponents
-            hc.consoleReport(indent + 2, "└ ")
-        Next
+        consoleReportHullComponents(indent + 2, "└ ")
         Console.WriteLine(indd & "Cargo Bay:")
         For Each r In constants.resourceArray
             Console.WriteLine(inddd & "└ " & fakeTab(r.ToString & ":", 13) & resources(r) & "/" & resourcesMax(r))
+        Next
+    End Sub
+    Private Sub consoleReportHullComponents(ByVal indent As Integer, Optional ByVal prefix As String = "")
+        Dim ind As String = vbSpace(indent) & prefix
+
+        Dim ftlen As Integer = 0
+        For Each hc In hullComponents
+            If hc.name.Length > ftlen Then ftlen = hc.name.Length
+        Next
+        ftlen += 3
+
+        For Each hc In hullComponents
+            Console.WriteLine(ind & fakeTab(hc.name & ":", ftlen) & hc.consoleDescription)
         Next
     End Sub
 

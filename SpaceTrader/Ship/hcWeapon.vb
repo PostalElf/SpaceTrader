@@ -1,5 +1,13 @@
 ﻿Public Class hcWeapon
     Inherits hullComponent
+    Friend Sub New(ByVal aName As String, ByVal aSize As Integer, ByVal aDamage As Integer, ByVal aDamageType As eDamageType)
+        MyBase.New(aName, aSize)
+        damage = aDamage
+        damageType = aDamageType
+    End Sub
+    Friend Overrides Function consoleDescription() As String
+        Return damage & " " & damageType.ToString & " damage"
+    End Function
 
     Private damage As Integer
     Private damageType As eDamageType

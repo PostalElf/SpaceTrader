@@ -14,6 +14,11 @@
             Return System.Enum.GetValues(GetType(ePlanetType))
         End Get
     End Property
+    Friend Shared ReadOnly Property defenceTypearray As Array
+        Get
+            Return System.Enum.GetValues(GetType(eDefenceType))
+        End Get
+    End Property
 
     Friend Shared Function getEnumFromString(ByVal str As String, ByVal enumArray As Array) As [Enum]
         For Each item In enumArray

@@ -8,7 +8,7 @@
     Slaves
     Azoth
     Food
-    Water
+    Organics
     Bandwidth
     Media
 End Enum

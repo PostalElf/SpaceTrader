@@ -74,7 +74,7 @@
             Case eResource.Ammunition, eResource.Missiles : Return ePlanetRole.Industrial
             Case eResource.Savants, eResource.Machines : Return ePlanetRole.Research
             Case eResource.Slaves, eResource.Azoth : Return ePlanetRole.Prison
-            Case eResource.Food, eResource.Water : Return ePlanetRole.Agarian
+            Case eResource.Food, eResource.Organics : Return ePlanetRole.Agarian
             Case eResource.Bandwidth, eResource.Media : Return ePlanetRole.Cultural
             Case Else
                 MsgBox("buildRole error!")

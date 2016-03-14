@@ -69,6 +69,7 @@
     <Import Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="alert.vb" />
     <Compile Include="Dev\constants.vb" />
     <Compile Include="eResource.vb" />
     <Compile Include="Module1.vb" />
@@ -88,6 +89,16 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Dev\valve.vb" />
+    <Compile Include="Ship\eDamageType.vb" />
+    <Compile Include="Ship\eDefenceType.vb" />
+    <Compile Include="Ship\eShipType.vb" />
+    <Compile Include="Ship\hcCargo.vb" />
+    <Compile Include="Ship\hcDefence.vb" />
+    <Compile Include="Ship\hcProducer.vb" />
+    <Compile Include="Ship\hcWeapon.vb" />
+    <Compile Include="Ship\hullComponent.vb" />
+    <Compile Include="Ship\player.vb" />
+    <Compile Include="Ship\ship.vb" />
     <Compile Include="World\ePlanetRole.vb" />
     <Compile Include="World\ePlanetType.vb" />
     <Compile Include="World\planet.vb" />
@@ -113,6 +124,7 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

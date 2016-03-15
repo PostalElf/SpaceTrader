@@ -38,4 +38,6 @@
         _isActive = result
         Return result
     End Function
+
+    Friend crewable As New shcCrewable(Me)
 End Class

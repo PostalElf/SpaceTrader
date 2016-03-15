@@ -22,6 +22,8 @@
     Private Shared namesLast As New List(Of String)
 
     Friend crewQuarters As hcCrewQuarters
+    Friend crewAssignment As shcCrewable
+
     Private nameFirst As String
     Private nameLast As String
     Friend ReadOnly Property name As String

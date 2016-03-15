@@ -21,7 +21,7 @@
         ship.addComponent(New hcCrewQuarters("Crew Cabin", 5, 5, eRace.Human, eResource.Food, 1))
         ship.addComponent(New hcCrewQuarters("Machinery Room", 5, 5, eRace.Uplifted, eResource.Machines, 1))
         ship.allLoadResource()
-        For n = 1 To 5
+        For n = 1 To 3
             ship.addCrew(crew.build(eRace.Human))
         Next
 

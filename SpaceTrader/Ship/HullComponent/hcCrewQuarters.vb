@@ -10,10 +10,10 @@
         Return crewOccupied & "/" & crewMax
     End Function
     Friend Overrides Sub tickTravel()
-        crewTick()
+        crewEatTick()
     End Sub
     Friend Overrides Sub tickIdle()
-        crewTick()
+        crewEatTick()
     End Sub
 
     Private crewRace As eRace
@@ -34,7 +34,6 @@
             Return _crewList
         End Get
     End Property
-    Private crewStarvation As Boolean = False
     Friend Sub addCrew(ByRef crew As crew)
         _crewList.Add(crew)
         crew.crewQuarters = Me
@@ -52,7 +51,8 @@
         crew.crewQuarters = Nothing
         _crewList.Remove(crew)
     End Sub
-    Private Sub crewTick()
+    Private crewStarvation As Boolean = False
+    Private Sub crewEatTick()
         For n = 1 To crewOccupied
             If useResource() = False Then
                 crewStarvation = True

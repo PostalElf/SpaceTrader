@@ -61,7 +61,7 @@
         Console.WriteLine(indd & fakeTab("Hull:", ftlen) & hullSpaceOccupied & "/" & hullSpaceMaxBase)
         consoleReportHullComponents(indent + 2, "└ ")
 
-        Dim crewList As List(Of crew) = getCrew()
+        Dim crewList As List(Of crew) = getCrews()
         If crewList.Count > 0 Then
             Console.WriteLine(indd & "Crew:")
             For Each crew In crewList
@@ -88,6 +88,18 @@
         For Each kvp In hullComponents
             For Each hc In kvp.Value
                 Console.WriteLine(ind & fakeTab(hc.name & ":", ftlen) & hc.consoleDescription & " " & hc.consoleResourceDescription)
+            Next
+        Next
+    End Sub
+    Friend Sub consoleReportAlarms(ByVal indent As Integer)
+        Dim ind As String = vbSpace(indent)
+
+        For Each kvp In hullComponents
+            Dim hcList As List(Of hullComponent) = kvp.Value
+            For Each hc In hcList
+                For Each alarm In hc.alarms
+                    Console.WriteLine(ind & hc.name & ": " & alarm)
+                Next
             Next
         Next
     End Sub
@@ -158,7 +170,7 @@
         Get
             Dim total As Integer = shieldsMaxBase
             For Each hc As hcDefence In hullComponents(GetType(hcDefence))
-                If hc.type = eDefenceType.Shields Then total += hc.value
+                If hc.defType = eDefenceType.Shields Then total += hc.value
             Next
             Return total
         End Get
@@ -169,7 +181,7 @@
         Get
             Dim total As Integer = armourMaxBase
             For Each hc As hcDefence In hullComponents(GetType(hcDefence))
-                If hc.type = eDefenceType.Armour Then total += hc.value
+                If hc.defType = eDefenceType.Armour Then total += hc.value
             Next
             Return total
         End Get
@@ -213,7 +225,7 @@
         Get
             Dim total As Integer = hullSpaceMaxBase
             For Each hc As hcDefence In hullComponents(GetType(hcDefence))
-                If hc.type = eDefenceType.Shields Then total += hc.value
+                If hc.defType = eDefenceType.Shields Then total += hc.value
             Next
             Return total
         End Get
@@ -245,6 +257,10 @@
         hc.ship = Nothing
         hullComponents(hc.GetType).Remove(hc)
     End Sub
+    Friend Function getComponents(ByVal hcType As Type) As List(Of hullComponent)
+        If hullComponents.ContainsKey(hcType) Then Return hullComponents(hcType)
+        Return Nothing
+    End Function
 
     Private resources As New Dictionary(Of eResource, Integer)
     Private resourcesMaxBase As New Dictionary(Of eResource, Integer)
@@ -285,11 +301,17 @@
             Next
         Next
     End Sub
-    Private Function getCrew() As List(Of crew)
+    Friend Function getCrews(Optional ByVal isIdleOnly As Boolean = False) As List(Of crew)
         Dim total As New List(Of crew)
         For Each hc In hullComponents(GetType(hcCrewQuarters))
             Dim cq As hcCrewQuarters = CType(hc, hcCrewQuarters)
-            total.AddRange(cq.crewList)
+            If isIdleOnly = False Then
+                total.AddRange(cq.crewList)
+            Else
+                For Each p In cq.crewList
+                    If p.crewAssignment Is Nothing Then total.Add(p)
+                Next
+            End If
         Next
         Return total
     End Function

@@ -9,6 +9,14 @@
     Friend Overrides Function consoleDescription() As String
         Return withSign(speed) & " sublight speed, " & withSign(dodge) & " dodge"
     End Function
+    Friend Overrides ReadOnly Property alarms As List(Of String)
+        Get
+            Dim total As New List(Of String)(MyBase.alarms)
+            If crewable.isManned = False Then total.Add("Requires crew member(s).")
+            Return total
+        End Get
+    End Property
+
     Friend Overrides Sub tickTravel()
         If ship.travelByJump = False Then
             _isActive = useResource()
@@ -24,13 +32,13 @@
     Private _speed As Integer
     Friend ReadOnly Property speed As Integer
         Get
-            Return _speed
+            If crewable.isManned = True Then Return _speed Else Return 0
         End Get
     End Property
     Private _dodge As Integer
     Friend ReadOnly Property dodge As Integer
         Get
-            Return _dodge
+            If crewable.isManned = True Then Return _dodge Else Return 0
         End Get
     End Property
     Friend Overrides Function loadResource() As Boolean

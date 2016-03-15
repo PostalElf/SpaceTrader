@@ -12,6 +12,13 @@
         Return "[" & resourceSlot.ToString & " " & resourceQtyRemaining & "%]"
     End Function
     Friend MustOverride Function consoleDescription() As String
+    Friend Overridable ReadOnly Property alarms As List(Of String)
+        Get
+            Dim total As New List(Of String)
+            If resourceSlot <> Nothing AndAlso resourceQtyRemaining = 0 Then total.Add("No " & resourceSlot.ToString & " remaining.")
+            Return total
+        End Get
+    End Property
 
     Protected _name As String
     Friend ReadOnly Property name As String

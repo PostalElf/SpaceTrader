@@ -15,7 +15,9 @@
         ship.addComponent(New hcWeapon("Chaingun", 5, 1, eDamageType.Ballistic))
         ship.addComponent(New hcCargo("Gaol", 5, eResource.Slaves, 30))
         ship.addComponent(New hcDefence("Shield Battery", 5, eDefenceType.Shields, 5))
-        ship.addComponent(New hcProducer("Aeroponics Bay", 5, eResource.Food, 1, 5, eResource.Organics, 5))
+        Dim aeroponics As New hcProducer("Aeroponics Bay", 5, eResource.Food, 1, 5, eResource.Organics, 5)
+        aeroponics.crewable.SetProperties(1, 3)
+        ship.addComponent(aeroponics)
         ship.addComponent(New hcEngine("Z-23 Moonbeam Engines", 5, 5, 1, eResource.Chemicals, 5))
         ship.addComponent(New hcJumpDrive("Whirlwind Jumpdrive", 5, 50, eResource.Azoth, 5))
         ship.addComponent(New hcCrewQuarters("Crew Cabin", 5, 5, eRace.Human, eResource.Food, 1))
@@ -25,9 +27,13 @@
             ship.addCrew(crew.build(eRace.Human))
         Next
 
+        aeroponics.crewable.assignCrewBest()
+
         While True
             Console.Clear()
             ship.consoleReport(0)
+            Console.WriteLine(vbSpace(1) & "Alarms:")
+            ship.consoleReportAlarms(2)
             Console.WriteLine(vbCrLf)
             alert.allConsoleReport(0, 7)
             Console.ReadLine()

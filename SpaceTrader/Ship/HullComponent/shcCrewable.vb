@@ -2,6 +2,10 @@
     Friend Sub New(ByRef hc As hullComponent)
         hullComponent = hc
     End Sub
+    Friend Sub SetProperties(ByVal min As Integer, ByVal max As Integer)
+        crewMin = min
+        crewMax = max
+    End Sub
 
     Private hullComponent As hullComponent
     Private _crewList As New List(Of crew)
@@ -10,6 +14,7 @@
             Return _crewList
         End Get
     End Property
+    Private crewMin As Integer
     Private crewMax As Integer
     Private ReadOnly Property crewOccupied
         Get
@@ -21,12 +26,24 @@
             Return crewMax - crewOccupied
         End Get
     End Property
+    Friend ReadOnly Property isManned As Boolean
+        Get
+            If crewOccupied >= crewMin Then Return True Else Return False
+        End Get
+    End Property
+
+    Friend Sub assignCrewBest()
+        Dim idlers As List(Of crew) = hullComponent.ship.getCrews(True)
+        Dim p As crew = idlers(rng.Next(idlers.Count))
+        assignCrew(p)
+    End Sub
     Friend Sub assignCrew(ByRef crew As crew)
         _crewList.Add(crew)
         crew.crewAssignment = Me
     End Sub
     Friend Function assignCrewCheck(ByRef crew As crew) As Boolean
         If crewEmpty < 1 Then Return False
+        If crew.crewAssignment Is Nothing = False Then Return False
         If _crewList.Contains(crew) Then Return False
 
         Return True

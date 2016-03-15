@@ -10,6 +10,14 @@
     Friend Overrides Function consoleDescription() As String
         Return withSign(resourceProductionQty) & " " & resourceProduction.ToString & " per " & resourceProductionTimerMax & " ticks"
     End Function
+    Friend Overrides ReadOnly Property alarms As List(Of String)
+        Get
+            Dim total As New List(Of String)(MyBase.alarms)
+            If crewable.isManned = False Then total.Add("Requires crew member(s).")
+            Return total
+        End Get
+    End Property
+
     Friend Overrides Sub tickTravel()
         resourceProductionTick()
     End Sub
@@ -22,6 +30,7 @@
     Private resourceProductionTimer As Integer
     Private resourceProductionTimerMax As Integer
     Private Sub resourceProductionTick()
+        If crewable.isManned = False Then Exit Sub
         If useResource() = False Then Exit Sub
 
         resourceProductionTimer += 1
@@ -31,4 +40,6 @@
             ship.addResource(resourceProduction, resourceProductionQty)
         End If
     End Sub
+
+    Friend crewable As New shcCrewable(Me)
 End Class

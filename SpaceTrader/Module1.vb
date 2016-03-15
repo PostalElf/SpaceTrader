@@ -2,9 +2,9 @@
 
     Sub Main()
         Console.SetWindowSize(120, 50)
-        Dim starmap As starmap = starmap.build(3, 3, 513058105)
-        starmap.consoleReport(0)
-        Console.ReadLine()
+        'Dim starmap As starmap = starmap.build(3, 3, 513058105)
+        'starmap.consoleReport(0)
+        'Console.ReadLine()
 
         Dim player As New player
         player.addCredits(10000)

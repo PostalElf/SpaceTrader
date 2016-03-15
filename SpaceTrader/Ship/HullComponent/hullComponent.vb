@@ -40,19 +40,20 @@
         resourceSlot = aResourceSlot
         resourceQtyPerUse = aResourceQtyPerUse
     End Sub
-    Friend Sub loadResource()
-        If resourceSlot = Nothing Then Exit Sub
-        If resourceQtyRemaining >= 100 Then Exit Sub
+    Friend Overridable Function loadResource() As Boolean
+        If resourceSlot = Nothing Then Return True
+        If resourceQtyRemaining >= 100 Then Return False
         If ship.addResourceCheck(resourceSlot, -1) = False Then
             alert.Add("Load Failure", name & " was unable to load " & resourceSlot.ToString & " from the cargo hold.", 5)
-            Exit Sub
+            Return False
         End If
 
         ship.addResource(resourceSlot, -1)
         resourceQtyRemaining += 100
         alert.Add("Load", name & " loaded a pod of " & resourceSlot.ToString & " from the cargo hold.", 7)
-    End Sub
-    Friend Function useResource() As Boolean
+        Return True
+    End Function
+    Protected Function useResource() As Boolean
         If resourceSlot = Nothing Then Return True
         If resourceQtyPerUse > resourceQtyRemaining Then
             alert.Add("Use Failure", name & " is out of " & resourceSlot.ToString & "!", 5)

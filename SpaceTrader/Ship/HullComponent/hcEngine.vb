@@ -33,4 +33,9 @@
             Return _dodge
         End Get
     End Property
+    Friend Overrides Function loadResource() As Boolean
+        Dim result As Boolean = MyBase.loadResource()
+        _isActive = result
+        Return result
+    End Function
 End Class

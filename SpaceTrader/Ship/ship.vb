@@ -264,7 +264,19 @@
         Return True
     End Function
     Friend Sub addResource(ByVal resource As eResource, ByVal value As Integer)
-        resources(resource) += value
+        If resources(resource) + value > resourcesMax(resource) Then
+            Dim waste As Integer = resources(resource) + value - resourcesMax(resource)
+            alert.Add("Jettison", waste & " pod(s) of " & resource.ToString & " has been jettisoned.", 5)
+            resources(resource) = resourcesMax(resource)
+        Else
+            resources(resource) += value
+            If value > 0 Then
+                alert.Add("Resource", value & " pod(s) of " & resource.ToString & " has been added to the cargo hold.", 9)
+            Else
+                alert.Add("Resource", Math.Abs(value) & " pod(s) of " & resource.ToString & " has been removed from the cargo hold.", 9)
+            End If
+
+        End If
     End Sub
     Friend Sub allLoadResource()
         For Each kvp In hullComponents
@@ -284,7 +296,7 @@
     Friend Function addCrew(ByRef crew As crew) As Boolean
         For Each hc In hullComponents(GetType(hcCrewQuarters))
             Dim cq As hcCrewQuarters = CType(hc, hcCrewQuarters)
-            If cq.crewEmpty > 0 Then
+            If cq.addCrewCheck(crew) = True Then
                 cq.addCrew(crew)
                 Return True
             End If

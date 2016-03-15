@@ -44,12 +44,13 @@
         If resourceSlot = Nothing Then Exit Sub
         If resourceQtyRemaining >= 100 Then Exit Sub
         If ship.addResourceCheck(resourceSlot, -1) = False Then
-            alert.Add("Load Failure", name & " was unable to load " & resourceSlot.ToString & " from the cargo bay.", 5)
+            alert.Add("Load Failure", name & " was unable to load " & resourceSlot.ToString & " from the cargo hold.", 5)
             Exit Sub
         End If
 
         ship.addResource(resourceSlot, -1)
         resourceQtyRemaining += 100
+        alert.Add("Load", name & " loaded a pod of " & resourceSlot.ToString & " from the cargo hold.", 7)
     End Sub
     Friend Function useResource() As Boolean
         If resourceSlot = Nothing Then Return True

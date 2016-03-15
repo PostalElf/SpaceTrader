@@ -89,7 +89,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Dev\valve.vb" />
-    <Compile Include="Ship\crew.vb" />
+    <Compile Include="Ship\Crew\crew.vb" />
+    <Compile Include="Ship\Crew\eRace.vb" />
     <Compile Include="Ship\eDamageType.vb" />
     <Compile Include="Ship\eDefenceType.vb" />
     <Compile Include="Ship\eShipType.vb" />

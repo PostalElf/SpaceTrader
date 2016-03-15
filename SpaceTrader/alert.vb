@@ -11,13 +11,16 @@
             alerts(.priority).Add(alert)
         End With
     End Sub
-    Friend Shared Sub allConsoleReport(ByVal indent As Integer)
+    Friend Shared Sub allConsoleReport(ByVal indent As Integer, Optional ByVal maxPriority As Integer = 999)
         If alerts.Count > 0 Then
             For Each kvp In alerts
-                Dim alertList As List(Of alert) = kvp.Value
-                For Each alert In alertList
-                    alert.consoleReport(indent)
-                Next
+                If kvp.Key <= maxPriority Then
+                    Dim alertList As List(Of alert) = kvp.Value
+                    For Each alert In alertList
+                        alert.consoleReport(indent)
+                    Next
+                    If alertList.Count > 0 Then Console.WriteLine()
+                End If
             Next
         End If
         alerts.Clear()

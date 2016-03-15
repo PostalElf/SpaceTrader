@@ -64,6 +64,7 @@ Imports Microsoft.VisualBasic.FileIO
         Select Case gender
             Case eGender.Male : Return "boy"
             Case eGender.Female : Return "girl"
+            Case eGender.Thing : Return "thing"
             Case Else : Return Nothing
         End Select
     End Function
@@ -71,6 +72,7 @@ Imports Microsoft.VisualBasic.FileIO
         Select Case gender
             Case eGender.Male : Return "man"
             Case eGender.Female : Return "woman"
+            Case eGender.Thing : Return "thing"
             Case Else : Return Nothing
         End Select
     End Function
@@ -78,6 +80,7 @@ Imports Microsoft.VisualBasic.FileIO
         Select Case gender
             Case eGender.Male : Return "him"
             Case eGender.Female : Return "her"
+            Case eGender.Thing : Return "it"
             Case Else : Return Nothing
         End Select
     End Function
@@ -297,6 +300,7 @@ End Structure
 Public Enum eGender
     Male = 1
     Female
+    Thing
 End Enum
 
 <DebuggerStepThrough()> Public Class rollingCounter

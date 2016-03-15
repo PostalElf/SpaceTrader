@@ -1,13 +1,18 @@
 ﻿Public Class shcCrewable
     Friend Sub New(ByRef hc As hullComponent)
-        hullComponent = hc
+        _hullComponent = hc
     End Sub
     Friend Sub SetProperties(ByVal min As Integer, ByVal max As Integer)
         crewMin = min
         crewMax = max
     End Sub
 
-    Private hullComponent As hullComponent
+    Private _hullComponent As hullComponent
+    Friend ReadOnly Property hullComponent As hullComponent
+        Get
+            Return _hullComponent
+        End Get
+    End Property
     Private _crewList As New List(Of crew)
     Friend ReadOnly Property crewList As List(Of crew)
         Get
@@ -33,7 +38,7 @@
     End Property
 
     Friend Sub assignCrewBest()
-        Dim idlers As List(Of crew) = hullComponent.ship.getCrews(True)
+        Dim idlers As List(Of crew) = _hullComponent.ship.getCrews(True)
         Dim p As crew = idlers(rng.Next(idlers.Count))
         assignCrew(p)
     End Sub

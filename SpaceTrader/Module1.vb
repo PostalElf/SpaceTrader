@@ -35,7 +35,7 @@
             Console.WriteLine(vbSpace(1) & "Alarms:")
             ship.consoleReportAlarms(2)
             Console.WriteLine(vbCrLf)
-            alert.allConsoleReport(0, 7)
+            alert.allConsoleReport(0, 5)
             Console.ReadLine()
             ship.tickTravel()
         End While

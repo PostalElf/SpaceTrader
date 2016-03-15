@@ -65,7 +65,9 @@
         If crewList.Count > 0 Then
             Console.WriteLine(indd & "Crew:")
             For Each crew In crewList
-                Console.WriteLine(inddd & "└ " & crew.name)
+                Console.Write(inddd & "└ " & crew.name)
+                If crew.crewAssignment Is Nothing = False Then Console.Write(" (" & crew.crewAssignment.hullComponent.name & ")")
+                Console.WriteLine()
             Next
         End If
 

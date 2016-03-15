@@ -5,7 +5,7 @@
             ._starmap = starmap
             ._name = getRandomAndRemove(star.starNames, "data/starnames.txt", r)
 
-            numPlanets += rng.Next(4)
+            numPlanets += r.Next(4)
             For n = 1 To numPlanets
                 Dim planet As planet = planet.build(star, n, r)
                 .planets.Add(planet)

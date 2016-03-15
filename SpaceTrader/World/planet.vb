@@ -1,11 +1,14 @@
 ﻿Public Class planet
-    Public Sub New()
-        For Each r In constants.resourceArray
-            productsPrices.Add(r, 100)
+    Public Sub New(ByRef r As Random)
+        For Each kvp In constants.defaultProductsPrices
+            productsPrices.Add(kvp.Key, kvp.Value)
+        Next
+        For n = 1 To 5
+            adjustProductPrices(r)
         Next
     End Sub
     Friend Shared Function build(ByRef star As star, ByVal planetNumber As Integer, ByRef r As Random) As planet
-        Dim planet As New planet
+        Dim planet As New planet(r)
         With planet
             ._star = star
             .number = planetNumber
@@ -53,7 +56,7 @@
     End Function
     Private Shared Function buildImport(ByRef r As Random) As eResource
         If planetImports.Count = 0 Then planetImports.AddRange(constants.resourceArray)
-        Dim c As eResource = planetImports(rng.Next(planetImports.Count))
+        Dim c As eResource = planetImports(r.Next(planetImports.Count))
         planetImports.Remove(c)
         Return c
     End Function
@@ -182,10 +185,18 @@
     Private productsPrices As New Dictionary(Of eResource, Integer)
     Friend Function getProductPriceSell(ByVal product As eResource) As Integer
         Dim total As Integer = productsPrices(product)
-        If productsExport.Contains(product) Then total /= 2
+        If productsExport.Contains(product) Then total /= 1.5
         Return total
     End Function
     Friend Function getProductPriceBuy(ByVal product As eResource) As Integer
         Return getProductPriceSell(product) * 0.75
     End Function
+    Friend Sub adjustProductPrices(Optional ByRef r As Random = Nothing)
+        If r Is Nothing Then r = rng
+        For Each res In constants.resourceArray
+            Dim maxVariance As Integer = (productsPrices(res) * 0.1)
+            Dim variance As Integer = lumpyRng(-maxVariance, maxVariance, r)
+            productsPrices(res) += variance
+        Next
+    End Sub
 End Class

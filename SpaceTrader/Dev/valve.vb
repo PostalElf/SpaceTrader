@@ -112,12 +112,12 @@ Imports Microsoft.VisualBasic.FileIO
         Dim roll As Integer = rng.Next(1, 101)
         If roll <= probability Then Return True Else Return False
     End Function
-    Public Function lumpyRng(ByVal min As Integer, ByVal max As Integer)
+    Public Function lumpyRng(ByVal min As Integer, ByVal max As Integer, Optional ByRef r As Random = Nothing)
         'min is inclusive while max is exclusive
-
+        If r Is Nothing Then r = rng
         Dim total As Integer = 0
         For n = 1 To 3
-            total += rng.Next(min, max)
+            total += r.Next(min, max)
         Next
         Return Int(total / 3)
     End Function

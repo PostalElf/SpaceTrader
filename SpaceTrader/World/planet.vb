@@ -194,21 +194,27 @@
         Dim ind As String = vbSpace(indent)
         Dim indd As String = vbSpace(indent + 1)
         Dim inddd As String = vbSpace(indent + 2)
-        Const ftLen As Integer = 11
-        Const ftLen2 As Integer = 13
+        Const ftLen As Integer = 10
 
         Console.WriteLine(ind & name)
         Console.WriteLine(indd & fakeTab("Role:", ftLen) & role.ToString)
         Console.WriteLine(indd & fakeTab("Type:", ftLen) & type.ToString)
         Console.WriteLine(indd & fakeTab("Habitat:", ftLen) & habitation)
-        Console.WriteLine(indd & fakeTab("Distance:", ftLen) & distanceToGate)
+        Console.WriteLine(indd & fakeTab("Orbital:", ftLen) & distanceToGate)
+    End Sub
+    Friend Sub consoleReportShop(ByVal indent As Integer)
+        Dim ind As String = vbSpace(indent)
+        Dim indd As String = vbSpace(indent + 1)
+        Dim inddd As String = vbSpace(indent + 2)
+        Const ftLen As Integer = 13
+
         Console.WriteLine(indd & "Exports:")
         For Each export In productsExport
             Console.WriteLine(inddd & "└ " & export.ToString)
         Next
         Console.WriteLine(indd & "Prices:")
         For Each product As eResource In constants.resourceArray
-            Console.WriteLine(inddd & "└ " & fakeTab(product.ToString & ":", ftLen2) & getProductPriceBuy(product) & "/" & getProductPriceSell(product) & " " & productPricesRange(product).ToString)
+            Console.WriteLine(inddd & "└ " & fakeTab(product.ToString & ":", ftLen) & getProductPriceBuy(product) & "/" & getProductPriceSell(product))
         Next
     End Sub
 

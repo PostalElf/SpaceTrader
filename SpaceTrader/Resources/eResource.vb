@@ -11,4 +11,8 @@
     Organics
     Bandwidth
     Media
+
+    Drugs = 101
+    Lore
+
 End Enum

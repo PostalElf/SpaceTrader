@@ -26,7 +26,10 @@
                     Next
                 Case "Commercial"
                     'export random, import normal
-                    Dim e As eResource = constants.resourceArray(r.Next(constants.resourceArray.Length))
+                    Dim e As eResource = 0
+                    While e <= 0 OrElse e > 100
+                        e = constants.resourceArray(r.Next(constants.resourceArray.Length))
+                    End While
                     .productsExport.Add(e)
                     .productsPrices(buildImport(r)) *= 1.3
                 Case Else
@@ -44,11 +47,11 @@
     End Function
     Private Shared planetExports As New List(Of String)
     Private Shared planetImports As New List(Of eResource)
-    Private Shared planetSuffixes As New List(Of ePlanetType)
+    Private Shared planetRoles As New List(Of ePlanetType)
     Private Shared Function buildExport(ByRef r As Random) As String
         If planetExports.Count = 0 Then
             For Each res In constants.resourceArray
-                planetExports.Add(res.ToString)
+                If res < 100 Then planetExports.Add(res.ToString)
             Next
             planetExports.Add("Tourist")
             planetExports.Add("Commercial")
@@ -89,9 +92,9 @@
         End Select
     End Function
     Private Shared Function buildType(ByRef r As Random) As ePlanetType
-        If planetSuffixes.Count = 0 Then planetSuffixes.AddRange(constants.planetSuffixArray)
-        Dim c As ePlanetType = planetSuffixes(r.Next(planetSuffixes.Count))
-        planetSuffixes.Remove(c)
+        If planetRoles.Count = 0 Then planetRoles.AddRange(constants.planetSuffixArray)
+        Dim c As ePlanetType = planetRoles(r.Next(planetRoles.Count))
+        planetRoles.Remove(c)
         Return c
     End Function
     Private Shared Function buildHabitation(ByVal suffix As ePlanetType, ByRef r As Random) As String
@@ -265,6 +268,9 @@
             .Add(eResource.Organics, 50)
             .Add(eResource.Bandwidth, 120)
             .Add(eResource.Media, 100)
+
+            .Add(eResource.Drugs, 200)
+            .Add(eResource.Lore, 220)
         End With
         Return total
     End Function

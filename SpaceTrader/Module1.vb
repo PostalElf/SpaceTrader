@@ -1,10 +1,13 @@
 ﻿Module Module1
-    Private starmap As starmap = starmap.build(3, 3, 513058105)
+    Private starmap As starmap
     Private player As New player
-    Private ship As ship = ship.build(player, eShipType.Crusier)
+    Private ship As ship
 
 
     Sub Main()
+        starmap = starmap.build(7, 3, 513058105)
+        ship = ship.build(player, eShipType.Crusier)
+
         Console.SetWindowSize(120, 50)
         'starmap.consoleReport(0)
         'Console.ReadLine()
@@ -233,6 +236,8 @@
             Case "10", "or" : Return eResource.Organics
             Case "11", "bd" : Return eResource.Bandwidth
             Case "12", "md" : Return eResource.Media
+            Case "13", "dg" : Return eResource.Drugs
+            Case "14", "le" : Return eResource.Lore
             Case Else : Return Nothing
         End Select
     End Function

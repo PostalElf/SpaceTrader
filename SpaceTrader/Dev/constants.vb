@@ -34,26 +34,6 @@
             Return total
         End Get
     End Property
-    Friend Shared ReadOnly Property defaultProductsPrices As Dictionary(Of eResource, Integer)
-        Get
-            Dim total As New Dictionary(Of eResource, Integer)
-            With total
-                .Add(eResource.Metals, 100)
-                .Add(eResource.Chemicals, 100)
-                .Add(eResource.Ammunition, 50)
-                .Add(eResource.Missiles, 70)
-                .Add(eResource.Savants, 150)
-                .Add(eResource.Machines, 100)
-                .Add(eResource.Slaves, 100)
-                .Add(eResource.Azoth, 200)
-                .Add(eResource.Food, 50)
-                .Add(eResource.Organics, 50)
-                .Add(eResource.Bandwidth, 120)
-                .Add(eResource.Media, 100)
-            End With
-            Return total
-        End Get
-    End Property
 
     Friend Shared Function getEnumFromString(ByVal str As String, ByVal enumArray As Array) As [Enum]
         For Each item In enumArray

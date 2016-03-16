@@ -1,6 +1,6 @@
 ﻿Public Class planet
     Public Sub New(ByRef r As Random)
-        For Each kvp In constants.defaultProductsPrices
+        For Each kvp In productPricesDefault
             productsPrices.Add(kvp.Key, kvp.Value)
         Next
         For n = 1 To 5
@@ -25,12 +25,12 @@
                     'export random, import normal
                     Dim e As eResource = constants.resourceArray(r.Next(constants.resourceArray.Length))
                     .productsExport.Add(e)
-                    .productsPrices(buildImport(r)) += 50
+                    .productsPrices(buildImport(r)) *= 1.3
                 Case Else
                     'prefix based on export, import normal
                     Dim e As eResource = constants.getEnumFromString(export, constants.resourceArray)
                     .productsExport.Add(e)
-                    .productsPrices(buildImport(r)) += 50
+                    .productsPrices(buildImport(r)) *= 1.3
             End Select
             .role = buildRole(export)
             .type = buildType(r)
@@ -155,6 +155,37 @@
                 Return Nothing
         End Select
     End Function
+    Private Shared productPricesDefault As Dictionary(Of eResource, Integer) = buildProductPricesDefault()
+    Private Shared Function buildProductPricesDefault() As Dictionary(Of eResource, Integer)
+        Dim total As New Dictionary(Of eResource, Integer)
+        With total
+            .Add(eResource.Metals, 100)
+            .Add(eResource.Chemicals, 100)
+            .Add(eResource.Ammunition, 50)
+            .Add(eResource.Missiles, 70)
+            .Add(eResource.Savants, 150)
+            .Add(eResource.Machines, 100)
+            .Add(eResource.Slaves, 100)
+            .Add(eResource.Azoth, 200)
+            .Add(eResource.Food, 50)
+            .Add(eResource.Organics, 50)
+            .Add(eResource.Bandwidth, 120)
+            .Add(eResource.Media, 100)
+        End With
+        Return total
+    End Function
+    Private Shared productPricesRange As Dictionary(Of eResource, range) = buildProductPricesRange()
+    Private Shared Function buildProductPricesRange()
+        Dim total As New Dictionary(Of eResource, range)
+        With total
+            For Each kvp In productPricesDefault
+                Dim min As Integer = kvp.Value * 0.5
+                Dim max As Integer = kvp.Value * 1.5
+                .Add(kvp.Key, New range(min, max))
+            Next
+        End With
+        Return total
+    End Function
 
     Public Overrides Function ToString() As String
         Return name
@@ -177,7 +208,7 @@
         Next
         Console.WriteLine(indd & "Prices:")
         For Each product As eResource In constants.resourceArray
-            Console.WriteLine(inddd & "└ " & fakeTab(product.ToString & ":", ftLen2) & getProductPriceBuy(product) & "/" & getProductPriceSell(product))
+            Console.WriteLine(inddd & "└ " & fakeTab(product.ToString & ":", ftLen2) & getProductPriceBuy(product) & "/" & getProductPriceSell(product) & " " & productPricesRange(product).ToString)
         Next
     End Sub
 
@@ -224,6 +255,7 @@
             Dim maxVariance As Integer = (productsPrices(res) * 0.1)
             Dim variance As Integer = lumpyRng(-maxVariance, maxVariance, r)
             productsPrices(res) += variance
+            productsPrices(res) = constrain(productsPrices(res), productPricesRange(res))
         Next
     End Sub
 

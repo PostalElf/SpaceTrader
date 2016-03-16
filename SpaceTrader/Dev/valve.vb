@@ -28,6 +28,9 @@ Imports Microsoft.VisualBasic.FileIO
         If total > maxValue Then total = maxValue
         Return total
     End Function
+    Public Function constrain(ByVal value As Integer, ByVal range As range) As Integer
+        Return constrain(value, range.min, range.max)
+    End Function
     Public Function circular(ByVal value As Integer, Optional ByVal minValue As Integer = 1, Optional ByVal maxValue As Integer = 4) As Integer
         Dim total As Integer = value
         While total < minValue OrElse total > maxValue

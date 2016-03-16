@@ -195,8 +195,8 @@
         Console.WriteLine()
         Console.WriteLine(r.ToString)
         With ship.planet
-            Console.WriteLine(ind & fakeTab("Buy:", ftlen) & "¥" & .getProductPriceSell(r))
-            Console.WriteLine(ind & fakeTab("Sell:", ftlen) & "¥" & .getProductPriceBuy(r))
+            Console.WriteLine(ind & fakeTab("Buy:", ftlen) & "¥" & .getProductPriceBuy(r))
+            Console.WriteLine(ind & fakeTab("Sell:", ftlen) & "¥" & .getProductPriceSell(r))
             Console.WriteLine(ind & fakeTab("Range:", ftlen) & "¥" & planet.productPricesRange(r).min & " - ¥" & planet.productPricesRange(r).max)
         End With
         Console.ReadKey()

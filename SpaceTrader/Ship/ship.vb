@@ -82,28 +82,21 @@
         Dim ind As String = vbSpace(indent) & prefix
 
         Dim ftlen As Integer = 0
-        For Each kvp In hullComponents
-            For Each hc In kvp.Value
-                If hc.name.Length > ftlen Then ftlen = hc.name.Length
-            Next
+        For Each hc In hullComponentsList
+            If hc.name.Length > ftlen Then ftlen = hc.name.Length
         Next
         ftlen += 3
 
-        For Each kvp In hullComponents
-            For Each hc In kvp.Value
-                Console.WriteLine(ind & fakeTab(hc.name & ":", ftlen) & hc.consoleDescription & " " & hc.consoleResourceDescription)
-            Next
+        For Each hc In hullComponentsList
+            Console.WriteLine(ind & fakeTab(hc.name & ":", ftlen) & hc.consoleDescription & " " & hc.consoleResourceDescription)
         Next
     End Sub
     Friend Sub consoleReportAlarms(ByVal indent As Integer)
         Dim ind As String = vbSpace(indent)
 
-        For Each kvp In hullComponents
-            Dim hcList As List(Of hullComponent) = kvp.Value
-            For Each hc In hcList
-                For Each alarm In hc.alarms
-                    Console.WriteLine(ind & hc.name & ": " & alarm)
-                Next
+        For Each hc In hullComponentsList
+            For Each alarm In hc.alarms
+                Console.WriteLine(ind & hc.name & ": " & alarm)
             Next
         Next
     End Sub
@@ -226,10 +219,8 @@
         Return total
     End Function
     Private Sub tickIdle()
-        For Each kvp In hullComponents
-            For Each hc In kvp.Value
-                hc.tickIdle()
-            Next
+        For Each hc In hullComponentsList
+            hc.tickIdle()
         Next
     End Sub
 
@@ -293,6 +284,17 @@
     End Sub
 
     Private hullComponents As New Dictionary(Of Type, List(Of hullComponent))
+    Private ReadOnly Property hullComponentsList As List(Of hullComponent)
+        Get
+            Dim total As New List(Of hullComponent)
+            For Each kvp In hullComponents
+                For Each hc In kvp.Value
+                    total.Add(hc)
+                Next
+            Next
+            Return total
+        End Get
+    End Property
     Private hullSpaceMaxBase As Integer
     Private ReadOnly Property hullSpaceMax As Integer
         Get
@@ -306,10 +308,8 @@
     Private ReadOnly Property hullSpaceOccupied As Integer
         Get
             Dim total As Integer = 0
-            For Each kvp In hullComponents
-                For Each hc In kvp.Value
-                    total += hc.size
-                Next
+            For Each hc In hullComponentsList
+                total += hc.size
             Next
             Return total
         End Get
@@ -368,10 +368,8 @@
         End If
     End Sub
     Friend Sub allLoadResource()
-        For Each kvp In hullComponents
-            For Each hc In kvp.Value
-                hc.loadResource()
-            Next
+        For Each hc In hullComponentsList
+            hc.loadResource()
         Next
     End Sub
     Friend Function getCrews(Optional ByVal isIdleOnly As Boolean = False) As List(Of crew)
@@ -398,4 +396,16 @@
         Next
         Return False
     End Function
+    Friend Sub allAssignCrewBest()
+        For Each hc In hullComponentsList
+            If TypeOf hc Is ihcCrewable Then
+                Dim c As ihcCrewable = CType(hc, ihcCrewable)
+                With c.crewable
+                    If .isManned = False Then
+                        .assignCrewBest()
+                    End If
+                End With
+            End If
+        Next
+    End Sub
 End Class

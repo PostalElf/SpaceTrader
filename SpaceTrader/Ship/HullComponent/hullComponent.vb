@@ -43,6 +43,7 @@
     Private resourceSlot As eResource
     Private resourceQtyRemaining As Integer
     Private resourceQtyPerUse As Integer
+    Friend autoloadResource As Boolean = False
     Friend Sub setResourceSlot(ByVal aResourceSlot As eResource, ByVal aResourceQtyPerUse As Integer)
         resourceSlot = aResourceSlot
         resourceQtyPerUse = aResourceQtyPerUse
@@ -63,6 +64,7 @@
     Protected Function useResource() As Boolean
         If resourceSlot = Nothing Then Return True
         If resourceQtyPerUse > resourceQtyRemaining Then
+            If autoloadResource = True Then loadResource()
             alert.Add("Use Failure", name & " is out of " & resourceSlot.ToString & "!", 5)
             Return False
         End If

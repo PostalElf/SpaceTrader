@@ -320,13 +320,3 @@ End Enum
         Return value - 1
     End Function
 End Class
-
-<DebuggerStepThrough()> Public Structure pair
-    Public Property val1 As Integer
-    Public Property val2 As Integer
-
-    Public Sub New(ByVal v1 As Integer, ByVal v2 As Integer)
-        val1 = v1
-        val2 = v2
-    End Sub
-End Structure

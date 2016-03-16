@@ -3,6 +3,9 @@
         For Each kvp In productPricesDefault
             productsPrices.Add(kvp.Key, kvp.Value)
         Next
+        For Each kvp In servicePricesDefault
+            servicesPrices.Add(kvp.Key, kvp.Value)
+        Next
         For n = 1 To 5
             adjustProductPrices(r)
         Next
@@ -216,6 +219,7 @@
     Private habitation As String
     Private productsExport As New List(Of eResource)
     Private productsPrices As New Dictionary(Of eResource, Integer)
+    Private servicesPrices As New Dictionary(Of eService, Integer)
     Friend Function getProductPriceSell(ByVal product As eResource) As Integer
         Dim total As Integer = productsPrices(product)
         If productsExport.Contains(product) Then total /= 1.5
@@ -224,6 +228,9 @@
     Friend Function getProductPriceBuy(ByVal product As eResource) As Integer
         Return getProductPriceSell(product) * 0.75
     End Function
+    Friend Function getServicePrice(ByVal service As eService) As Integer
+        Return servicesPrices(service)
+    End Function
     Private Sub adjustProductPrices(Optional ByRef r As Random = Nothing)
         If r Is Nothing Then r = rng
         For Each res In constants.resourceArray
@@ -231,6 +238,12 @@
             Dim variance As Integer = lumpyRng(-maxVariance, maxVariance, r)
             productsPrices(res) += variance
             productsPrices(res) = constrain(productsPrices(res), productPricesRange(res))
+        Next
+        For Each s In constants.serviceArray
+            Dim maxVariance As Integer = (servicesPrices(s) * 0.1)
+            Dim variance As Integer = lumpyRng(-maxVariance, maxVariance, r)
+            servicesPrices(s) += variance
+            servicesPrices(s) = constrain(servicesPrices(s), servicePricesRange(s))
         Next
     End Sub
 
@@ -267,7 +280,7 @@
         End With
         Return total
     End Function
-    Private Shared servicePricesDefault As Dictionary(Of eService, Integer)
+    Private Shared servicePricesDefault As Dictionary(Of eService, Integer) = buildServicePricesDefault()
     Private Shared Function buildServicePricesDefault() As Dictionary(Of eService, Integer)
         Dim total As New Dictionary(Of eService, Integer)
         With total
@@ -275,7 +288,7 @@
         End With
         Return total
     End Function
-    Friend Shared servicePricesRange As Dictionary(Of eService, range)
+    Friend Shared servicePricesRange As Dictionary(Of eService, range) = buildServicePricesRange()
     Private Shared Function buildServicePricesRange() As Dictionary(Of eService, range)
         Dim total As New Dictionary(Of eService, range)
         With total

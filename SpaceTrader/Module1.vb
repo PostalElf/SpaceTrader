@@ -57,6 +57,9 @@
             Case "travel", "t"
                 cmdTravel(cmd)
 
+            Case "damage"
+                Dim damage As Integer = CInt(cmd(1))
+                ship.addDamage(damage, eDamageType.Ballistic)
 
             Case "shop", "sh"
                 If ship.planet Is Nothing Then Exit Sub
@@ -70,6 +73,8 @@
                 cmdBuySell(cmd, False)
             Case "examine", "ex"
                 cmdExamine(cmd)
+            Case "repair", "rep"
+                cmdRepair()
         End Select
     End Sub
     Private Sub cmdHelp()
@@ -143,6 +148,37 @@
 
             ship.addResource(r, -qty)
             player.addCredits(totalPrice)
+        End If
+    End Sub
+    Private Sub cmdRepair()
+        If ship.planet Is Nothing Then Exit Sub
+
+        Dim defences As Integer() = ship.getDefences("armour")
+        Dim armour As Integer = defences(0)
+        Dim armourMax As Integer = defences(1)
+        Dim empty As Integer = armourMax - armour
+        Dim price As Integer = ship.planet.getServicePrice(eService.Repair)
+        Dim totalPrice As Integer = empty * price
+
+        Console.WriteLine()
+        Console.WriteLine(fakeTab("Repair:", 9) & "¥" & price.ToString("N0"))
+        Console.WriteLine(fakeTab("Armour:", 9) & armour & "/" & armourMax)
+        If empty <= 0 Then
+            Console.WriteLine("The ship is in perfect condition.")
+            Console.ReadKey()
+            Exit Sub
+        End If
+
+        If menu.confirmChoice(0, "Pay ¥" & totalPrice.ToString("N0") & " for full repairs? ") = True Then
+            If player.addCreditsCheck(-totalPrice) = False Then
+                Console.WriteLine(vbCrLf & "Insufficient funds.")
+                Console.ReadKey()
+                Exit Sub
+            End If
+            player.addCredits(-totalPrice)
+            ship.repair(empty)
+        Else
+
         End If
     End Sub
     Private Sub cmdExamine(ByRef cmd As String())

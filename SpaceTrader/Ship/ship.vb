@@ -256,6 +256,24 @@
             Return total
         End Get
     End Property
+    Friend Function getDefences(ByVal defenceType As String) As Integer()
+        Dim total(1) As Integer
+        Select Case defenceType.ToLower
+            Case "shields"
+                total(0) = shields
+                total(1) = shieldsMax
+            Case "armour"
+                total(0) = armour
+                total(1) = armourMax
+            Case "dodge"
+                total(0) = dodge
+                total(1) = dodge
+            Case Else
+                MsgBox("getDefences unrecognised defenceType string")
+                Return Nothing
+        End Select
+        Return total
+    End Function
     Friend Sub fullRepair()
         shields = shieldsMax
         armour = armourMaxBase
@@ -269,12 +287,16 @@
                 alert.Add("Shields Down", name & "'s shields are down.", 2)
             Else
                 alert.Add("Shields", name & " has " & shields & " shields remaining.", 2)
+                Exit Sub
             End If
         End If
         If damage > 0 Then
             armour -= damage
             If armour <= 0 Then destroy() Else alert.Add("Armour", name & " has " & armour & " armour remaining.", 2)
         End If
+    End Sub
+    Friend Sub repair(ByVal value As Integer)
+        armour = constrain(armour + value, 0, armourMax)
     End Sub
     Private Sub destroy()
         alert.Add("Ship Destruction", _name & " was destroyed!", 0)
@@ -364,8 +386,11 @@
 
         End If
     End Sub
-    Friend Function getResource(ByVal resource As eResource) As pair
-        Return New pair(resources(resource), resourcesMax(resource))
+    Friend Function getResource(ByVal resource As eResource) As Integer()
+        Dim total(1) As Integer
+        total(0) = resources(resource)
+        total(1) = resourcesMax(resource)
+        Return total
     End Function
     Friend Sub allLoadResource()
         For Each hc In hullComponentsList

@@ -71,7 +71,7 @@
   <ItemGroup>
     <Compile Include="alert.vb" />
     <Compile Include="Dev\constants.vb" />
-    <Compile Include="eResource.vb" />
+    <Compile Include="Resources\eResource.vb" />
     <Compile Include="Module1.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
@@ -89,6 +89,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Dev\valve.vb" />
+    <Compile Include="Resources\eService.vb" />
     <Compile Include="Ship\Crew\crew.vb" />
     <Compile Include="Ship\Crew\eRace.vb" />
     <Compile Include="Ship\eDamageType.vb" />

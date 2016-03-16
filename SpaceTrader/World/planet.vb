@@ -22,7 +22,7 @@
                     'no export, imports x2
                     For n = 1 To 2
                         Dim import As eResource = constants.resourceArray(r.Next(constants.resourceArray.Length))
-                        .productsPrices(import) += 50
+                        .productsImport.Add(import)
                     Next
                 Case "Commercial"
                     'export random, import normal
@@ -31,12 +31,12 @@
                         e = constants.resourceArray(r.Next(constants.resourceArray.Length))
                     End While
                     .productsExport.Add(e)
-                    .productsPrices(buildImport(r)) *= 1.3
+                    .productsImport.Add(buildImport(e, r))
                 Case Else
                     'prefix based on export, import normal
                     Dim e As eResource = constants.getEnumFromString(export, constants.resourceArray)
                     .productsExport.Add(e)
-                    .productsPrices(buildImport(r)) *= 1.3
+                    .productsImport.Add(buildImport(e, r))
             End Select
             .role = buildRole(export)
             .type = buildType(r)
@@ -61,9 +61,14 @@
         planetExports.Remove(c)
         Return c
     End Function
-    Private Shared Function buildImport(ByRef r As Random) As eResource
+    Private Shared Function buildImport(ByVal export As eResource, ByRef r As Random) As eResource
+        If planetImports.Count = 1 AndAlso planetImports.Contains(export) Then planetImports.Clear()
         If planetImports.Count = 0 Then planetImports.AddRange(constants.resourceArray)
-        Dim c As eResource = planetImports(r.Next(planetImports.Count))
+
+        Dim c As eResource = export
+        While c = export
+            c = planetImports(r.Next(planetImports.Count))
+        End While
         planetImports.Remove(c)
         Return c
     End Function
@@ -183,10 +188,18 @@
         Dim inddd As String = vbSpace(indent + 2)
         Const ftLen As Integer = 13
 
-        Console.WriteLine(indd & "Exports:")
-        For Each export In productsExport
-            Console.WriteLine(inddd & "└ " & export.ToString)
-        Next
+        If productsImport.Count > 0 Then
+            Console.WriteLine(indd & "Imports:")
+            For Each import In productsImport
+                Console.WriteLine(inddd & "└ " & import.ToString)
+            Next
+        End If
+        If productsExport.Count > 0 Then
+            Console.WriteLine(indd & "Exports:")
+            For Each export In productsExport
+                Console.WriteLine(inddd & "└ " & export.ToString)
+            Next
+        End If
         Console.WriteLine(indd & "Prices:")
         For Each product As eResource In constants.resourceArray
             Console.WriteLine(inddd & "└ " & fakeTab(product.ToString & ":", ftLen) & getProductPriceBuy(product) & "/" & getProductPriceSell(product))
@@ -220,6 +233,7 @@
     Private role As ePlanetRole
     Private type As ePlanetType
     Private habitation As String
+    Private productsImport As New List(Of eResource)
     Private productsExport As New List(Of eResource)
     Private productsPrices As New Dictionary(Of eResource, Integer)
     Private servicesPrices As New Dictionary(Of eService, Integer)
@@ -229,7 +243,9 @@
         Return total
     End Function
     Friend Function getProductPriceBuy(ByVal product As eResource) As Integer
-        Return getProductPriceSell(product) * 0.75
+        Dim total As Integer = getProductPriceSell(product) * 0.75
+        If productsImport.Contains(product) Then total *= 1.5
+        Return total
     End Function
     Friend Function getServicePrice(ByVal service As eService) As Integer
         Return servicesPrices(service)

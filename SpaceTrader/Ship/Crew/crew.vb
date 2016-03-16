@@ -42,4 +42,14 @@
             Return _race
         End Get
     End Property
+
+    Friend Sub destroy(Optional ByVal cause As String = "")
+        If crewQuarters Is Nothing = False Then crewQuarters.removeCrew(Me)
+        If crewAssignment Is Nothing = False Then crewAssignment.unassignCrew(Me)
+
+        Select Case cause.ToLower
+            Case "starvation" : alert.Add("Crew Dead", name & " has starved to death.", 1)
+            Case Else : alert.Add("Crew Dead", name & " is dead.", 1)
+        End Select
+    End Sub
 End Class

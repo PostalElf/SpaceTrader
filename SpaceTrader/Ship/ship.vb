@@ -176,10 +176,14 @@
     End Sub
     Private Sub tickTravel()
         If travelDestination Is Nothing Then Exit Sub
+
         planet = Nothing
+        For Each hc In hullComponentsList
+            hc.tickTravel()
+        Next
 
         If travelDistancePlanet1 > 0 Then
-            travelProgress += tickTravelEngines()
+            travelProgress += travelSpeed(False)
             travelDescription = "Travelling to Jump Gate (" & travelProgress & "/" & travelDistancePlanet1 & ")"
             If travelProgress >= travelDistancePlanet1 Then
                 travelProgress = 0
@@ -187,7 +191,7 @@
                 travelDescription = "Entering Jump Gate..."
             End If
         ElseIf travelDistanceStar > 0 Then
-            travelProgress += tickTravelJumpDrives()
+            travelProgress += travelSpeed(True)
             travelDescription = "Warping to " & travelDestination.star.name & " (" & travelProgress & "/" & travelDistanceStar & ")"
             If travelProgress >= travelDistanceStar Then
                 travelProgress = 0
@@ -195,29 +199,13 @@
                 travelDescription = "Exiting Jump Gate..."
             End If
         ElseIf travelDistancePlanet2 > 0 Then
-            travelProgress += tickTravelEngines()
+            travelProgress += travelSpeed(False)
             travelDescription = "Travelling to " & travelDestination.name & " (" & travelProgress & "/" & travelDistancePlanet2 & ")"
             If travelProgress >= travelDistancePlanet2 Then
                 teleportTo(travelDestination)
             End If
         End If
     End Sub
-    Private Function tickTravelEngines() As Integer
-        Dim total As Integer = 0
-        For Each hc As hcEngine In hullComponents(GetType(hcEngine))
-            hc.tickTravel()
-            total += hc.speed
-        Next
-        Return total
-    End Function
-    Private Function tickTravelJumpDrives() As Integer
-        Dim total As Integer = 0
-        For Each hc As hcJumpDrive In hullComponents(GetType(hcJumpDrive))
-            hc.tickTravel()
-            total += hc.jumpSpeed
-        Next
-        Return total
-    End Function
     Private Sub tickIdle()
         For Each hc In hullComponentsList
             hc.tickIdle()

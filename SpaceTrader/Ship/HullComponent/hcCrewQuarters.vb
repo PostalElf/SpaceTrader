@@ -51,14 +51,17 @@
         crew.crewQuarters = Nothing
         _crewList.Remove(crew)
     End Sub
-    Private crewStarvation As Boolean = False
     Private Sub crewEatTick()
+        Dim crewStarvation As Boolean = False
         For n = 1 To crewOccupied
-            If useResource() = False Then
-                crewStarvation = True
-                Exit Sub
-            End If
+            If useResource() = False Then crewStarvation = True
         Next
-        crewStarvation = False
+
+        If crewStarvation = True Then
+            alert.Add("Starvation", "The crew in " & name & " is starving.", 5)
+            For Each c In _crewList
+                If percentRoll(65) = True Then c.destroy("starvation")
+            Next
+        End If
     End Sub
 End Class

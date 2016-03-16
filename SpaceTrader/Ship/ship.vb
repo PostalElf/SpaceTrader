@@ -54,7 +54,7 @@
         Console.WriteLine(ind & name)
         Console.WriteLine(indd & fakeTab("Credits:", ftlen) & "¥" & player.credits.ToString("N0"))
         Console.Write(indd & fakeTab("Location:", ftlen))
-        If planet Is Nothing Then Console.WriteLine(travelDescription) Else Console.WriteLine(planet.ToString)
+        If _planet Is Nothing Then Console.WriteLine(travelDescription) Else Console.WriteLine(_planet.ToString)
         If travelDestination Is Nothing = False Then Console.WriteLine(indd & fakeTab("Target:", ftlen) & travelDestination.name)
         Console.WriteLine(indd & fakeTab("Shields:", ftlen) & shields & "/" & shieldsMax)
         Console.WriteLine(indd & fakeTab("Armour:", ftlen) & armour & "/" & armourMaxBase)
@@ -122,12 +122,17 @@
         End Select
     End Function
 
-    Private ReadOnly Property star As star
+    Private _planet As planet
+    Friend ReadOnly Property planet As planet
+        Get
+            Return _planet
+        End Get
+    End Property
+    Friend ReadOnly Property star As star
         Get
             Return planet.star
         End Get
     End Property
-    Private planet As planet
     Private travelDescription As String
     Friend ReadOnly Property travelSpeed(ByVal jump As Boolean) As Integer
         Get
@@ -150,16 +155,16 @@
     Private travelDistancePlanet2 As Integer
     Private travelDistanceStar As Integer
     Friend Sub setTravelDestination(ByVal destination As planet)
-        If planet Is Nothing Then Exit Sub
-        If destination.Equals(planet) Then Exit Sub
+        If _planet Is Nothing Then Exit Sub
+        If destination.Equals(_planet) Then Exit Sub
 
         If star.Equals(destination.star) Then
             travelDistanceStar = 0
             travelDistancePlanet1 = 0
-            travelDistancePlanet2 = planet.getDistanceTo(destination)
+            travelDistancePlanet2 = _planet.getDistanceTo(destination)
         Else
             travelDistanceStar = star.getDistanceTo(destination.star)
-            travelDistancePlanet1 = planet.distanceToGate
+            travelDistancePlanet1 = _planet.distanceToGate
             travelDistancePlanet2 = destination.distanceToGate
         End If
 
@@ -167,7 +172,7 @@
         travelProgress = 0
     End Sub
     Friend Sub teleportTo(ByRef destination As planet)
-        planet = destination
+        _planet = destination
         travelDestination = Nothing
         travelProgress = 0
         travelDistanceStar = 0
@@ -177,7 +182,7 @@
     Private Sub tickTravel()
         If travelDestination Is Nothing Then Exit Sub
 
-        planet = Nothing
+        _planet = Nothing
         For Each hc In hullComponentsList
             hc.tickTravel()
         Next
@@ -355,11 +360,15 @@
 
         End If
     End Sub
+    Friend Function getResource(ByVal resource As eResource) As pair
+        Return New pair(resources(resource), resourcesMax(resource))
+    End Function
     Friend Sub allLoadResource()
         For Each hc In hullComponentsList
             hc.loadResource()
         Next
     End Sub
+
     Friend Function getCrews(Optional ByVal isIdleOnly As Boolean = False) As List(Of crew)
         Dim total As New List(Of crew)
         For Each hc In hullComponents(GetType(hcCrewQuarters))

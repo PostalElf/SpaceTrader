@@ -44,8 +44,9 @@
             handleInput(Console.ReadLine())
         End While
     End Sub
-    Private Sub handleInput(ByVal cmd As String)
-        Select Case cmd.ToLower
+    Private Sub handleInput(ByVal rawstr As String)
+        Dim cmd As String() = rawstr.Split(" ")
+        Select Case cmd(0).ToLower
             Case ""
                 ship.tick()
                 starmap.tick()
@@ -53,7 +54,58 @@
                 Console.Clear()
                 starmap.consoleReport(0)
                 Console.ReadKey()
+            Case "shop", "sh"
+                If ship.planet Is Nothing Then Exit Sub
+                Console.Clear()
+                ship.planet.consoleReport(0)
+                Console.ReadKey()
+            Case "buy"
+                cmdBuySell(cmd, True)
+            Case "sell"
+                cmdBuySell(cmd, False)
         End Select
     End Sub
+    Private Sub cmdBuySell(ByVal cmd As String(), ByVal isBuying As Boolean)
+        If ship.planet Is Nothing Then Exit Sub
 
+        Dim ind As String = vbSpace(1)
+        Dim descriptor As String
+        If isBuying = True Then descriptor = "Buy" Else descriptor = "Sell"
+
+        Console.Write(vbCrLf & ind & "How much? ")
+        Dim qtyInput As String = Console.ReadLine()
+        If IsNumeric(qtyInput) = False Then Exit Sub
+
+        Dim r As eResource = constants.getEnumFromString(cmd(1), constants.resourceArray)
+        Dim qty As Integer = CInt(qtyInput)
+        Dim price As Integer
+        If isBuying = True Then price = ship.planet.getProductPriceSell(r) Else price = ship.planet.getProductPriceBuy(r)
+        Dim totalPrice As Integer = qty * price
+
+        If menu.confirmChoice(1, descriptor & " " & qty & " " & r.ToString & " for ¥" & totalPrice & "? ") = False Then Exit Sub
+        If isBuying = True Then
+            If player.addCreditsCheck(-totalPrice) = False Then
+                Console.WriteLine(vbCrLf & ind & "Insufficient credits!")
+                Console.ReadKey()
+                Exit Sub
+            End If
+            If ship.addResourceCheck(r, qty) = False Then
+                Console.WriteLine(vbCrLf & ind & "Insufficient cargo space!")
+                Console.ReadKey()
+                Exit Sub
+            End If
+
+            player.addCredits(-totalPrice)
+            ship.addResource(r, qty)
+        Else
+            If ship.addResourceCheck(r, -qty) = False Then
+                Console.WriteLine(vbCrLf & ind & "Insufficient cargo!")
+                Console.ReadKey()
+                Exit Sub
+            End If
+
+            ship.addResource(r, -qty)
+            player.addCredits(totalPrice)
+        End If
+    End Sub
 End Module

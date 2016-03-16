@@ -108,6 +108,7 @@
     <Compile Include="Ship\ship.vb" />
     <Compile Include="World\ePlanetRole.vb" />
     <Compile Include="World\ePlanetType.vb" />
+    <Compile Include="Dev\menu.vb" />
     <Compile Include="World\planet.vb" />
     <Compile Include="World\star.vb" />
     <Compile Include="World\starmap.vb" />

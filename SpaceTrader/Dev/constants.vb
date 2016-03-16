@@ -4,6 +4,11 @@
             Return System.Enum.GetValues(GetType(eResource))
         End Get
     End Property
+    Friend Shared ReadOnly Property serviceArray As Array
+        Get
+            Return System.Enum.GetValues(GetType(eService))
+        End Get
+    End Property
     Friend Shared ReadOnly Property planetPrefixArray As Array
         Get
             Return System.Enum.GetValues(GetType(ePlanetRole))

@@ -155,37 +155,6 @@
                 Return Nothing
         End Select
     End Function
-    Private Shared productPricesDefault As Dictionary(Of eResource, Integer) = buildProductPricesDefault()
-    Private Shared Function buildProductPricesDefault() As Dictionary(Of eResource, Integer)
-        Dim total As New Dictionary(Of eResource, Integer)
-        With total
-            .Add(eResource.Metals, 100)
-            .Add(eResource.Chemicals, 100)
-            .Add(eResource.Ammunition, 50)
-            .Add(eResource.Missiles, 70)
-            .Add(eResource.Savants, 150)
-            .Add(eResource.Machines, 100)
-            .Add(eResource.Slaves, 100)
-            .Add(eResource.Azoth, 200)
-            .Add(eResource.Food, 50)
-            .Add(eResource.Organics, 50)
-            .Add(eResource.Bandwidth, 120)
-            .Add(eResource.Media, 100)
-        End With
-        Return total
-    End Function
-    Friend Shared productPricesRange As Dictionary(Of eResource, range) = buildProductPricesRange()
-    Private Shared Function buildProductPricesRange()
-        Dim total As New Dictionary(Of eResource, range)
-        With total
-            For Each kvp In productPricesDefault
-                Dim min As Integer = kvp.Value * 0.5
-                Dim max As Integer = kvp.Value * 1.5
-                .Add(kvp.Key, New range(min, max))
-            Next
-        End With
-        Return total
-    End Function
 
     Public Overrides Function ToString() As String
         Return name
@@ -264,6 +233,60 @@
             productsPrices(res) = constrain(productsPrices(res), productPricesRange(res))
         Next
     End Sub
+
+    Private Const priceMin As Double = 0.5
+    Private Const priceMax As Double = 1.5
+    Private Shared productPricesDefault As Dictionary(Of eResource, Integer) = buildProductPricesDefault()
+    Private Shared Function buildProductPricesDefault() As Dictionary(Of eResource, Integer)
+        Dim total As New Dictionary(Of eResource, Integer)
+        With total
+            .Add(eResource.Metals, 100)
+            .Add(eResource.Chemicals, 100)
+            .Add(eResource.Ammunition, 50)
+            .Add(eResource.Missiles, 70)
+            .Add(eResource.Savants, 150)
+            .Add(eResource.Machines, 100)
+            .Add(eResource.Slaves, 100)
+            .Add(eResource.Azoth, 200)
+            .Add(eResource.Food, 50)
+            .Add(eResource.Organics, 50)
+            .Add(eResource.Bandwidth, 120)
+            .Add(eResource.Media, 100)
+        End With
+        Return total
+    End Function
+    Friend Shared productPricesRange As Dictionary(Of eResource, range) = buildProductPricesRange()
+    Private Shared Function buildProductPricesRange()
+        Dim total As New Dictionary(Of eResource, range)
+        With total
+            For Each kvp In productPricesDefault
+                Dim min As Integer = kvp.Value * priceMin
+                Dim max As Integer = kvp.Value * priceMax
+                .Add(kvp.Key, New range(min, max))
+            Next
+        End With
+        Return total
+    End Function
+    Private Shared servicePricesDefault As Dictionary(Of eService, Integer)
+    Private Shared Function buildServicePricesDefault() As Dictionary(Of eService, Integer)
+        Dim total As New Dictionary(Of eService, Integer)
+        With total
+            .Add(eService.Repair, 10)
+        End With
+        Return total
+    End Function
+    Friend Shared servicePricesRange As Dictionary(Of eService, range)
+    Private Shared Function buildServicePricesRange() As Dictionary(Of eService, range)
+        Dim total As New Dictionary(Of eService, range)
+        With total
+            For Each kvp In servicePricesDefault
+                Dim min As Integer = kvp.Value * priceMin
+                Dim max As Integer = kvp.Value * priceMax
+                .Add(kvp.Key, New range(min, max))
+            Next
+        End With
+        Return total
+    End Function
 
     Friend Sub tick()
         adjustProductPrices()

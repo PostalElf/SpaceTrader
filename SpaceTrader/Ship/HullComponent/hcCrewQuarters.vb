@@ -59,7 +59,8 @@
 
         If crewStarvation = True Then
             alert.Add("Starvation", "The crew in " & name & " is starving.", 5)
-            For Each c In _crewList
+            For n = _crewList.Count - 1 To 0 Step -1
+                Dim c As crew = _crewList(n)
                 If percentRoll(65) = True Then c.destroy("starvation")
             Next
         End If

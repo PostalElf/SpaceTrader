@@ -36,12 +36,16 @@
             ship.consoleReport(0)
             Console.WriteLine(vbSpace(1) & "Alarms:")
             ship.consoleReportAlarms(2)
-            Console.WriteLine(vbCrLf)
+            Console.WriteLine()
             alert.allConsoleReport(0, 5)
-            Console.ReadLine()
+
+            handleInput(Console.ReadLine())
             ship.tick()
             starmap.tick()
         End While
+    End Sub
+    Private Sub handleInput(ByVal cmd As String)
+
     End Sub
 
 End Module

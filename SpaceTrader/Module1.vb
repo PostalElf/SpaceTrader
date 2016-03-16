@@ -31,7 +31,7 @@
         Next
         ship.allLoadResource()
         ship.allAssignCrewBest()
-        ship.teleportTo(starmap.getPlanetRandom)
+        ship.teleportTo(starmap.stars(0).planets(0))
 
         While True
             Console.Clear()

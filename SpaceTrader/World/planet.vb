@@ -63,7 +63,11 @@
     End Function
     Private Shared Function buildImport(ByVal export As eResource, ByRef r As Random) As eResource
         If planetImports.Count = 1 AndAlso planetImports.Contains(export) Then planetImports.Clear()
-        If planetImports.Count = 0 Then planetImports.AddRange(constants.resourceArray)
+        If planetImports.Count = 0 Then
+            For Each res As eResource In constants.resourceArray
+                If res < 100 Then planetImports.Add(res)
+            Next
+        End If
 
         Dim c As eResource = export
         While c = export
@@ -239,12 +243,12 @@
     Private servicesPrices As New Dictionary(Of eService, Integer)
     Friend Function getProductPriceSell(ByVal product As eResource) As Integer
         Dim total As Integer = productsPrices(product)
+        If productsImport.Contains(product) Then total *= 1.5
         If productsExport.Contains(product) Then total /= 1.5
         Return total
     End Function
     Friend Function getProductPriceBuy(ByVal product As eResource) As Integer
         Dim total As Integer = getProductPriceSell(product) * 0.75
-        If productsImport.Contains(product) Then total *= 1.5
         Return total
     End Function
     Friend Function getServicePrice(ByVal service As eService) As Integer

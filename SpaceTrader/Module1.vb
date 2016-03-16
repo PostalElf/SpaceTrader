@@ -1,14 +1,15 @@
 ﻿Module Module1
+    Private starmap As starmap = starmap.build(3, 3, 513058105)
+    Private player As New player
+    Private ship As ship = ship.build(player, eShipType.Crusier)
+
 
     Sub Main()
         Console.SetWindowSize(120, 50)
-        Dim starmap As starmap = starmap.build(3, 3, 513058105)
         'starmap.consoleReport(0)
         'Console.ReadLine()
 
-        Dim player As New player
         player.addCredits(10000)
-        Dim ship As ship = ship.build(player, eShipType.Crusier)
         For Each r In constants.resourceArray
             ship.addResource(r, 10)
         Next
@@ -39,13 +40,20 @@
             Console.WriteLine()
             alert.allConsoleReport(0, 5)
 
+            Console.Write("> ")
             handleInput(Console.ReadLine())
-            ship.tick()
-            starmap.tick()
         End While
     End Sub
     Private Sub handleInput(ByVal cmd As String)
-
+        Select Case cmd.ToLower
+            Case ""
+                ship.tick()
+                starmap.tick()
+            Case "starmap", "sm"
+                Console.Clear()
+                starmap.consoleReport(0)
+                Console.ReadKey()
+        End Select
     End Sub
 
 End Module

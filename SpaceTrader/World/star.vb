@@ -9,7 +9,7 @@
             numPlanets += r.Next(4)
             For n = 1 To numPlanets
                 Dim planet As planet = planet.build(star, n, r)
-                .planets.Add(planet)
+                ._planets.Add(planet)
             Next
         End With
         Return star
@@ -25,7 +25,7 @@
         Dim ind As String = vbSpace(indent)
 
         Console.WriteLine(ind & name & " (" & xy.ToString & ")")
-        For Each planet In planets
+        For Each planet In _planets
             planet.consoleReport(indent + 1)
             Console.WriteLine()
         Next
@@ -43,9 +43,14 @@
             Return _starmap
         End Get
     End Property
-    Private planets As New List(Of planet)
+    Private _planets As New List(Of planet)
+    Friend ReadOnly Property planets As List(Of planet)
+        Get
+            Return _planets
+        End Get
+    End Property
     Friend Function getPlanetRandom() As planet
-        Return planets(rng.Next(planets.Count))
+        Return _planets(rng.Next(_planets.Count))
     End Function
 
     Friend xy As xy
@@ -55,7 +60,7 @@
     End Function
 
     Friend Sub tick()
-        For Each planet In planets
+        For Each planet In _planets
             planet.tick()
         Next
     End Sub

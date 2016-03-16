@@ -174,7 +174,7 @@
         End With
         Return total
     End Function
-    Private Shared productPricesRange As Dictionary(Of eResource, range) = buildProductPricesRange()
+    Friend Shared productPricesRange As Dictionary(Of eResource, range) = buildProductPricesRange()
     Private Shared Function buildProductPricesRange()
         Dim total As New Dictionary(Of eResource, range)
         With total

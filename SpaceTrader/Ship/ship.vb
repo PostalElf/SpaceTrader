@@ -156,9 +156,13 @@
     Private travelDistanceStar As Integer
     Friend Sub setTravelDestination(ByVal destination As planet)
         If _planet Is Nothing Then Exit Sub
-        If destination.Equals(_planet) Then Exit Sub
+        If destination Is Nothing = False AndAlso destination.Equals(_planet) Then Exit Sub
 
-        If star.Equals(destination.star) Then
+        If destination Is Nothing Then
+            travelDistanceStar = 0
+            travelDistancePlanet1 = 0
+            travelDistancePlanet2 = 0
+        ElseIf star.Equals(destination.star) Then
             travelDistanceStar = 0
             travelDistancePlanet1 = 0
             travelDistancePlanet2 = _planet.getDistanceTo(destination)

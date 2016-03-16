@@ -28,9 +28,7 @@
         Next
         ship.allLoadResource()
         ship.allAssignCrewBest()
-
         ship.teleportTo(starmap.getPlanetRandom)
-        ship.setTravelDestination(starmap.getPlanetRandom)
 
         While True
             Console.Clear()
@@ -50,10 +48,16 @@
             Case ""
                 ship.tick()
                 starmap.tick()
+            Case "cmd", "?", "help"
+                cmdHelp()
             Case "starmap", "sm"
                 Console.Clear()
                 starmap.consoleReport(0)
                 Console.ReadKey()
+            Case "travel", "t"
+                cmdTravel(cmd)
+
+
             Case "shop", "sh"
                 If ship.planet Is Nothing Then Exit Sub
                 Console.Clear()
@@ -63,20 +67,52 @@
                 cmdBuySell(cmd, True)
             Case "sell"
                 cmdBuySell(cmd, False)
+            Case "examine", "ex"
+                cmdExamine(cmd)
         End Select
     End Sub
-    Private Sub cmdBuySell(ByVal cmd As String(), ByVal isBuying As Boolean)
-        If ship.planet Is Nothing Then Exit Sub
-
+    Private Sub cmdHelp()
         Dim ind As String = vbSpace(1)
+        Const ftlen As Integer = 15
+
+        Console.Clear()
+        Console.WriteLine("Commands:")
+        Console.WriteLine(ind & fakeTab("starmap/sm:", ftlen) & "reveals starmap")
+        Console.WriteLine(ind & fakeTab("travel/t:", ftlen) & "set travel destination")
+        Console.WriteLine(ind & fakeTab("travel c:", ftlen) & "cancel travel plans")
+        Console.WriteLine(ind & fakeTab("shop:", ftlen) & "examines planet stores")
+        Console.WriteLine(ind & fakeTab("examine", ftlen) & "examines specific good on the planet")
+        Console.WriteLine(ind & fakeTab("buy <good>", ftlen) & "buy goods")
+        Console.WriteLine(ind & fakeTab("sell <good>", ftlen) & "sell goods")
+        Console.WriteLine()
+        Console.WriteLine("Goods:")
+        Console.WriteLine(ind & fakeTab("1/me:", ftlen) & "metals")
+        Console.WriteLine(ind & fakeTab("2/ch:", ftlen) & "chemicals")
+        Console.WriteLine(ind & fakeTab("3/am:", ftlen) & "ammunition")
+        Console.WriteLine(ind & fakeTab("4/mi:", ftlen) & "missiles")
+        Console.WriteLine(ind & fakeTab("5/sa:", ftlen) & "savants")
+        Console.WriteLine(ind & fakeTab("6/ma:", ftlen) & "machines")
+        Console.WriteLine(ind & fakeTab("7/sl:", ftlen) & "slaves")
+        Console.WriteLine(ind & fakeTab("8/az:", ftlen) & "azoth")
+        Console.WriteLine(ind & fakeTab("9/fd:", ftlen) & "food")
+        Console.WriteLine(ind & fakeTab("10/or:", ftlen) & "organics")
+        Console.WriteLine(ind & fakeTab("11/bd:", ftlen) & "bandwidth")
+        Console.WriteLine(ind & fakeTab("12/md:", ftlen) & "media")
+        Console.ReadKey()
+    End Sub
+    Private Sub cmdBuySell(ByRef cmd As String(), ByVal isBuying As Boolean)
+        Dim ind As String = vbSpace(1)
+        Dim r As eResource = getResourceFromStr(cmd(1))
         Dim descriptor As String
         If isBuying = True Then descriptor = "Buy" Else descriptor = "Sell"
 
-        Console.Write(vbCrLf & ind & "How much? ")
+        If ship.planet Is Nothing Then Exit Sub
+        If r = Nothing Then Exit Sub
+
+        Console.Write(vbCrLf & ind & descriptor & " how many pods of " & r.ToString & "? ")
         Dim qtyInput As String = Console.ReadLine()
         If IsNumeric(qtyInput) = False Then Exit Sub
 
-        Dim r As eResource = constants.getEnumFromString(cmd(1), constants.resourceArray)
         Dim qty As Integer = CInt(qtyInput)
         Dim price As Integer
         If isBuying = True Then price = ship.planet.getProductPriceSell(r) Else price = ship.planet.getProductPriceBuy(r)
@@ -108,4 +144,59 @@
             player.addCredits(totalPrice)
         End If
     End Sub
+    Private Sub cmdExamine(ByRef cmd As String())
+        Dim ind As String = vbSpace(1)
+        Dim r As eResource = getResourceFromStr(cmd(1))
+        Const ftlen As Integer = 8
+
+        If ship.planet Is Nothing Then Exit Sub
+        If r = Nothing Then Exit Sub
+
+        Console.WriteLine()
+        Console.WriteLine(r.ToString)
+        With ship.planet
+            Console.WriteLine(ind & fakeTab("Buy:", ftlen) & "¥" & .getProductPriceSell(r))
+            Console.WriteLine(ind & fakeTab("Sell:", ftlen) & "¥" & .getProductPriceBuy(r))
+            Console.WriteLine(ind & fakeTab("Range:", ftlen) & "¥" & planet.productPricesRange(r).min & " - ¥" & planet.productPricesRange(r).max)
+        End With
+        Console.ReadKey()
+    End Sub
+    Private Sub cmdTravel(ByRef cmd As String())
+        Console.WriteLine()
+        If cmd.Length > 1 AndAlso (cmd(1) = "c" OrElse cmd(1) = "cancel") Then
+            ship.setTravelDestination(Nothing)
+            Console.WriteLine("Travel plans cancelled.")
+            Console.ReadKey()
+        Else
+            Dim star As star = menu.getListChoice(starmap.stars, 1, "Select a star:")
+            Console.WriteLine()
+            Dim destination As planet = menu.getListChoice(star.planets, 1, "Select a planet:")
+            Console.WriteLine()
+
+            If menu.confirmChoice(0, "Travel to " & destination.name & "? ") = False Then Exit Sub
+            ship.setTravelDestination(destination)
+        End If
+    End Sub
+
+
+    Private Function getResourceFromStr(ByVal rawstr As String) As eResource
+        Dim r As eResource = constants.getEnumFromString(rawstr, constants.resourceArray)
+        If r <> Nothing Then Return r
+
+        Select Case rawstr.ToLower
+            Case "1", "me" : Return eResource.Metals
+            Case "2", "ch" : Return eResource.Chemicals
+            Case "3", "am" : Return eResource.Ammunition
+            Case "4", "mi" : Return eResource.Missiles
+            Case "5", "sa" : Return eResource.Savants
+            Case "6", "ma" : Return eResource.Machines
+            Case "7", "sl" : Return eResource.Slaves
+            Case "8", "az" : Return eResource.Azoth
+            Case "9", "fd" : Return eResource.Food
+            Case "10", "or" : Return eResource.Organics
+            Case "11", "bd" : Return eResource.Bandwidth
+            Case "12", "md" : Return eResource.Media
+            Case Else : Return Nothing
+        End Select
+    End Function
 End Module

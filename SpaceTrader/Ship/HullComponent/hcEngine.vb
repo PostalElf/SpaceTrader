@@ -18,9 +18,7 @@
     End Property
 
     Friend Overrides Sub tickTravel()
-        If ship.travelByJump = False Then
-            _isActive = useResource()
-        End If
+        _isActive = useResource()
     End Sub
 
     Private _isActive As Boolean

@@ -23,4 +23,11 @@
 
     Private seed As Integer
     Private stars As New List(Of star)
+    Friend Function getStarRandom() As star
+        Return stars(rng.Next(stars.Count))
+    End Function
+    Friend Function getPlanetRandom()
+        Dim star As star = getStarRandom()
+        Return star.getPlanetRandom
+    End Function
 End Class

@@ -34,6 +34,7 @@
             End Select
             .role = buildRole(export)
             .type = buildType(r)
+            ._distanceToGate = buildDistanceToGate(.type, r)
             .habitation = buildHabitation(.type, r)
         End With
         Return planet
@@ -143,18 +144,33 @@
                 Return Nothing
         End Select
     End Function
+    Private Shared Function buildDistanceToGate(ByVal planetType As ePlanetType, ByRef r As Random) As Integer
+        Select Case planetType
+            Case ePlanetType.Desert, ePlanetType.Volcanic, ePlanetType.Wasteland : Return r.Next(100, 300)
+            Case ePlanetType.Eden, ePlanetType.Sprawl : Return r.Next(300, 400)
+            Case ePlanetType.Gaseous, ePlanetType.Oceanic : Return r.Next(300, 600)
+            Case ePlanetType.Barren : Return r.Next(600, 700)
+            Case Else
+                MsgBox("buildDistanceToGate() error: unrecognised planetType")
+                Return Nothing
+        End Select
+    End Function
 
+    Public Overrides Function ToString() As String
+        Return name
+    End Function
     Friend Sub consoleReport(ByVal indent As Integer)
         Dim ind As String = vbSpace(indent)
         Dim indd As String = vbSpace(indent + 1)
         Dim inddd As String = vbSpace(indent + 2)
-        Const ftLen As Integer = 10
+        Const ftLen As Integer = 11
         Const ftLen2 As Integer = 13
 
         Console.WriteLine(ind & name)
         Console.WriteLine(indd & fakeTab("Role:", ftLen) & role.ToString)
         Console.WriteLine(indd & fakeTab("Type:", ftLen) & type.ToString)
         Console.WriteLine(indd & fakeTab("Habitat:", ftLen) & habitation)
+        Console.WriteLine(indd & fakeTab("Distance:", ftLen) & distanceToGate)
         Console.WriteLine(indd & "Exports:")
         For Each export In productsExport
             Console.WriteLine(inddd & "└ " & export.ToString)
@@ -177,6 +193,17 @@
         End Get
     End Property
     Private number As Integer
+    Private _distanceToGate As Integer
+    Friend ReadOnly Property distanceToGate As Integer
+        Get
+            Return _distanceToGate
+        End Get
+    End Property
+    Friend Function getDistanceTo(ByRef destination As planet) As Integer
+        If destination.star.Equals(star) = False Then Return -1
+
+        Return Math.Abs(distanceToGate - destination.distanceToGate)
+    End Function
 
     Private role As ePlanetRole
     Private type As ePlanetType
@@ -199,9 +226,4 @@
             productsPrices(res) += variance
         Next
     End Sub
-
-    Friend Function getDistanceTo(ByRef destination As planet) As Integer
-        Dim total As Integer = star.getDistanceTo(destination.star)
-        Return total
-    End Function
 End Class

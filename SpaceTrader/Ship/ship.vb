@@ -49,14 +49,16 @@
         Dim ind As String = vbSpace(indent)
         Dim indd As String = vbSpace(indent + 1)
         Dim inddd As String = vbSpace(indent + 2)
-        Const ftlen As Integer = 10
+        Const ftlen As Integer = 11
 
         Console.WriteLine(ind & name)
         Console.WriteLine(indd & fakeTab("Credits:", ftlen) & "¥" & player.credits.ToString("N0"))
+        Console.Write(indd & fakeTab("Location:", ftlen))
+        If planet Is Nothing Then Console.WriteLine(travelDescription) Else Console.WriteLine(planet.ToString)
+        If travelDestination Is Nothing = False Then Console.WriteLine(indd & fakeTab("Target:", ftlen) & travelDestination.name)
         Console.WriteLine(indd & fakeTab("Shields:", ftlen) & shields & "/" & shieldsMax)
         Console.WriteLine(indd & fakeTab("Armour:", ftlen) & armour & "/" & armourMaxBase)
-        Console.Write(indd & fakeTab("Speed:", ftlen) & travelSpeed & " ")
-        If travelByJump = True Then Console.WriteLine("jump") Else Console.WriteLine("sublight")
+        Console.WriteLine(indd & fakeTab("Speed:", ftlen) & travelSpeed(True) & " jump + " & travelSpeed(False) & " sublight")
 
         Console.WriteLine(indd & fakeTab("Hull:", ftlen) & hullSpaceOccupied & "/" & hullSpaceMaxBase)
         consoleReportHullComponents(indent + 2, "└ ")
@@ -127,16 +129,17 @@
         End Select
     End Function
 
-    Private _travelByJump As Boolean = True
-    Friend ReadOnly Property travelByJump As Boolean
+    Private ReadOnly Property star As star
         Get
-            Return _travelByJump
+            Return planet.star
         End Get
     End Property
-    Friend ReadOnly Property travelSpeed As Integer
+    Private planet As planet
+    Private travelDescription As String
+    Friend ReadOnly Property travelSpeed(ByVal jump As Boolean) As Integer
         Get
             Dim totalSpeed As Integer = 0
-            If travelByJump = True Then
+            If jump = True Then
                 For Each hc As hcJumpDrive In hullComponents(GetType(hcJumpDrive))
                     If hc.isActive = True Then totalSpeed += hc.jumpSpeed
                 Next
@@ -148,33 +151,80 @@
             Return totalSpeed
         End Get
     End Property
-    Private planet As planet
     Private travelDestination As planet
     Private travelProgress As Integer
-    Private travelDistance As Integer
+    Private travelDistancePlanet1 As Integer
+    Private travelDistancePlanet2 As Integer
+    Private travelDistanceStar As Integer
     Friend Sub setTravelDestination(ByVal destination As planet)
         If planet Is Nothing Then Exit Sub
+        If destination.Equals(planet) Then Exit Sub
+
+        If star.Equals(destination.star) Then
+            travelDistanceStar = 0
+            travelDistancePlanet1 = 0
+            travelDistancePlanet2 = planet.getDistanceTo(destination)
+        Else
+            travelDistanceStar = star.getDistanceTo(destination.star)
+            travelDistancePlanet1 = planet.distanceToGate
+            travelDistancePlanet2 = destination.distanceToGate
+        End If
 
         travelDestination = destination
         travelProgress = 0
-        travelDistance = planet.getDistanceTo(destination)
+    End Sub
+    Friend Sub teleportTo(ByRef destination As planet)
+        planet = destination
+        travelDestination = Nothing
+        travelProgress = 0
+        travelDistanceStar = 0
+        travelDistancePlanet1 = 0
+        travelDistancePlanet2 = 0
     End Sub
     Friend Sub tickTravel()
-        Dim totalSpeed As Integer = 0
-        If travelByJump = True Then
-            For Each hc As hcJumpDrive In hullComponents(GetType(hcJumpDrive))
-                hc.tickTravel()
-                totalSpeed += hc.jumpSpeed
-            Next
-        Else
-            For Each hc As hcEngine In hullComponents(GetType(hcEngine))
-                hc.tickTravel()
-                totalSpeed += hc.speed
-            Next
+        If travelDestination Is Nothing Then Exit Sub
+        planet = Nothing
+
+        If travelDistancePlanet1 > 0 Then
+            travelProgress += tickTravelEngines()
+            travelDescription = "Travelling to Jump Gate (" & travelProgress & "/" & travelDistancePlanet1 & ")"
+            If travelProgress >= travelDistancePlanet1 Then
+                travelProgress = 0
+                travelDistancePlanet1 = 0
+                travelDescription = "Entering Jump Gate..."
+            End If
+        ElseIf travelDistanceStar > 0 Then
+            travelProgress += tickTravelJumpDrives()
+            travelDescription = "Warping to " & travelDestination.star.name & " (" & travelProgress & "/" & travelDistanceStar & ")"
+            If travelProgress >= travelDistanceStar Then
+                travelProgress = 0
+                travelDistanceStar = 0
+                travelDescription = "Exiting Jump Gate..."
+            End If
+        ElseIf travelDistancePlanet2 > 0 Then
+            travelProgress += tickTravelEngines()
+            travelDescription = "Travelling to " & travelDestination.name & " (" & travelProgress & "/" & travelDistancePlanet2 & ")"
+            If travelProgress >= travelDistancePlanet2 Then
+                teleportTo(travelDestination)
+            End If
         End If
-
-
     End Sub
+    Private Function tickTravelEngines() As Integer
+        Dim total As Integer = 0
+        For Each hc As hcEngine In hullComponents(GetType(hcEngine))
+            hc.tickTravel()
+            total += hc.speed
+        Next
+        Return total
+    End Function
+    Private Function tickTravelJumpDrives() As Integer
+        Dim total As Integer = 0
+        For Each hc As hcJumpDrive In hullComponents(GetType(hcJumpDrive))
+            hc.tickTravel()
+            total += hc.jumpSpeed
+        Next
+        Return total
+    End Function
     Friend Sub tickIdle()
         For Each kvp In hullComponents
             For Each hc In kvp.Value

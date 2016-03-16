@@ -18,7 +18,9 @@
     Private Const maxX As Integer = 100
     Private Const maxY As Integer = 100
 
-
+    Public Overrides Function ToString() As String
+        Return name
+    End Function
     Friend Sub consoleReport(ByVal indent As Integer)
         Dim ind As String = vbSpace(indent)
 
@@ -42,6 +44,9 @@
         End Get
     End Property
     Private planets As New List(Of planet)
+    Friend Function getPlanetRandom() As planet
+        Return planets(rng.Next(planets.Count))
+    End Function
 
     Friend xy As xy
     Friend Function getDistanceTo(ByRef destination As star) As Integer

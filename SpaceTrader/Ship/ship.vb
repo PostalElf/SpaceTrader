@@ -181,7 +181,7 @@
         travelDistancePlanet1 = 0
         travelDistancePlanet2 = 0
     End Sub
-    Friend Sub tickTravel()
+    Private Sub tickTravel()
         If travelDestination Is Nothing Then Exit Sub
         planet = Nothing
 
@@ -225,12 +225,16 @@
         Next
         Return total
     End Function
-    Friend Sub tickIdle()
+    Private Sub tickIdle()
         For Each kvp In hullComponents
             For Each hc In kvp.Value
                 hc.tickIdle()
             Next
         Next
+    End Sub
+
+    Friend Sub tick()
+        If travelDestination Is Nothing Then tickIdle() Else tickTravel()
     End Sub
 
     Private shields As Integer

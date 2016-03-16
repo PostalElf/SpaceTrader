@@ -53,4 +53,10 @@
         Dim distance As Integer = pythogoras(destination.xy, xy)
         Return distance
     End Function
+
+    Friend Sub tick()
+        For Each planet In planets
+            planet.tick()
+        Next
+    End Sub
 End Class

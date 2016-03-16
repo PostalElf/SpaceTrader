@@ -39,7 +39,8 @@
             Console.WriteLine(vbCrLf)
             alert.allConsoleReport(0, 5)
             Console.ReadLine()
-            ship.tickTravel()
+            ship.tick()
+            starmap.tick()
         End While
     End Sub
 

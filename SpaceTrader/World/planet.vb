@@ -218,12 +218,16 @@
     Friend Function getProductPriceBuy(ByVal product As eResource) As Integer
         Return getProductPriceSell(product) * 0.75
     End Function
-    Friend Sub adjustProductPrices(Optional ByRef r As Random = Nothing)
+    Private Sub adjustProductPrices(Optional ByRef r As Random = Nothing)
         If r Is Nothing Then r = rng
         For Each res In constants.resourceArray
             Dim maxVariance As Integer = (productsPrices(res) * 0.1)
             Dim variance As Integer = lumpyRng(-maxVariance, maxVariance, r)
             productsPrices(res) += variance
         Next
+    End Sub
+
+    Friend Sub tick()
+        adjustProductPrices()
     End Sub
 End Class

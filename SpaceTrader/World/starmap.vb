@@ -30,4 +30,10 @@
         Dim star As star = getStarRandom()
         Return star.getPlanetRandom
     End Function
+
+    Friend Sub tick()
+        For Each star In stars
+            star.tick()
+        Next
+    End Sub
 End Class

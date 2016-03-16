@@ -137,26 +137,43 @@
         Get
             Dim totalSpeed As Integer = 0
             If travelByJump = True Then
-                For Each hc In hullComponents(GetType(hcJumpDrive))
-                    Dim j As hcJumpDrive = CType(hc, hcJumpDrive)
-                    If j.isActive = True Then totalSpeed += j.jumpSpeed
+                For Each hc As hcJumpDrive In hullComponents(GetType(hcJumpDrive))
+                    If hc.isActive = True Then totalSpeed += hc.jumpSpeed
                 Next
             Else
-                For Each hc In hullComponents(GetType(hcEngine))
-                    Dim e As hcEngine = CType(hc, hcEngine)
-                    If e.isActive = True Then totalSpeed += e.speed
+                For Each hc As hcEngine In hullComponents(GetType(hcEngine))
+                    If hc.isActive = True Then totalSpeed += hc.speed
                 Next
             End If
             Return totalSpeed
         End Get
     End Property
+    Private planet As planet
+    Private travelDestination As planet
+    Private travelProgress As Integer
+    Private travelDistance As Integer
+    Friend Sub setTravelDestination(ByVal destination As planet)
+        If planet Is Nothing Then Exit Sub
+
+        travelDestination = destination
+        travelProgress = 0
+        travelDistance = planet.getDistanceTo(destination)
+    End Sub
     Friend Sub tickTravel()
         Dim totalSpeed As Integer = 0
-        For Each kvp In hullComponents
-            For Each hc In kvp.Value
+        If travelByJump = True Then
+            For Each hc As hcJumpDrive In hullComponents(GetType(hcJumpDrive))
                 hc.tickTravel()
+                totalSpeed += hc.jumpSpeed
             Next
-        Next
+        Else
+            For Each hc As hcEngine In hullComponents(GetType(hcEngine))
+                hc.tickTravel()
+                totalSpeed += hc.speed
+            Next
+        End If
+
+
     End Sub
     Friend Sub tickIdle()
         For Each kvp In hullComponents

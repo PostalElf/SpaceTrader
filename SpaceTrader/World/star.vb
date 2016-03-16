@@ -4,6 +4,7 @@
         With star
             ._starmap = starmap
             ._name = getRandomAndRemove(star.starNames, "data/starnames.txt", r)
+            .xy = New xy(r.Next(1, maxX), r.Next(1, maxY))
 
             numPlanets += r.Next(4)
             For n = 1 To numPlanets
@@ -14,11 +15,14 @@
         Return star
     End Function
     Private Shared starNames As New List(Of String)
+    Private Const maxX As Integer = 100
+    Private Const maxY As Integer = 100
+
 
     Friend Sub consoleReport(ByVal indent As Integer)
         Dim ind As String = vbSpace(indent)
 
-        Console.WriteLine(ind & name)
+        Console.WriteLine(ind & name & " (" & xy.ToString & ")")
         For Each planet In planets
             planet.consoleReport(indent + 1)
             Console.WriteLine()
@@ -38,4 +42,10 @@
         End Get
     End Property
     Private planets As New List(Of planet)
+
+    Friend xy As xy
+    Friend Function getDistanceTo(ByRef destination As star) As Integer
+        Dim distance As Integer = pythogoras(destination.xy, xy)
+        Return distance
+    End Function
 End Class

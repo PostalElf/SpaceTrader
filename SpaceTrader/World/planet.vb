@@ -199,4 +199,9 @@
             productsPrices(res) += variance
         Next
     End Sub
+
+    Friend Function getDistanceTo(ByRef destination As planet) As Integer
+        Dim total As Integer = star.getDistanceTo(destination.star)
+        Return total
+    End Function
 End Class

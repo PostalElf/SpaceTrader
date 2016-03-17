@@ -107,7 +107,7 @@
     End Property
 
     Protected _name As String
-    Friend ReadOnly Property name As String
+    Friend ReadOnly Property name As String Implements ihcSaleable.name
         Get
             Return _name
         End Get

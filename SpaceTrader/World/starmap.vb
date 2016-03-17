@@ -28,6 +28,17 @@
             Return _stars
         End Get
     End Property
+    Friend Function getStar(ByVal starName As String) As star
+        For Each star In stars
+            If star.name.ToLower = starName.ToLower Then Return star
+        Next
+        Return Nothing
+    End Function
+    Friend Function getPlanet(ByVal starName As String, ByVal planetNumber As Integer)
+        Dim star As star = getStar(starName)
+        If star Is Nothing Then Return Nothing
+        Return star.getplanet(planetNumber)
+    End Function
     Friend Function getStarRandom() As star
         Return _stars(rng.Next(_stars.Count))
     End Function

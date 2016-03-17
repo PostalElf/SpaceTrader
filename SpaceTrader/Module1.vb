@@ -217,6 +217,12 @@
             ship.setTravelDestination(Nothing)
             Console.WriteLine("Travel plans cancelled.")
             Console.ReadKey()
+        ElseIf cmd.Length = 3 Then
+            Dim destination As planet = starmap.getPlanet(cmd(1), CInt(cmd(2)))
+            If destination Is Nothing Then Exit Sub
+
+            If menu.confirmChoice(0, "Travel to " & destination.name & "? ") = False Then Exit Sub
+            ship.setTravelDestination(destination)
         Else
             Dim star As star = menu.getListChoice(starmap.stars, 1, "Select a star:")
             Console.WriteLine()

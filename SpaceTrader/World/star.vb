@@ -49,6 +49,10 @@
             Return _planets
         End Get
     End Property
+    Friend Function getPlanet(ByVal planetNumber As Integer) As planet
+        If planetNumber <= 0 OrElse planetNumber > planets.Count Then Return Nothing
+        Return planets(planetNumber - 1)
+    End Function
     Friend Function getPlanetRandom() As planet
         Return _planets(rng.Next(_planets.Count))
     End Function

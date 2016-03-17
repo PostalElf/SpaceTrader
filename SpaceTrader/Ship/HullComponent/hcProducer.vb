@@ -1,15 +1,14 @@
 ﻿Public Class hcProducer
     Inherits hullComponent
     Implements ihcCrewable
-    Friend Sub New(ByVal aName As String, ByVal aSize As Integer, ByVal aResourceProduction As eResource, ByVal aResourceProductionQty As Integer, ByVal aResourceProductionTimerMax As Integer, _
+    Friend Sub New(ByVal aName As String, ByVal aSize As Integer, ByVal aResourceProduction As eResource, ByVal aResourceProductionTimerMax As Integer, _
                    Optional ByVal aResourceSlot As eResource = Nothing, Optional ByVal aResourceQtyPerUse As Integer = 0)
         MyBase.New(aName, aSize, aResourceSlot, aResourceQtyPerUse)
         resourceProduction = aResourceProduction
-        resourceProductionQty = aResourceProductionQty
         resourceProductionTimerMax = aResourceProductionTimerMax
     End Sub
     Friend Overrides Function consoleDescription() As String
-        Return withSign(resourceProductionQty) & " " & resourceProduction.ToString & " per " & resourceProductionTimerMax & " ticks"
+        Return "1 " & resourceProduction.ToString & " per " & resourceProductionTimerMax & " ticks"
     End Function
     Friend Overrides ReadOnly Property alarms As List(Of String)
         Get
@@ -27,7 +26,6 @@
     End Sub
 
     Private resourceProduction As eResource
-    Private resourceProductionQty As Integer
     Private resourceProductionTimer As Integer
     Private resourceProductionTimerMax As Integer
     Private Sub resourceProductionTick()
@@ -38,7 +36,7 @@
         If resourceProductionTimer >= resourceProductionTimerMax Then
             resourceProductionTimer = 0
             alert.Add("Production", name & " has produced a pod of " & resourceProduction.ToString & ".", 7)
-            ship.addResource(resourceProduction, resourceProductionQty)
+            ship.addResource(resourceProduction, 1)
         End If
     End Sub
 

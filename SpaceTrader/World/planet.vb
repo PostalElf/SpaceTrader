@@ -101,7 +101,7 @@
         End Select
     End Function
     Private Shared Function buildType(ByRef r As Random) As ePlanetType
-        If planetRoles.Count = 0 Then planetRoles.AddRange(constants.planetSuffixArray)
+        If planetRoles.Count = 0 Then planetRoles.AddRange(constants.planetTypeArray)
         Dim c As ePlanetType = planetRoles(r.Next(planetRoles.Count))
         planetRoles.Remove(c)
         Return c

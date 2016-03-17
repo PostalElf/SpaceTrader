@@ -1,0 +1,47 @@
+[Chaingun]
+Type: Weapon
+Size: 5
+Damage: 1
+DamageType: Ballistic
+CrewableMin: 1
+CrewableMax: 1
+
+[Gaol]
+Type: Cargo
+Size: 5
+Resource: Slaves
+Value: 10
+
+[Shield Battery]
+Type: Defence
+Size: 5
+Value: 5
+
+[Aeroponics Bay]
+Type: Producer
+Size: 5
+Resource: Organics
+ResourceProductionTimer: 5
+ResourceSlot: Organics
+ResourceQtyPerUse: 5
+CrewableMin: 1
+CrewableMax: 1
+
+[Microkitchen]
+Type: Producer
+Size: 5
+Resource: Food
+ResourceProductionTimer: 5
+ResourceSlot: Organics
+ResourceQtyPerUse: 10
+CrewableMin: 1
+CrewableMax: 1
+
+[Z-21 'Twilight']
+Type: Engine
+Size: 5
+Speed: 10
+Dodge: 5
+ResourceSlot: Chemicals
+ResourceQtyPerUse: 2
+

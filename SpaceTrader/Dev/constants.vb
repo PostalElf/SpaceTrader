@@ -9,19 +9,29 @@
             Return System.Enum.GetValues(GetType(eService))
         End Get
     End Property
-    Friend Shared ReadOnly Property planetPrefixArray As Array
+    Friend Shared ReadOnly Property planetRoleArray As Array
         Get
             Return System.Enum.GetValues(GetType(ePlanetRole))
         End Get
     End Property
-    Friend Shared ReadOnly Property planetSuffixArray As Array
+    Friend Shared ReadOnly Property planetTypeArray As Array
         Get
             Return System.Enum.GetValues(GetType(ePlanetType))
         End Get
     End Property
-    Friend Shared ReadOnly Property defenceTypearray As Array
+    Friend Shared ReadOnly Property damageTypeArray As Array
+        Get
+            Return System.Enum.GetValues(GetType(eDamageType))
+        End Get
+    End Property
+    Friend Shared ReadOnly Property defenceTypeArray As Array
         Get
             Return System.Enum.GetValues(GetType(eDefenceType))
+        End Get
+    End Property
+    Friend Shared ReadOnly Property raceArray As Array
+        Get
+            Return System.Enum.GetValues(GetType(eRace))
         End Get
     End Property
     Friend Shared ReadOnly Property hcTypeList As List(Of Type)

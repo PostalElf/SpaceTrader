@@ -210,7 +210,7 @@ Imports Microsoft.VisualBasic.FileIO
 
         Return templist
     End Function
-    Public Function filegetBracket(ByVal pathname As String, ByVal bracketString As String) As List(Of String)
+    Public Function bracketFileget(ByVal pathname As String, ByVal bracketString As String) As List(Of String)
         Dim total As New List(Of String)
         Try
             Dim line As String

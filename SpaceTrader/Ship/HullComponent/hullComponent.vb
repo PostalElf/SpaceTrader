@@ -1,4 +1,5 @@
 ﻿Public MustInherit Class hullComponent
+    Implements ihcSaleable
     Friend Sub New(ByVal aName As String, ByVal aSize As Integer, ByVal aResourceSlot As eResource, ByVal aResourceQtyPerUse As Integer)
         _name = aName
         _size = aSize
@@ -11,6 +12,8 @@
         'initialise variables
         Dim type As String = ""
         Dim size As Integer
+        Dim tier As Integer
+        Dim cost As Integer
         Dim value As Integer
         Dim crewRace As eRace
         Dim crewMax As Integer
@@ -37,8 +40,10 @@
             Select Case ln(0).ToLower
                 Case "type" : type = ln(1)
                 Case "size" : size = CInt(ln(1))
+                Case "tier" : tier = CInt(ln(1))
+                Case "cost" : cost = CInt(ln(1))
                 Case "value" : value = CInt(ln(1))
-                Case "crewrace" : crewRace = constants.getEnumFromString(ln(1), constants.racearray)
+                Case "crewrace" : crewRace = constants.getEnumFromString(ln(1), constants.raceArray)
                 Case "crewmax" : crewMax = CInt(ln(1))
                 Case "damage" : damage = CInt(ln(1))
                 Case "damagetype" : damageType = constants.getEnumFromString(ln(1), constants.damageTypeArray)
@@ -65,6 +70,7 @@
             Case "weapon" : hc = New hcWeapon(targetName, size, damage, damageType, resourceSlot, resourceQtyPerUse)
         End Select
         buildCrewable(hc, crewableMin, crewableMax)
+        buildSaleable(hc, tier, cost)
         Return hc
     End Function
     Private Shared Sub buildCrewable(ByRef hc As hullComponent, ByVal crewableMin As Integer, ByVal crewableMax As Integer)
@@ -74,6 +80,15 @@
 
         Dim i As ihcCrewable = CType(hc, ihcCrewable)
         i.crewable.SetProperties(crewableMin, crewableMax)
+    End Sub
+    Private Shared Sub buildSaleable(ByRef hc As hullComponent, ByVal tier As Integer, ByVal cost As Integer)
+        If hc Is Nothing Then Exit Sub
+        If TypeOf hc Is ihcSaleable = False Then Exit Sub
+        If tier = 0 OrElse cost = 0 Then Exit Sub
+
+        Dim i As ihcSaleable = CType(hc, ihcSaleable)
+        i.saleTier = tier
+        i.saleCost = cost
     End Sub
     Public Overrides Function ToString() As String
         Return name
@@ -104,6 +119,9 @@
             Return _size
         End Get
     End Property
+    Friend Property saleCost As Integer Implements ihcSaleable.saleCost
+    Friend Property saleTier As Integer Implements ihcSaleable.saleTier
+
     Friend Overridable Sub tickTravel()
         'handle in subclass if necessary
     End Sub

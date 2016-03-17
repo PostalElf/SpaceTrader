@@ -2,144 +2,192 @@
 [Metal Containers]
 Type: Cargo
 Size: 5
+Tier: 1
+Cost: 1000
 Resource: Metals
 Value: 10
 
 [Large Metal Containers]
 Type: Cargo
 Size: 10
+Tier: 2
+Cost: 4000
 Resource: Metals
 Value: 30
 
 [Chemical Containers]
 Type: Cargo
 Size: 5
+Tier: 1
+Cost: 1000
 Resource: Chemicals
 Value: 10
 
 [Large Chemical Containers]
 Type: Cargo
 Size: 10
+Tier: 2
+Cost: 4000
 Resource: Chemicals
 Value: 30
 
 [Ammunition Bay]
 Type: Cargo
 Size: 5
+Tier: 1
+Cost: 1000
 Resource: Ammunition
 Value: 10
 
 [Large Ammunition Bay]
 Type: Cargo
 Size: 10
+Tier: 2
+Cost: 4000
 Resource: Ammunition
 Value: 30
 
 [Missile Bay]
 Type: Cargo
 Size: 5
+Tier: 1
+Cost: 1000
 Resource: Missiles
 Value: 10
 
 [Large Missile Bay]
 Type: Cargo
 Size: 10
+Tier: 2
+Cost: 4000
 Resource: Missiles
 Value: 30
 
 [Thinktank]
 Type: Cargo
 Size: 5
+Tier: 1
+Cost: 1000
 Resource: Savants
 Value: 10
 
 [Large Thinktank]
 Type: Cargo
 Size: 10
+Tier: 2
+Cost: 4000
 Resource: Savants
 Value: 30
 
 [Machine Containers]
 Type: Cargo
 Size: 5
+Tier: 1
+Cost: 1000
 Resource: Machines
 Value: 10
 
 [Large Machine Containers]
 Type: Cargo
 Size: 10
+Tier: 2
+Cost: 4000
 Resource: Machines
 Value: 30
 
 [Gaol]
 Type: Cargo
 Size: 5
+Tier: 1
+Cost: 1000
 Resource: Slaves
 Value: 10
 
 [Prison]
 Type: Cargo
 Size: 10
+Tier: 2
+Cost: 4000
 Resource: Slaves
 Value: 30
 
 [Azoth Containers]
 Type: Cargo
 Size: 5
+Tier: 1
+Cost: 1200
 Resource: Azoth
 Value: 10
 
 [Large Azoth Containers]
 Type: Cargo
 Size: 10
+Tier: 2
+Cost: 4500
 Resource: Azoth
 Value: 30
 
 [Food Storage]
 Type: Cargo
 Size: 5
+Tier: 1
+Cost: 1000
 Resource: Food
 Value: 10
 
 [Food Megastorage]
 Type: Cargo
 Size: 10
+Tier: 2
+Cost: 4000
 Resource: Food
 Value: 30
 
 [Organic Containers]
 Type: Cargo
 Size: 5
+Tier: 1
+Cost: 1000
 Resource: Organics
 Value: 10
 
 [Large Organic Containers]
 Type: Cargo
 Size: 10
+Tier: 2
+Cost: 4000
 Resource: Organics
 Value: 30
 
 [Bandwidth Server]
 Type: Cargo
 Size: 5
+Tier: 1
+Cost: 1000
 Resource: Bandwidth
 Value: 10
 
 [Bandwidth Megaserver]
 Type: Cargo
 Size: 10
+Tier: 2
+Cost: 4000
 Resource: Bandwidth
 Value: 30
 
 [Media Server]
 Type: Cargo
 Size: 5
+Tier: 1
+Cost: 1000
 Resource: Media
 Value: 10
 
 [Media Megaserver]
 Type: Cargo
 Size: 10
+Tier: 2
+Cost: 4000
 Resource: Media
 Value: 30
 
@@ -149,6 +197,8 @@ Value: 30
 [Crew Cabin]
 Type: CrewQuarters
 Size: 5
+Tier: 1
+Cost: 2000
 CrewRace: Human
 CrewMax: 5
 ResourceSlot: Food
@@ -157,6 +207,8 @@ ResourceQtyPerUse: 2
 [Doublebunk Cabin]
 Type: CrewQuarters
 Size: 5
+Tier: 2
+Cost: 5000
 CrewRace: Human
 CrewMax: 10
 ResourceSlot: Food
@@ -165,6 +217,8 @@ ResourceQtyPerUse: 2
 [Stasis Chamber]
 Type: CrewQuarters
 Size: 5
+Tier: 3
+Cost: 10000
 CrewRace: Human
 CrewMax: 5
 ResourceSlot: Media
@@ -173,18 +227,22 @@ ResourceQtyPerUse: 1
 [Uplifted Maintenance Bay]
 Type: CrewQuarters
 Size: 5
+Tier: 2
+Cost: 2500
 CrewRace: Uplifted
 CrewMax: 5
 ResourceSlot: Machines
-ResourceQtyPerUse: 2
+ResourceQtyPerUse: 1
 
 [Upload Rack]
 Type: CrewQuarters
 Size: 1
+Tier: 3
+Cost: 6000
 CrewRace: Uplifted
 CrewMax: 3
 ResourceSlot: Machines
-ResourceQtyPerUse: 2
+ResourceQtyPerUse: 1
 
 
 
@@ -192,6 +250,8 @@ ResourceQtyPerUse: 2
 [Shield Battery]
 Type: Defence
 Size: 5
+Tier: 1
+Cost: 5000
 Value: 5
 
 
@@ -200,14 +260,18 @@ Value: 5
 [Z-21 'Wynn']
 Type: Engine
 Size: 5
+Tier: 1
+Cost: 5000
 Speed: 10
 Dodge: 5
 ResourceSlot: Chemicals
 ResourceQtyPerUse: 2
 
-[Z-27 'Changeling']
+[Z-24 'Changeling']
 Type: Engine
 Size: 5
+Tier: 2
+Cost: 10000
 Speed: 20
 Dodge: 10
 ResourceSlot: Chemicals
@@ -216,6 +280,8 @@ ResourceQtyPerUse: 5
 [Z-33 'Aos Si']
 Type: Engine
 Size: 10
+Tier: 3
+Cost: 20000
 Speed: 30
 Dodge: 15
 ResourceSlot: Chemicals
@@ -224,6 +290,8 @@ ResourceQtyPerUse: 10
 [Z-39 'Tamlin']
 Type: Engine
 Size: 10
+Tier: 4
+Cost: 30000
 Speed: 50
 Dodge: 20
 ResourceSlot: Chemicals
@@ -232,6 +300,8 @@ ResourceQtyPerUse: 15
 [Q-174N 'Twilight']
 Type: Engine
 Size: 5
+Tier: 1
+Cost: 4500
 Speed: 10
 Dodge: 0
 ResourceSlot: Chemicals
@@ -240,6 +310,8 @@ ResourceQtyPerUse: 1
 [Q-274N 'Dusk']
 Type: Engine
 Size: 5
+Tier: 2
+Cost: 10000
 Speed: 15
 Dodge: 0
 ResourceSlot: Chemicals
@@ -248,6 +320,8 @@ ResourceQtyPerUse: 2
 [Q-374N 'Daybreak']
 Type: Engine
 Size: 5
+Tier: 3
+Cost: 18000
 Speed: 20
 Dodge: 0
 ResourceSlot: Chemicals
@@ -256,6 +330,8 @@ ResourceQtyPerUse: 5
 [Q-574N 'Lux']
 Type: Engine
 Size: 5
+Tier: 4
+Cost: 27500
 Speed: 25
 Dodge: 0
 ResourceSlot: Chemicals
@@ -267,13 +343,17 @@ ResourceQtyPerUse: 5
 [T-46173 'Imp']
 Type: JumpDrive
 Size: 5
+Tier: 1
+Cost: 5000
 Speed: 10
 ResourceSlot: Azoth
 ResourceQtyPerUse: 10
 
 [T-46176 'Goblin']
 Type: JumpDrive
-Size: 5
+Size: 10
+Tier: 2
+Cost: 7500
 Speed: 10
 ResourceSlot: Azoth
 ResourceQtyPerUse: 5
@@ -281,34 +361,53 @@ ResourceQtyPerUse: 5
 [T-51173 'Cambion']
 Type: JumpDrive
 Size: 5
+Tier: 2
+Cost: 10000
 Speed: 20
 ResourceSlot: Azoth
 ResourceQtyPerUse: 15
 
 [T-51176 'Poltergeist']
 Type: JumpDrive
-Size: 5
+Size: 10
+Tier: 3
+Cost: 18000
 Speed: 20
 ResourceSlot: Azoth
 ResourceQtyPerUse: 10
 
 [T-63173 'Incubus']
 Type: JumpDrive
-Size: 10
+Size: 5
+Tier: 3
+Cost: 20000
 Speed: 30
 ResourceSlot: Azoth
 ResourceQtyPerUse: 20
 
 [T-63176 'Shedim']
 Type: JumpDrive
-Size: 5
+Size: 10
+Tier: 4
+Cost: 25000
 Speed: 30
 ResourceSlot: Azoth
 ResourceQtyPerUse: 15
 
+[T-77173 'Djinn']
+Type: JumpDrive
+Size: 5
+Tier: 4
+Cost: 50000
+Speed: 40
+ResourceSlot: Azoth
+ResourceQtyPerUse: 20
+
 [h78 'Caliban']
 Type: JumpDrive
 Size: 2
+Tier: 1
+Cost: 5000
 Speed: 3
 ResourceSlot: Azoth
 ResourceQtyPerUse: 1
@@ -316,6 +415,8 @@ ResourceQtyPerUse: 1
 [h88 'Sycorax']
 Type: JumpDrive
 Size: 2
+Tier: 2
+Cost: 10000
 Speed: 5
 ResourceSlot: Azoth
 ResourceQtyPerUse: 2
@@ -323,6 +424,8 @@ ResourceQtyPerUse: 2
 [h98 'Setebos']
 Type: JumpDrive
 Size: 2
+Tier: 3
+Cost: 20000
 Speed: 10
 ResourceSlot: Azoth
 ResourceQtyPerUse: 5
@@ -333,6 +436,8 @@ ResourceQtyPerUse: 5
 [Crucible]
 Type: Producer
 Size: 2
+Tier: 1
+Cost: 5000
 Resource: Chemicals
 ResourceProductionTimer: 10
 ResourceSlot: Metals
@@ -341,6 +446,8 @@ ResourceQtyPerUse: 10
 [Neocondenser]
 Type: Producer
 Size: 2
+Tier: 1
+Cost: 5000
 Resource: Metals
 ResourceProductionTimer: 10
 ResourceSlot: Chemicals
@@ -349,6 +456,8 @@ ResourceQtyPerUse: 10
 [Ammo Press]
 Type: Producer
 Size: 2
+Tier: 1
+Cost: 5000
 Resource: Ammunition
 ResourceProductionTimer: 5
 ResourceSlot: Metals
@@ -357,6 +466,8 @@ ResourceQtyPerUse: 10
 [Microfactory]
 Type: Producer
 Size: 2
+Tier: 1
+Cost: 5000
 Resource: Machines
 ResourceProductionTimer: 10
 ResourceSlot: Metals
@@ -365,6 +476,8 @@ ResourceQtyPerUse: 10
 [Disassembler]
 Type: Producer
 Size: 2
+Tier: 1
+Cost: 5000
 Resource: Metals
 ResourceProductionTimer: 10
 ResourceSlot: Machines
@@ -373,6 +486,8 @@ ResourceQtyPerUse: 10
 [Pirate Broadcaster]
 Type: Producer
 Size: 2
+Tier: 1
+Cost: 5000
 Resource: Media
 ResourceProductionTimer: 10
 ResourceSlot: Bandwidth
@@ -381,6 +496,8 @@ ResourceQtyPerUse: 10
 [Soleas Chamber]
 Type: Producer
 Size: 2
+Tier: 2
+Cost: 8000
 Resource: Savants
 ResourceProductionTimer: 30
 ResourceSlot: Media
@@ -389,6 +506,8 @@ ResourceQtyPerUse: 5
 [Alembic Dibikos]
 Type: Producer
 Size: 2
+Tier: 2
+Cost: 10000
 Resource: Chemicals
 ResourceProductionTimer: 1
 ResourceSlot: Azoth
@@ -397,6 +516,8 @@ ResourceQtyPerUse: 50
 [Alembic Tribikos]
 Type: Producer
 Size: 2
+Tier: 2
+Cost: 10000
 Resource: Metals
 ResourceProductionTimer: 1
 ResourceSlot: Azoth
@@ -405,6 +526,8 @@ ResourceQtyPerUse: 50
 [Aludel Dibikos]
 Type: Producer
 Size: 5
+Tier: 2
+Cost: 10000
 Resource: Azoth
 ResourceProductionTimer: 10
 ResourceSlot: Chemicals
@@ -415,6 +538,8 @@ CrewableMax: 1
 [Aludel Tribikos]
 Type: Producer
 Size: 5
+Tier: 2
+Cost: 10000
 Resource: Azoth
 ResourceProductionTimer: 10
 ResourceSlot: Metals
@@ -425,6 +550,8 @@ CrewableMax: 1
 [Magnum Opus]
 Type: Producer
 Size: 5
+Tier: 2
+Cost: 10000
 Resource: Azoth
 ResourceProductionTimer: 10
 ResourceSlot: Machines
@@ -435,6 +562,8 @@ CrewableMax: 1
 [Mizbeach]
 Type: Producer
 Size: 5
+Tier: 3
+Cost: 15000
 Resource: Azoth
 ResourceProductionTimer: 10
 ResourceSlot: Slaves
@@ -445,6 +574,8 @@ CrewableMax: 1
 [Aeroponics Bay]
 Type: Producer
 Size: 5
+Tier: 1
+Cost: 8000
 Resource: Organics
 ResourceProductionTimer: 5
 ResourceSlot: Organics
@@ -455,6 +586,8 @@ CrewableMax: 1
 [Microkitchen]
 Type: Producer
 Size: 2
+Tier: 1
+Cost: 8000
 Resource: Food
 ResourceProductionTimer: 5
 ResourceSlot: Organics
@@ -465,6 +598,8 @@ CrewableMax: 1
 [Mechanised Mess]
 Type: Producer
 Size: 5
+Tier: 2
+Cost: 17500
 Resource: Food
 ResourceProductionTimer: 5
 ResourceSlot: Organics
@@ -473,6 +608,8 @@ ResourceQtyPerUse: 10
 [Emain Ablach]
 Type: Producer
 Size: 2
+Tier: 2
+Cost: 20000
 Resource: Food
 ResourceProductionTimer: 5
 ResourceSlot: Slaves
@@ -484,6 +621,8 @@ ResourceQtyPerUse: 10
 [Chaingun]
 Type: Weapon
 Size: 5
+Tier: 1
+Cost: 2000
 Damage: 1
 DamageType: Ballistic
 CrewableMin: 1

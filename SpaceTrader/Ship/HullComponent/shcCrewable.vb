@@ -39,6 +39,7 @@
 
     Friend Sub assignCrewBest()
         Dim idlers As List(Of crew) = _hullComponent.ship.getCrews(True)
+        If idlers.Count = 0 Then Exit Sub
         Dim p As crew = idlers(rng.Next(idlers.Count))
         assignCrew(p)
     End Sub

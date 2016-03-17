@@ -6,11 +6,149 @@ DamageType: Ballistic
 CrewableMin: 1
 CrewableMax: 1
 
+[Metal Containers]
+Type: Cargo
+Size: 5
+Resource: Metals
+Value: 10
+
+[Large Metal Containers]
+Type: Cargo
+Size: 10
+Resource: Metals
+Value: 30
+
+[Chemical Containers]
+Type: Cargo
+Size: 5
+Resource: Chemicals
+Value: 10
+
+[Large Chemical Containers]
+Type: Cargo
+Size: 10
+Resource: Chemicals
+Value: 30
+
+[Ammunition Bay]
+Type: Cargo
+Size: 5
+Resource: Ammunition
+Value: 10
+
+[Large Ammunition Bay]
+Type: Cargo
+Size: 10
+Resource: Ammunition
+Value: 30
+
+[Missile Bay]
+Type: Cargo
+Size: 5
+Resource: Missiles
+Value: 10
+
+[Large Missile Bay]
+Type: Cargo
+Size: 10
+Resource: Missiles
+Value: 30
+
+[Thinktank]
+Type: Cargo
+Size: 5
+Resource: Savants
+Value: 10
+
+[Large Thinktank]
+Type: Cargo
+Size: 10
+Resource: Savants
+Value: 30
+
+[Machine Containers]
+Type: Cargo
+Size: 5
+Resource: Machines
+Value: 10
+
+[Large Machine Containers]
+Type: Cargo
+Size: 10
+Resource: Machines
+Value: 30
+
 [Gaol]
 Type: Cargo
 Size: 5
 Resource: Slaves
 Value: 10
+
+[Prison]
+Type: Cargo
+Size: 10
+Resource: Slaves
+Value: 30
+
+[Azoth Containers]
+Type: Cargo
+Size: 5
+Resource: Azoth
+Value: 10
+
+[Large Azoth Containers]
+Type: Cargo
+Size: 10
+Resource: Azoth
+Value: 30
+
+[Food Storage]
+Type: Cargo
+Size: 5
+Resource: Food
+Value: 10
+
+[Food Megastorage]
+Type: Cargo
+Size: 10
+Resource: Food
+Value: 30
+
+[Organic Containers]
+Type: Cargo
+Size: 5
+Resource: Organics
+Value: 10
+
+[Large Organic Containers]
+Type: Cargo
+Size: 10
+Resource: Organics
+Value: 30
+
+[Bandwidth Server]
+Type: Cargo
+Size: 5
+Resource: Bandwidth
+Value: 10
+
+[Bandwidth Megaserver]
+Type: Cargo
+Size: 10
+Resource: Bandwidth
+Value: 30
+
+[Media Server]
+Type: Cargo
+Size: 5
+Resource: Media
+Value: 10
+
+[Media Megaserver]
+Type: Cargo
+Size: 10
+Resource: Media
+Value: 30
 
 [Shield Battery]
 Type: Defence
@@ -45,3 +183,25 @@ Dodge: 5
 ResourceSlot: Chemicals
 ResourceQtyPerUse: 2
 
+[T-46173 'Faust']
+Type: JumpDrive
+Size: 5
+Speed: 10
+ResourceSlot: Azoth
+ResourceQtyPerUse: 10
+
+[Crew Cabin]
+Type: CrewQuarters
+Size: 5
+CrewRace: Human
+CrewMax: 5
+ResourceSlot: Food
+ResourceQtyPerUse: 1
+
+[Server Locker]
+Type: CrewQuarters
+Size: 5
+CrewRace: Uplifted
+CrewMax: 3
+ResourceSlot: Machines
+ResourceQtyPerUse: 1

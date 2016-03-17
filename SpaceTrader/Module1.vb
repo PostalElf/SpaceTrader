@@ -17,14 +17,14 @@
             ship.addResource(r, 10)
         Next
         ship.addComponent(hullComponent.build("Chaingun"))
-        ship.addComponent(hullComponent.build("Gaol"))
+        ship.addComponent(hullComponent.build("Food Megastorage"))
         ship.addComponent(hullComponent.build("Shield Battery"))
         ship.addComponent(hullComponent.build("Aeroponics Bay"))
         ship.addComponent(hullComponent.build("Microkitchen"))
         ship.addComponent(hullComponent.build("Z-21 'Twilight'"))
-        ship.addComponent(New hcJumpDrive("Whirlwind Jumpdrive", 5, 10, eResource.Azoth, 5))
-        ship.addComponent(New hcCrewQuarters("Crew Cabin", 5, 5, eRace.Human, eResource.Food, 1))
-        ship.addComponent(New hcCrewQuarters("Machinery Room", 5, 5, eRace.Uplifted, eResource.Machines, 1))
+        ship.addComponent(hullComponent.build("T-46173 'Faust'"))
+        ship.addComponent(hullComponent.build("Crew Cabin"))
+        ship.addComponent(hullComponent.build("Server Locker"))
         For n = 1 To 3
             ship.addCrew(crew.build(eRace.Human))
         Next

@@ -1,11 +1,4 @@
-[Chaingun]
-Type: Weapon
-Size: 5
-Damage: 1
-DamageType: Ballistic
-CrewableMin: 1
-CrewableMax: 1
-
+--Cargo--
 [Metal Containers]
 Type: Cargo
 Size: 5
@@ -150,10 +143,304 @@ Size: 10
 Resource: Media
 Value: 30
 
+
+
+--CrewQuarters--
+[Crew Cabin]
+Type: CrewQuarters
+Size: 5
+CrewRace: Human
+CrewMax: 5
+ResourceSlot: Food
+ResourceQtyPerUse: 2
+
+[Doublebunk Cabin]
+Type: CrewQuarters
+Size: 5
+CrewRace: Human
+CrewMax: 10
+ResourceSlot: Food
+ResourceQtyPerUse: 2
+
+[Stasis Chamber]
+Type: CrewQuarters
+Size: 5
+CrewRace: Human
+CrewMax: 5
+ResourceSlot: Media
+ResourceQtyPerUse: 1
+
+[Uplifted Maintenance Bay]
+Type: CrewQuarters
+Size: 5
+CrewRace: Uplifted
+CrewMax: 5
+ResourceSlot: Machines
+ResourceQtyPerUse: 2
+
+[Upload Rack]
+Type: CrewQuarters
+Size: 1
+CrewRace: Uplifted
+CrewMax: 3
+ResourceSlot: Machines
+ResourceQtyPerUse: 2
+
+
+
+--Defence--
 [Shield Battery]
 Type: Defence
 Size: 5
 Value: 5
+
+
+
+--Engine--
+[Z-21 'Wynn']
+Type: Engine
+Size: 5
+Speed: 10
+Dodge: 5
+ResourceSlot: Chemicals
+ResourceQtyPerUse: 2
+
+[Z-27 'Changeling']
+Type: Engine
+Size: 5
+Speed: 20
+Dodge: 10
+ResourceSlot: Chemicals
+ResourceQtyPerUse: 5
+
+[Z-33 'Aos Si']
+Type: Engine
+Size: 10
+Speed: 30
+Dodge: 15
+ResourceSlot: Chemicals
+ResourceQtyPerUse: 10
+
+[Z-39 'Tamlin']
+Type: Engine
+Size: 10
+Speed: 50
+Dodge: 20
+ResourceSlot: Chemicals
+ResourceQtyPerUse: 15
+
+[Q-174N 'Twilight']
+Type: Engine
+Size: 5
+Speed: 10
+Dodge: 0
+ResourceSlot: Chemicals
+ResourceQtyPerUse: 1
+
+[Q-274N 'Dusk']
+Type: Engine
+Size: 5
+Speed: 15
+Dodge: 0
+ResourceSlot: Chemicals
+ResourceQtyPerUse: 2
+
+[Q-374N 'Daybreak']
+Type: Engine
+Size: 5
+Speed: 20
+Dodge: 0
+ResourceSlot: Chemicals
+ResourceQtyPerUse: 5
+
+[Q-574N 'Lux']
+Type: Engine
+Size: 5
+Speed: 25
+Dodge: 0
+ResourceSlot: Chemicals
+ResourceQtyPerUse: 5
+
+
+
+--JumpDrive--
+[T-46173 'Imp']
+Type: JumpDrive
+Size: 5
+Speed: 10
+ResourceSlot: Azoth
+ResourceQtyPerUse: 10
+
+[T-46176 'Goblin']
+Type: JumpDrive
+Size: 5
+Speed: 10
+ResourceSlot: Azoth
+ResourceQtyPerUse: 5
+
+[T-51173 'Cambion']
+Type: JumpDrive
+Size: 5
+Speed: 20
+ResourceSlot: Azoth
+ResourceQtyPerUse: 15
+
+[T-51176 'Poltergeist']
+Type: JumpDrive
+Size: 5
+Speed: 20
+ResourceSlot: Azoth
+ResourceQtyPerUse: 10
+
+[T-63173 'Incubus']
+Type: JumpDrive
+Size: 10
+Speed: 30
+ResourceSlot: Azoth
+ResourceQtyPerUse: 20
+
+[T-63176 'Shedim']
+Type: JumpDrive
+Size: 5
+Speed: 30
+ResourceSlot: Azoth
+ResourceQtyPerUse: 15
+
+[h78 'Caliban']
+Type: JumpDrive
+Size: 2
+Speed: 3
+ResourceSlot: Azoth
+ResourceQtyPerUse: 1
+
+[h88 'Sycorax']
+Type: JumpDrive
+Size: 2
+Speed: 5
+ResourceSlot: Azoth
+ResourceQtyPerUse: 2
+
+[h98 'Setebos']
+Type: JumpDrive
+Size: 2
+Speed: 10
+ResourceSlot: Azoth
+ResourceQtyPerUse: 5
+
+
+
+--Producer--
+[Crucible]
+Type: Producer
+Size: 2
+Resource: Chemicals
+ResourceProductionTimer: 10
+ResourceSlot: Metals
+ResourceQtyPerUse: 10
+
+[Neocondenser]
+Type: Producer
+Size: 2
+Resource: Metals
+ResourceProductionTimer: 10
+ResourceSlot: Chemicals
+ResourceQtyPerUse: 10
+
+[Ammo Press]
+Type: Producer
+Size: 2
+Resource: Ammunition
+ResourceProductionTimer: 5
+ResourceSlot: Metals
+ResourceQtyPerUse: 10
+
+[Microfactory]
+Type: Producer
+Size: 2
+Resource: Machines
+ResourceProductionTimer: 10
+ResourceSlot: Metals
+ResourceQtyPerUse: 10
+
+[Disassembler]
+Type: Producer
+Size: 2
+Resource: Metals
+ResourceProductionTimer: 10
+ResourceSlot: Machines
+ResourceQtyPerUse: 10
+
+[Pirate Broadcaster]
+Type: Producer
+Size: 2
+Resource: Media
+ResourceProductionTimer: 10
+ResourceSlot: Bandwidth
+ResourceQtyPerUse: 10
+
+[Soleas Chamber]
+Type: Producer
+Size: 2
+Resource: Savants
+ResourceProductionTimer: 30
+ResourceSlot: Media
+ResourceQtyPerUse: 5
+
+[Alembic Dibikos]
+Type: Producer
+Size: 2
+Resource: Chemicals
+ResourceProductionTimer: 1
+ResourceSlot: Azoth
+ResourceQtyPerUse: 50
+
+[Alembic Tribikos]
+Type: Producer
+Size: 2
+Resource: Metals
+ResourceProductionTimer: 1
+ResourceSlot: Azoth
+ResourceQtyPerUse: 50
+
+[Aludel Dibikos]
+Type: Producer
+Size: 5
+Resource: Azoth
+ResourceProductionTimer: 10
+ResourceSlot: Chemicals
+ResourceQtyPerUse: 20
+CrewableMin: 1
+CrewableMax: 1
+
+[Aludel Tribikos]
+Type: Producer
+Size: 5
+Resource: Azoth
+ResourceProductionTimer: 10
+ResourceSlot: Metals
+ResourceQtyPerUse: 20
+CrewableMin: 1
+CrewableMax: 1
+
+[Magnum Opus]
+Type: Producer
+Size: 5
+Resource: Azoth
+ResourceProductionTimer: 10
+ResourceSlot: Machines
+ResourceQtyPerUse: 20
+CrewableMin: 1
+CrewableMax: 1
+
+[Mizbeach]
+Type: Producer
+Size: 5
+Resource: Azoth
+ResourceProductionTimer: 10
+ResourceSlot: Slaves
+ResourceQtyPerUse: 20
+CrewableMin: 1
+CrewableMax: 1
 
 [Aeroponics Bay]
 Type: Producer
@@ -167,7 +454,7 @@ CrewableMax: 1
 
 [Microkitchen]
 Type: Producer
-Size: 5
+Size: 2
 Resource: Food
 ResourceProductionTimer: 5
 ResourceSlot: Organics
@@ -175,33 +462,29 @@ ResourceQtyPerUse: 10
 CrewableMin: 1
 CrewableMax: 1
 
-[Z-21 'Twilight']
-Type: Engine
+[Mechanised Mess]
+Type: Producer
 Size: 5
-Speed: 10
-Dodge: 5
-ResourceSlot: Chemicals
-ResourceQtyPerUse: 2
-
-[T-46173 'Faust']
-Type: JumpDrive
-Size: 5
-Speed: 10
-ResourceSlot: Azoth
+Resource: Food
+ResourceProductionTimer: 5
+ResourceSlot: Organics
 ResourceQtyPerUse: 10
 
-[Crew Cabin]
-Type: CrewQuarters
-Size: 5
-CrewRace: Human
-CrewMax: 5
-ResourceSlot: Food
-ResourceQtyPerUse: 1
+[Emain Ablach]
+Type: Producer
+Size: 2
+Resource: Food
+ResourceProductionTimer: 5
+ResourceSlot: Slaves
+ResourceQtyPerUse: 10
 
-[Server Locker]
-Type: CrewQuarters
+
+
+--Weapon--
+[Chaingun]
+Type: Weapon
 Size: 5
-CrewRace: Uplifted
-CrewMax: 3
-ResourceSlot: Machines
-ResourceQtyPerUse: 1
+Damage: 1
+DamageType: Ballistic
+CrewableMin: 1
+CrewableMax: 1

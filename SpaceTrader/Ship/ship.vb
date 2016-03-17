@@ -356,6 +356,7 @@
         End Get
     End Property
     Friend Sub addComponent(ByRef hc As hullComponent)
+        If hc Is Nothing Then Exit Sub
         hullComponents(hc.GetType).Add(hc)
         hc.ship = Me
     End Sub

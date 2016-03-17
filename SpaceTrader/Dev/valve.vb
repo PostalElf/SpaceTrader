@@ -226,7 +226,8 @@ Imports Microsoft.VisualBasic.FileIO
                                 'reached next bracketed section, stop searching
                                 Return total
                             Else
-                                If line <> "" Then total.Add(line)
+                                'make sure that line doesn't start with comment char (-) and that line is not empty
+                                If line <> "" AndAlso line.StartsWith("-") = False Then total.Add(line)
                             End If
                         End While
                     End If

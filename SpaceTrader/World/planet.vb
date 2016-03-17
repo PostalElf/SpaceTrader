@@ -193,16 +193,20 @@
         Const ftLen As Integer = 13
 
         If productsImport.Count > 0 Then
-            Console.WriteLine(indd & "Imports:")
-            For Each import In productsImport
-                Console.WriteLine(inddd & "└ " & import.ToString)
+            Dim inputList As New List(Of String)
+            For Each p In productsImport
+                inputList.Add(p.ToString)
             Next
+            Console.Write(indd & "Imports:  ")
+            Console.WriteLine(withCommas(inputList))
         End If
         If productsExport.Count > 0 Then
-            Console.WriteLine(indd & "Exports:")
-            For Each export In productsExport
-                Console.WriteLine(inddd & "└ " & export.ToString)
+            Dim inputList As New List(Of String)
+            For Each p In productsExport
+                inputList.Add(p.ToString)
             Next
+            Console.Write(indd & "Exports:  ")
+            Console.WriteLine(withCommas(inputList))
         End If
         Console.WriteLine(indd & "Prices:")
         For Each product As eResource In constants.resourceArray
@@ -237,8 +241,6 @@
     Private role As ePlanetRole
     Private type As ePlanetType
     Private habitation As String
-    Private productsImport As New List(Of eResource)
-    Private productsExport As New List(Of eResource)
     Private productsPrices As New Dictionary(Of eResource, Integer)
     Private servicesPrices As New Dictionary(Of eService, Integer)
     Friend Function getProductPriceSell(ByVal product As eResource) As Integer
@@ -268,6 +270,22 @@
             servicesPrices(s) += variance
             servicesPrices(s) = constrain(servicesPrices(s), servicePricesRange(s))
         Next
+    End Sub
+    Private productsImport As New List(Of eResource)
+    Private productsExport As New List(Of eResource)
+    Friend Sub addShipment(ByVal res As eResource, ByVal isImport As Boolean)
+        Dim iList As List(Of eResource)
+        If isImport = True Then iList = productsImport Else iList = productsExport
+
+        If iList.Contains(res) Then Exit Sub
+        iList.Add(res)
+    End Sub
+    Friend Sub removeShipment(ByVal res As eResource, ByVal isImport As Boolean)
+        Dim iList As List(Of eResource)
+        If isImport = True Then iList = productsImport Else iList = productsExport
+
+        If iList.Contains(res) = False Then Exit Sub
+        iList.Remove(res)
     End Sub
 
     Private Const priceMin As Double = 0.5

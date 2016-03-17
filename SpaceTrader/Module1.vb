@@ -53,6 +53,8 @@
                 starmap.tick()
             Case "cmd", "?", "help"
                 cmdHelp()
+            Case "exit"
+                End
             Case "starmap", "sm"
                 Console.Clear()
                 starmap.consoleReport(0)
@@ -60,9 +62,17 @@
             Case "travel", "t"
                 cmdTravel(cmd)
 
-            Case "damage"
+
+            Case "adddamage"
                 Dim damage As Integer = CInt(cmd(1))
                 ship.addDamage(damage, eDamageType.Ballistic)
+            Case "addimport"
+                If ship.planet Is Nothing Then Exit Sub
+                ship.planet.addShipment(getResourceFromStr(cmd(1)), True)
+            Case "addexport"
+                If ship.planet Is Nothing Then Exit Sub
+                ship.planet.addShipment(getResourceFromStr(cmd(1)), False)
+
 
             Case "shop", "sh"
                 If ship.planet Is Nothing Then Exit Sub

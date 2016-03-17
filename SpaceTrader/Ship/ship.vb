@@ -25,22 +25,32 @@
                 hullSpaceMaxBase = 20
                 shieldsMaxBase = 5
                 armourMaxBase = 10
+                travelSublightSpeedBase = 5
+                travelJumpSpeedBase = 1
             Case eShipType.Frigate
                 hullSpaceMaxBase = 50
                 shieldsMaxBase = 10
                 armourMaxBase = 10
+                travelSublightSpeedBase = 5
+                travelJumpSpeedBase = 1
             Case eShipType.Crusier
                 hullSpaceMaxBase = 75
                 shieldsMaxBase = 20
                 armourMaxBase = 10
+                travelSublightSpeedBase = 5
+                travelJumpSpeedBase = 1
             Case eShipType.Destroyer
                 hullSpaceMaxBase = 100
                 shieldsMaxBase = 20
                 armourMaxBase = 20
+                travelSublightSpeedBase = 5
+                travelJumpSpeedBase = 1
             Case eShipType.Dreadnought
                 hullSpaceMaxBase = 150
                 shieldsMaxBase = 20
                 armourMaxBase = 40
+                travelSublightSpeedBase = 5
+                travelJumpSpeedBase = 1
         End Select
     End Sub
     Private Shared shipNames As New List(Of String)
@@ -151,14 +161,18 @@
         End Get
     End Property
     Private travelDescription As String
+    Private travelJumpSpeedBase As Integer
+    Private travelSublightSpeedBase As Integer
     Friend ReadOnly Property travelSpeed(ByVal jump As Boolean) As Integer
         Get
             Dim totalSpeed As Integer = 0
             If jump = True Then
+                totalSpeed += travelJumpSpeedBase
                 For Each hc As hcJumpDrive In hullComponents(GetType(hcJumpDrive))
                     If hc.isActive = True Then totalSpeed += hc.jumpSpeed
                 Next
             Else
+                totalSpeed += travelSublightSpeedBase
                 For Each hc As hcEngine In hullComponents(GetType(hcEngine))
                     If hc.isActive = True Then totalSpeed += hc.speed
                 Next

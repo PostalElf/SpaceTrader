@@ -6,9 +6,6 @@
         For Each kvp In servicePricesDefault
             servicesPrices.Add(kvp.Key, kvp.Value)
         Next
-        For n = 1 To 5
-            adjustProductPrices(r)
-        Next
     End Sub
     Friend Shared Function build(ByRef star As star, ByVal planetNumber As Integer, ByRef r As Random) As planet
         Dim planet As New planet(r)
@@ -42,6 +39,11 @@
             .type = buildType(r)
             ._distanceToGate = buildDistanceToGate(.type, r)
             .habitation = buildHabitation(.type, r)
+
+            .servicesAvailability = buildServiceAvailability(r, .role, .type)
+            For n = 1 To 5
+                .adjustProductPrices(r)
+            Next
         End With
         Return planet
     End Function
@@ -170,6 +172,74 @@
                 Return Nothing
         End Select
     End Function
+    Private Shared Function buildServiceAvailability(ByRef r As Random, ByVal role As ePlanetRole, ByVal type As ePlanetType) As Dictionary(Of Integer, Dictionary(Of eService, Integer))
+        Dim total As New Dictionary(Of Integer, Dictionary(Of eService, Integer))
+        For n = 1 To 4
+            Dim penalty As Integer = constrain(20 * n, 0, 85)
+            total.Add(n, New Dictionary(Of eService, Integer))
+            total(n).Add(eService.Repair, 100)
+
+            Dim storage As Integer = 100 - penalty
+            Dim war As Integer = 100 - penalty
+            Dim travel As Integer = 100 - penalty
+            Dim production As Integer = 100 - penalty
+
+            Select Case role
+                Case ePlanetRole.Mining
+                    war += 10
+                    travel -= 10
+                Case ePlanetRole.Industrial
+                    storage -= 10
+                    war += 10
+                Case ePlanetRole.Research
+                    storage -= 10
+                    production += 20
+                    war -= 10
+                Case ePlanetRole.Prison
+                    storage += 10
+                    war -= 20
+                    travel += 10
+                Case ePlanetRole.Agarian
+                    storage += 10
+                    travel -= 10
+                Case ePlanetRole.Cultural
+                    war -= 5
+                    production += 5
+                Case ePlanetRole.Commercial
+                Case ePlanetRole.Tourist
+                    storage += 10
+                    war -= 10
+            End Select
+
+            Select Case type
+                Case ePlanetType.Sprawl
+                    war += 5
+                Case ePlanetType.Wasteland
+                    storage += 5
+                Case ePlanetType.Eden
+                    war -= 5
+                    production += 10
+                Case ePlanetType.Barren
+                    storage += 5
+                Case ePlanetType.Oceanic
+                    travel += 5
+                Case ePlanetType.Desert
+                    travel += 5
+                Case ePlanetType.Volcanic
+                    production += 5
+                Case ePlanetType.Gaseous
+                    travel += 5
+            End Select
+
+            With total(n)
+                .Add(eService.Storage, constrain(storage, 15, 100))
+                .Add(eService.War, constrain(war, 15, 100))
+                .Add(eService.Travel, constrain(travel, 15, 100))
+                .Add(eService.Production, constrain(production, 15, 100))
+            End With
+        Next
+        Return total
+    End Function
 
     Public Overrides Function ToString() As String
         Return name
@@ -244,7 +314,6 @@
     Private type As ePlanetType
     Private habitation As String
     Private productsPrices As New Dictionary(Of eResource, Integer)
-    Private servicesPrices As New Dictionary(Of eService, Integer)
     Friend Function getProductPriceSell(ByVal product As eResource) As Integer
         Dim total As Integer = productsPrices(product)
         If productsImport.Contains(product) Then total *= 1.5
@@ -254,9 +323,6 @@
     Friend Function getProductPriceBuy(ByVal product As eResource) As Integer
         Dim total As Integer = getProductPriceSell(product) * 0.75
         Return total
-    End Function
-    Friend Function getServicePrice(ByVal service As eService) As Integer
-        Return servicesPrices(service)
     End Function
     Private Sub adjustProductPrices(Optional ByRef r As Random = Nothing)
         If r Is Nothing Then r = rng
@@ -289,6 +355,22 @@
         If iList.Contains(res) = False Then Exit Sub
         iList.Remove(res)
     End Sub
+
+    Private servicesPrices As New Dictionary(Of eService, Integer)
+    Private servicesAvailability As New Dictionary(Of Integer, Dictionary(Of eService, Integer))
+    Friend Function getServicePrice(ByVal service As eService) As Integer
+        Return servicesPrices(service)
+    End Function
+    Friend Function getServiceAvailability(ByVal service As eService, ByVal tier As Integer) As Integer
+        If tier < 1 OrElse tier > 4 Then
+            MsgBox("getServiceAvailability tier out of range")
+            Return -1
+        End If
+        If service = Nothing Then Return -1
+
+        Dim tierDict As Dictionary(Of eService, Integer) = servicesAvailability(tier)
+        Return tierDict(service)
+    End Function
 
     Private Const priceMin As Double = 0.5
     Private Const priceMax As Double = 1.5
@@ -329,9 +411,13 @@
     Private Shared servicePricesDefault As Dictionary(Of eService, Integer) = buildServicePricesDefault()
     Private Shared Function buildServicePricesDefault() As Dictionary(Of eService, Integer)
         Dim total As New Dictionary(Of eService, Integer)
-        With total
-            .Add(eService.Repair, 10)
-        End With
+        For Each es In constants.serviceArray
+            total.Add(es, 100)
+        Next
+
+        'for repair, represents cost per armour
+        'for all other services, represents percentage of base product cost
+        total(eService.Repair) = 10
         Return total
     End Function
     Friend Shared servicePricesRange As Dictionary(Of eService, range) = buildServicePricesRange()

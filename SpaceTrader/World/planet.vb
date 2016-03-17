@@ -235,7 +235,9 @@
     Friend Function getDistanceTo(ByRef destination As planet) As Integer
         If destination.star.Equals(star) = False Then Return -1
 
-        Return Math.Abs(distanceToGate - destination.distanceToGate)
+        Dim total As Integer = Math.Abs(distanceToGate - destination.distanceToGate)
+        total = constrain(total, 1, Int32.MaxValue)
+        Return total
     End Function
 
     Private role As ePlanetRole

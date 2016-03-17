@@ -63,20 +63,8 @@
         Console.WriteLine(indd & fakeTab("Hull:", ftlen) & hullSpaceOccupied & "/" & hullSpaceMaxBase)
         consoleReportHullComponents(indent + 2, "└ ")
 
-        Dim crewList As List(Of crew) = getCrews()
-        If crewList.Count > 0 Then
-            Console.WriteLine(indd & "Crew:")
-            For Each crew In crewList
-                Console.Write(inddd & "└ " & crew.name)
-                If crew.crewAssignment Is Nothing = False Then Console.Write(" (" & crew.crewAssignment.hullComponent.name & ")")
-                Console.WriteLine()
-            Next
-        End If
-
-        Console.WriteLine(indd & "Cargo Bay:")
-        For Each r In constants.resourceArray
-            Console.WriteLine(inddd & "└ " & fakeTab(r.ToString & ":", 13) & resources(r) & "/" & resourcesMax(r))
-        Next
+        consoleReportCrew(indent + 1)
+        consoleReportCargo(indent + 1)
     End Sub
     Private Sub consoleReportHullComponents(ByVal indent As Integer, Optional ByVal prefix As String = "")
         Dim ind As String = vbSpace(indent) & prefix
@@ -89,6 +77,35 @@
 
         For Each hc In hullComponentsList
             Console.WriteLine(ind & fakeTab(hc.name & ":", ftlen) & hc.consoleDescription & " " & hc.consoleResourceDescription)
+        Next
+    End Sub
+    Private Sub consoleReportCrew(ByVal indent As Integer)
+        Dim ind As String = vbSpace(indent)
+        Dim indd As String = vbSpace(indent + 1)
+
+        Dim crewList As List(Of crew) = getCrews()
+        If crewList.Count > 0 Then
+            Dim ftlen As Integer = 0
+            For Each crew In crewList
+                If crew.name.Length > ftlen Then ftlen = crew.name.Length
+            Next
+            ftlen += 3
+
+            Console.WriteLine(ind & "Crew:")
+            For Each crew In crewList
+                Console.Write(indd & fakeTab("└ " & crew.name, ftlen))
+                If crew.crewAssignment Is Nothing = False Then Console.Write(" (" & crew.crewAssignment.hullComponent.name & ")")
+                Console.WriteLine()
+            Next
+        End If
+    End Sub
+    Private Sub consoleReportCargo(ByVal indent As Integer)
+        Dim ind As String = vbSpace(indent)
+        Dim indd As String = vbSpace(indent + 1)
+
+        Console.WriteLine(ind & "Cargo Bay:")
+        For Each r In constants.resourceArray
+            Console.WriteLine(indd & "└ " & fakeTab(r.ToString & ":", 13) & resources(r) & "/" & resourcesMax(r))
         Next
     End Sub
     Friend Sub consoleReportAlarms(ByVal indent As Integer)

@@ -19,9 +19,12 @@
         ship.addComponent(New hcWeapon("Chaingun", 5, 1, eDamageType.Ballistic))
         ship.addComponent(New hcCargo("Gaol", 5, eResource.Slaves, 30))
         ship.addComponent(New hcDefence("Shield Battery", 5, eDefenceType.Shields, 5))
-        Dim aeroponics As New hcProducer("Aeroponics Bay", 5, eResource.Food, 1, 5, eResource.Organics, 5)
+        Dim aeroponics As New hcProducer("Aeroponics Bay", 5, eResource.Organics, 1, 5, eResource.Organics, 5)
         aeroponics.crewable.SetProperties(1, 3)
         ship.addComponent(aeroponics)
+        Dim kitchen As New hcProducer("Microkitchen", 5, eResource.Food, 1, 4, eResource.Organics, 10)
+        kitchen.crewable.SetProperties(1, 1)
+        ship.addComponent(kitchen)
         ship.addComponent(New hcEngine("Z-23 Moonbeam Engines", 5, 100, 1, eResource.Chemicals, 5))
         ship.addComponent(New hcJumpDrive("Whirlwind Jumpdrive", 5, 10, eResource.Azoth, 5))
         ship.addComponent(New hcCrewQuarters("Crew Cabin", 5, 5, eRace.Human, eResource.Food, 1))
@@ -219,7 +222,11 @@
             Console.ReadKey()
         ElseIf cmd.Length = 3 Then
             Dim destination As planet = starmap.getPlanet(cmd(1), CInt(cmd(2)))
-            If destination Is Nothing Then Exit Sub
+            If destination Is Nothing Then
+                Console.WriteLine("Invalid travel destination.")
+                Console.ReadKey()
+                Exit Sub
+            End If
 
             If menu.confirmChoice(0, "Travel to " & destination.name & "? ") = False Then Exit Sub
             ship.setTravelDestination(destination)

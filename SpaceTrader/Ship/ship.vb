@@ -320,7 +320,7 @@
     End Sub
 
     Private hullComponents As New Dictionary(Of Type, List(Of hullComponent))
-    Private ReadOnly Property hullComponentsList As List(Of hullComponent)
+    Friend ReadOnly Property hullComponentsList As List(Of hullComponent)
         Get
             Dim total As New List(Of hullComponent)
             For Each kvp In hullComponents

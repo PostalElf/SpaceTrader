@@ -32,6 +32,7 @@
         For n = 1 To 3
             ship.addCrew(crew.build(eRace.Human))
         Next
+        ship.addCrew(crew.build(eRace.Uplifted))
         ship.allLoadResource()
         ship.allAssignCrewBest()
         ship.teleportTo(starmap.stars(0).planets(0))
@@ -75,6 +76,8 @@
             Case "addexport"
                 If ship.planet Is Nothing Then Exit Sub
                 ship.planet.addShipment(getResourceFromStr(cmd(1)), False)
+            Case "loadresources", "loadresource", "lr", "lrs"
+                cmdLoadResource(cmd)
 
 
             Case "shop", "sh"
@@ -238,6 +241,20 @@
 
             If menu.confirmChoice(0, "Travel to " & destination.name & "? ") = False Then Exit Sub
             ship.setTravelDestination(destination)
+        End If
+    End Sub
+    Private Sub cmdLoadResource(ByVal cmd As String())
+        If cmd(0) = "lrs" OrElse cmd(0) = "loadresources" Then
+            ship.allLoadResource()
+            Exit Sub
+        End If
+
+        Console.WriteLine()
+        Dim choice As hullComponent = menu.getListChoice(ship.hullComponentsList, 1, "Select a hull component:")
+        If choice Is Nothing Then Exit Sub
+        If choice.loadResource() = False Then
+            Console.WriteLine("Load failure.")
+            Console.ReadKey()
         End If
     End Sub
 

@@ -5,7 +5,7 @@
         If aResourceSlot <> Nothing AndAlso aResourceQtyPerUse <> 0 Then setResourceSlot(aResourceSlot, aResourceQtyPerUse)
     End Sub
     Public Overrides Function ToString() As String
-        Return name & ": " & consoleDescription()
+        Return name
     End Function
     Friend Function consoleResourceDescription() As String
         If resourceSlot = Nothing Then Return Nothing

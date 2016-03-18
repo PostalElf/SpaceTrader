@@ -6,11 +6,8 @@
         For Each kvp In servicePricesDefault
             servicesPrices.Add(kvp.Key, kvp.Value)
         Next
-        For n = 1 To 4
-            services.Add(n, New Dictionary(Of eService, saleable))
-            For Each s In constants.serviceArray
-                services(n).Add(s, Nothing)
-            Next
+        For Each s In constants.serviceArray
+            services.Add(s, Nothing)
         Next
     End Sub
     Friend Shared Function build(ByRef star As star, ByVal planetNumber As Integer, ByRef r As Random) As planet
@@ -179,72 +176,68 @@
                 Return Nothing
         End Select
     End Function
-    Private Shared Function buildServiceAvailability(ByVal role As ePlanetRole, ByVal type As ePlanetType) As Dictionary(Of Integer, Dictionary(Of eService, Integer))
-        Dim total As New Dictionary(Of Integer, Dictionary(Of eService, Integer))
-        For n = 1 To 4
-            Dim penalty As Integer = constrain(20 * n, 0, 85)
-            total.Add(n, New Dictionary(Of eService, Integer))
-            total(n).Add(eService.Repair, 100)
+    Private Shared Function buildServiceAvailability(ByVal role As ePlanetRole, ByVal type As ePlanetType) As Dictionary(Of eService, Integer)
+        Dim total As New Dictionary(Of eService, Integer)
 
-            Dim storage As Integer = 100 - penalty
-            Dim war As Integer = 100 - penalty
-            Dim travel As Integer = 100 - penalty
-            Dim production As Integer = 100 - penalty
+        Dim storage As Integer = 100
+        Dim war As Integer = 100
+        Dim travel As Integer = 100
+        Dim production As Integer = 100
 
-            Select Case role
-                Case ePlanetRole.Mining
-                    war += 10
-                    travel -= 10
-                Case ePlanetRole.Industrial
-                    storage -= 10
-                    war += 10
-                Case ePlanetRole.Research
-                    storage -= 10
-                    production += 20
-                    war -= 10
-                Case ePlanetRole.Prison
-                    storage += 10
-                    war -= 20
-                    travel += 10
-                Case ePlanetRole.Agarian
-                    storage += 10
-                    travel -= 10
-                Case ePlanetRole.Cultural
-                    war -= 5
-                    production += 5
-                Case ePlanetRole.Commercial
-                Case ePlanetRole.Tourist
-                    storage += 10
-                    war -= 10
-            End Select
+        Select Case role
+            Case ePlanetRole.Mining
+                war += 10
+                travel -= 10
+            Case ePlanetRole.Industrial
+                storage -= 10
+                war += 10
+            Case ePlanetRole.Research
+                storage -= 10
+                production += 20
+                war -= 10
+            Case ePlanetRole.Prison
+                storage += 10
+                war -= 20
+                travel += 10
+            Case ePlanetRole.Agarian
+                storage += 10
+                travel -= 10
+            Case ePlanetRole.Cultural
+                war -= 5
+                production += 5
+            Case ePlanetRole.Commercial
+            Case ePlanetRole.Tourist
+                storage += 10
+                war -= 10
+        End Select
 
-            Select Case type
-                Case ePlanetType.Sprawl
-                    war += 5
-                Case ePlanetType.Wasteland
-                    storage += 5
-                Case ePlanetType.Eden
-                    war -= 5
-                    production += 10
-                Case ePlanetType.Barren
-                    storage += 5
-                Case ePlanetType.Oceanic
-                    travel += 5
-                Case ePlanetType.Desert
-                    travel += 5
-                Case ePlanetType.Volcanic
-                    production += 5
-                Case ePlanetType.Gaseous
-                    travel += 5
-            End Select
+        Select Case type
+            Case ePlanetType.Sprawl
+                war += 5
+            Case ePlanetType.Wasteland
+                storage += 5
+            Case ePlanetType.Eden
+                war -= 5
+                production += 10
+            Case ePlanetType.Barren
+                storage += 5
+            Case ePlanetType.Oceanic
+                travel += 5
+            Case ePlanetType.Desert
+                travel += 5
+            Case ePlanetType.Volcanic
+                production += 5
+            Case ePlanetType.Gaseous
+                travel += 5
+        End Select
 
-            With total(n)
-                .Add(eService.Storage, constrain(storage, 15, 100))
-                .Add(eService.War, constrain(war, 15, 100))
-                .Add(eService.Travel, constrain(travel, 15, 100))
-                .Add(eService.Production, constrain(production, 15, 100))
-            End With
-        Next
+        With total
+            .Add(eService.Repair, 100)
+            .Add(eService.Storage, constrain(storage, 15, 100))
+            .Add(eService.War, constrain(war, 15, 100))
+            .Add(eService.Travel, constrain(travel, 15, 100))
+            .Add(eService.Production, constrain(production, 15, 100))
+        End With
         Return total
     End Function
 
@@ -360,23 +353,19 @@
         iList.Remove(res)
     End Sub
 
-    Private services As New Dictionary(Of Integer, Dictionary(Of eService, saleable))
-    Private servicesAvailability As New Dictionary(Of Integer, Dictionary(Of eService, Integer))
+    Private services As New Dictionary(Of eService, saleable)
+    Private servicesAvailability As New Dictionary(Of eService, Integer)
     Private servicesPrices As New Dictionary(Of eService, Integer)
     Friend Function getServicePrice(ByVal service As eService) As Integer
         Return servicesPrices(service)
     End Function
-    Private ReadOnly Property servicesList As List(Of saleable)
-        Get
-            Dim total As New List(Of saleable)
-            For tier = 1 To 4
-                For Each kvp In services(tier)
-                    If kvp.Value Is Nothing = False Then total.Add(kvp.Value)
-                Next
-            Next
-            Return total
-        End Get
-    End Property
+    Private Function servicesList() As List(Of saleable)
+        Dim total As New List(Of saleable)
+        For Each kvp In services
+            If kvp.Value Is Nothing = False Then total.Add(kvp.Value)
+        Next
+        Return total
+    End Function
 
     Private Const priceMin As Double = 0.5
     Private Const priceMax As Double = 1.5
@@ -461,21 +450,34 @@
     Private Sub adjustServices(Optional ByRef r As Random = Nothing)
         If r Is Nothing Then r = rng
 
-        For tier = 1 To 4
-            For Each service As eService In constants.serviceArray
-                If service = eService.Repair Then Continue For
+        For Each service As eService In constants.serviceArray
+            If service = eService.Repair Then Continue For
 
-                Dim spawnChance As Integer = servicesAvailability(tier)(service)
-                Dim current As saleable = services(tier)(service)
+            Dim current As saleable = services(service)
 
-                If current Is Nothing = False Then
-                    current.tickSale()
-                    If current.isExpired = True Then services(tier)(service) = Nothing
+            'tick if current is present
+            If current Is Nothing = False Then
+                current.tickSale()
+                If current.isExpired = True Then services(service) = Nothing
+            End If
+
+            'roll spawnchance if current is empty
+            'this is outside of tick check because there's a chance that the current may have expired,
+            'in which case a new saleable is now added
+            Dim spawnChance As Integer = servicesAvailability(service)
+            If current Is Nothing AndAlso servicesList.Count < 5 Then
+                If percentRoll(spawnChance) = True Then
+                    Dim tier As Integer
+                    Select Case r.Next(1, 11)
+                        Case 1 To 4 : tier = 1
+                        Case 5 To 7 : tier = 2
+                        Case 8 To 9 : tier = 3
+                        Case 10 : tier = 4
+                    End Select
+
+                    services(service) = saleable.buildRandom(tier, service, r)
                 End If
-                If current Is Nothing AndAlso servicesList.Count < 5 Then
-                    If percentRoll(spawnChance) = True Then services(tier)(service) = saleable.buildRandom(tier, service, r)
-                End If
-            Next
+            End If
         Next
     End Sub
 End Class

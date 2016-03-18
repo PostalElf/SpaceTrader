@@ -1,19 +1,22 @@
 ﻿Public MustInherit Class hullComponent
-    Implements ihcSaleable
     Friend Sub New(ByVal aName As String, ByVal aSize As Integer, ByVal aResourceSlot As eResource, ByVal aResourceQtyPerUse As Integer)
         _name = aName
         _size = aSize
         If aResourceSlot <> Nothing AndAlso aResourceQtyPerUse <> 0 Then setResourceSlot(aResourceSlot, aResourceQtyPerUse)
     End Sub
     Friend Shared Function build(ByVal targetName As String) As hullComponent
-        Dim inputList As List(Of String) = bracketFileget("data/hullcomponents.txt", targetName)
+        Dim inputList As Queue(Of String) = bracketFileget("data/hullcomponents.txt", targetName)
         If inputList Is Nothing Then Return Nothing
+        Return build(inputList)
+    End Function
+    Friend Shared Function build(ByVal inputlist As Queue(Of String)) As hullComponent
+        'get name from head of queue
+        Dim targetName As String = inputlist.Dequeue
+
 
         'initialise variables
         Dim type As String = ""
         Dim size As Integer
-        Dim tier As Integer
-        Dim cost As Integer
         Dim value As Integer
         Dim crewRace As eRace
         Dim crewMax As Integer
@@ -30,8 +33,9 @@
         Dim crewableMax As Integer
 
 
-        For Each line In inputList
+        While inputlist.Count > 0
             'split and trim
+            Dim line As String = inputlist.Dequeue
             Dim ln As String() = line.Split(":")
             For n = 0 To ln.Length - 1
                 ln(n) = ln(n).Trim
@@ -40,8 +44,6 @@
             Select Case ln(0).ToLower
                 Case "type" : type = ln(1)
                 Case "size" : size = CInt(ln(1))
-                Case "tier" : tier = CInt(ln(1))
-                Case "cost" : cost = CInt(ln(1))
                 Case "value" : value = CInt(ln(1))
                 Case "crewrace" : crewRace = constants.getEnumFromString(ln(1), constants.raceArray)
                 Case "crewmax" : crewMax = CInt(ln(1))
@@ -57,7 +59,7 @@
                 Case "crewablemin" : crewableMin = CInt(ln(1))
                 Case "crewablemax" : crewableMax = CInt(ln(1))
             End Select
-        Next
+        End While
 
         Dim hc As hullComponent = Nothing
         Select Case type.ToLower
@@ -70,7 +72,6 @@
             Case "weapon" : hc = New hcWeapon(targetName, size, damage, damageType, resourceSlot, resourceQtyPerUse)
         End Select
         buildCrewable(hc, crewableMin, crewableMax)
-        buildSaleable(hc, tier, cost)
         Return hc
     End Function
     Private Shared Sub buildCrewable(ByRef hc As hullComponent, ByVal crewableMin As Integer, ByVal crewableMax As Integer)
@@ -81,15 +82,7 @@
         Dim i As ihcCrewable = CType(hc, ihcCrewable)
         i.crewable.SetProperties(crewableMin, crewableMax)
     End Sub
-    Private Shared Sub buildSaleable(ByRef hc As hullComponent, ByVal tier As Integer, ByVal cost As Integer)
-        If hc Is Nothing Then Exit Sub
-        If TypeOf hc Is ihcSaleable = False Then Exit Sub
-        If tier = 0 OrElse cost = 0 Then Exit Sub
 
-        Dim i As ihcSaleable = CType(hc, ihcSaleable)
-        i.saleTier = tier
-        i.saleCost = cost
-    End Sub
     Public Overrides Function ToString() As String
         Return name
     End Function
@@ -107,7 +100,7 @@
     End Property
 
     Protected _name As String
-    Friend ReadOnly Property name As String Implements ihcSaleable.name
+    Friend ReadOnly Property name As String
         Get
             Return _name
         End Get
@@ -119,8 +112,6 @@
             Return _size
         End Get
     End Property
-    Friend Property saleCost As Integer Implements ihcSaleable.saleCost
-    Friend Property saleTier As Integer Implements ihcSaleable.saleTier
 
     Friend Overridable Sub tickTravel()
         'handle in subclass if necessary

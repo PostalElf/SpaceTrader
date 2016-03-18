@@ -6,6 +6,12 @@
         For Each kvp In servicePricesDefault
             servicesPrices.Add(kvp.Key, kvp.Value)
         Next
+        For n = 1 To 4
+            services.Add(n, New Dictionary(Of eService, saleable))
+            For Each s In constants.serviceArray
+                services(n).Add(s, Nothing)
+            Next
+        Next
     End Sub
     Friend Shared Function build(ByRef star As star, ByVal planetNumber As Integer, ByRef r As Random) As planet
         Dim planet As New planet(r)
@@ -40,10 +46,11 @@
             ._distanceToGate = buildDistanceToGate(.type, r)
             .habitation = buildHabitation(.type, r)
 
-            .servicesAvailability = buildServiceAvailability(r, .role, .type)
+            .servicesAvailability = buildServiceAvailability(.role, .type)
             For n = 1 To 5
-                .adjustProductPrices(r)
+                .adjustPrices(r)
             Next
+            .adjustServices(r)
         End With
         Return planet
     End Function
@@ -172,7 +179,7 @@
                 Return Nothing
         End Select
     End Function
-    Private Shared Function buildServiceAvailability(ByRef r As Random, ByVal role As ePlanetRole, ByVal type As ePlanetType) As Dictionary(Of Integer, Dictionary(Of eService, Integer))
+    Private Shared Function buildServiceAvailability(ByVal role As ePlanetRole, ByVal type As ePlanetType) As Dictionary(Of Integer, Dictionary(Of eService, Integer))
         Dim total As New Dictionary(Of Integer, Dictionary(Of eService, Integer))
         For n = 1 To 4
             Dim penalty As Integer = constrain(20 * n, 0, 85)
@@ -259,7 +266,6 @@
     Friend Sub consoleReportShop(ByVal indent As Integer)
         Dim ind As String = vbSpace(indent)
         Dim indd As String = vbSpace(indent + 1)
-        Dim inddd As String = vbSpace(indent + 2)
         Const ftLen As Integer = 13
 
         If productsImport.Count > 0 Then
@@ -267,7 +273,7 @@
             For Each p In productsImport
                 inputList.Add(p.ToString)
             Next
-            Console.Write(indd & "Imports:  ")
+            Console.Write(ind & "Imports:  ")
             Console.WriteLine(withCommas(inputList))
         End If
         If productsExport.Count > 0 Then
@@ -275,12 +281,25 @@
             For Each p In productsExport
                 inputList.Add(p.ToString)
             Next
-            Console.Write(indd & "Exports:  ")
+            Console.Write(ind & "Exports:  ")
             Console.WriteLine(withCommas(inputList))
         End If
-        Console.WriteLine(indd & "Prices:")
+        Console.WriteLine(ind & "Prices:")
         For Each product As eResource In constants.resourceArray
-            Console.WriteLine(inddd & "└ " & fakeTab(product.ToString & ":", ftLen) & getProductPriceBuy(product) & "/" & getProductPriceSell(product))
+            Console.WriteLine(indd & "└ " & fakeTab(product.ToString & ":", ftLen) & getProductPriceBuy(product) & "/" & getProductPriceSell(product))
+        Next
+
+        Console.WriteLine(ind & "Shipyard:")
+        Dim ftlen2 As Integer = 0
+        For Each saleable In servicesList
+            If saleable.name.Length > ftlen2 Then ftlen2 = saleable.name.Length
+        Next
+        ftlen2 += 3
+        For Each saleable In servicesList
+            With saleable
+                Dim cost As Integer = .saleCost / getServicePrice(.service) * 100
+                Console.WriteLine(indd & "└ " & fakeTab(.name & ":", ftlen2) & "¥" & cost.ToString("N0"))
+            End With
         Next
     End Sub
 
@@ -324,21 +343,6 @@
         Dim total As Integer = getProductPriceSell(product) * 0.75
         Return total
     End Function
-    Private Sub adjustProductPrices(Optional ByRef r As Random = Nothing)
-        If r Is Nothing Then r = rng
-        For Each res In constants.resourceArray
-            Dim maxVariance As Integer = (productsPrices(res) * 0.1)
-            Dim variance As Integer = lumpyRng(-maxVariance, maxVariance, r)
-            productsPrices(res) += variance
-            productsPrices(res) = constrain(productsPrices(res), productPricesRange(res))
-        Next
-        For Each s In constants.serviceArray
-            Dim maxVariance As Integer = (servicesPrices(s) * 0.1)
-            Dim variance As Integer = lumpyRng(-maxVariance, maxVariance, r)
-            servicesPrices(s) += variance
-            servicesPrices(s) = constrain(servicesPrices(s), servicePricesRange(s))
-        Next
-    End Sub
     Private productsImport As New List(Of eResource)
     Private productsExport As New List(Of eResource)
     Friend Sub addShipment(ByVal res As eResource, ByVal isImport As Boolean)
@@ -356,21 +360,23 @@
         iList.Remove(res)
     End Sub
 
-    Private servicesPrices As New Dictionary(Of eService, Integer)
+    Private services As New Dictionary(Of Integer, Dictionary(Of eService, saleable))
     Private servicesAvailability As New Dictionary(Of Integer, Dictionary(Of eService, Integer))
+    Private servicesPrices As New Dictionary(Of eService, Integer)
     Friend Function getServicePrice(ByVal service As eService) As Integer
         Return servicesPrices(service)
     End Function
-    Friend Function getServiceAvailability(ByVal service As eService, ByVal tier As Integer) As Integer
-        If tier < 1 OrElse tier > 4 Then
-            MsgBox("getServiceAvailability tier out of range")
-            Return -1
-        End If
-        If service = Nothing Then Return -1
-
-        Dim tierDict As Dictionary(Of eService, Integer) = servicesAvailability(tier)
-        Return tierDict(service)
-    End Function
+    Private ReadOnly Property servicesList As List(Of saleable)
+        Get
+            Dim total As New List(Of saleable)
+            For tier = 1 To 4
+                For Each kvp In services(tier)
+                    If kvp.Value Is Nothing = False Then total.Add(kvp.Value)
+                Next
+            Next
+            Return total
+        End Get
+    End Property
 
     Private Const priceMin As Double = 0.5
     Private Const priceMax As Double = 1.5
@@ -434,6 +440,42 @@
     End Function
 
     Friend Sub tick()
-        adjustProductPrices()
+        adjustPrices()
+        adjustServices()
+    End Sub
+    Private Sub adjustPrices(Optional ByRef r As Random = Nothing)
+        If r Is Nothing Then r = rng
+        For Each res In constants.resourceArray
+            Dim maxVariance As Integer = (productsPrices(res) * 0.1)
+            Dim variance As Integer = lumpyRng(-maxVariance, maxVariance, r)
+            productsPrices(res) += variance
+            productsPrices(res) = constrain(productsPrices(res), productPricesRange(res))
+        Next
+        For Each s In constants.serviceArray
+            Dim maxVariance As Integer = (servicesPrices(s) * 0.1)
+            Dim variance As Integer = lumpyRng(-maxVariance, maxVariance, r)
+            servicesPrices(s) += variance
+            servicesPrices(s) = constrain(servicesPrices(s), servicePricesRange(s))
+        Next
+    End Sub
+    Private Sub adjustServices(Optional ByRef r As Random = Nothing)
+        If r Is Nothing Then r = rng
+
+        For tier = 1 To 4
+            For Each service As eService In constants.serviceArray
+                If service = eService.Repair Then Continue For
+
+                Dim spawnChance As Integer = servicesAvailability(tier)(service)
+                Dim current As saleable = services(tier)(service)
+
+                If current Is Nothing = False Then
+                    current.tickSale()
+                    If current.isExpired = True Then services(tier)(service) = Nothing
+                End If
+                If current Is Nothing AndAlso servicesList.Count < 5 Then
+                    If percentRoll(spawnChance) = True Then services(tier)(service) = saleable.buildRandom(tier, service, r)
+                End If
+            Next
+        Next
     End Sub
 End Class

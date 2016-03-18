@@ -74,7 +74,7 @@
                 If ship.planet Is Nothing Then Exit Sub
                 Console.Clear()
                 ship.planet.consoleReport(0)
-                ship.planet.consoleReportShop(0)
+                ship.planet.consoleReportShop(1)
                 Console.ReadKey()
             Case "buy"
                 cmdBuySell(cmd, True)

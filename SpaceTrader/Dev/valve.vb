@@ -210,8 +210,8 @@ Imports Microsoft.VisualBasic.FileIO
 
         Return templist
     End Function
-    Public Function bracketFileget(ByVal pathname As String, ByVal bracketString As String) As List(Of String)
-        Dim total As New List(Of String)
+    Public Function bracketFileget(ByVal pathname As String, ByVal bracketString As String) As Queue(Of String)
+        Dim total As New Queue(Of String)
         Try
             Dim line As String
             Using sr As New StreamReader(pathname)
@@ -219,6 +219,8 @@ Imports Microsoft.VisualBasic.FileIO
                     line = sr.ReadLine
                     If line = "[" & bracketString & "]" Then
                         'found bracketString
+                        total.Enqueue(bracketString)
+
                         'keep reading until next bracket
                         While sr.Peek <> -1
                             line = sr.ReadLine
@@ -227,11 +229,45 @@ Imports Microsoft.VisualBasic.FileIO
                                 Return total
                             Else
                                 'make sure that line doesn't start with comment char (-) and that line is not empty
-                                If line <> "" AndAlso line.StartsWith("-") = False Then total.Add(line)
+                                If line <> "" AndAlso line.StartsWith("-") = False Then total.Enqueue(line)
                             End If
                         End While
                     End If
                 End While
+            End Using
+        Catch ex As Exception
+            MsgBox(ex.ToString)
+            Return Nothing
+        End Try
+        Return total
+    End Function
+    Public Function bracketFilegetAll(ByVal pathname As String) As List(Of Queue(Of String))
+        Dim total As New List(Of Queue(Of String))
+        Try
+            Dim line As String
+            Using sr As New StreamReader(pathname)
+                Dim current As New Queue(Of String)
+                While sr.Peek <> -1
+                    line = sr.ReadLine
+                    If line.StartsWith("-") Then Continue While
+                    If line.StartsWith("[") Then
+                        'remove brackets
+                        line = line.Remove(0, 1)
+                        line = line.Remove(line.Length - 1, 1)
+
+                        'if current is filled, add to total
+                        If current.Count > 0 Then total.Add(current)
+
+                        'start new current with bracketstring as header
+                        current = New Queue(Of String)
+                        current.Enqueue(line)
+                    Else
+                        If line <> "" Then current.Enqueue(line)
+                    End If
+                End While
+
+                'add last entry
+                If current.Count > 0 Then total.Add(current)
             End Using
         Catch ex As Exception
             MsgBox(ex.ToString)

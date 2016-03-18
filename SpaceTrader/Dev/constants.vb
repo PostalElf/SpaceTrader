@@ -60,4 +60,15 @@
         Next
         Return Nothing
     End Function
+    Friend Shared Function getServiceFromTypeString(ByVal str As String) As eService
+        Select Case str.ToLower
+            Case "cargo", "crewquarters" : Return eService.Storage
+            Case "defence", "weapon" : Return eService.War
+            Case "engine", "jumpdrive" : Return eService.Travel
+            Case "producer" : Return eService.Production
+            Case Else
+                MsgBox("getServiceFromTypeString exception")
+                Return Nothing
+        End Select
+    End Function
 End Class

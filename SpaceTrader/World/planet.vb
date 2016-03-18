@@ -465,8 +465,8 @@
             'this is outside of tick check because there's a chance that the current may have expired,
             'in which case a new saleable is now added
             Dim spawnChance As Integer = servicesAvailability(service)
-            If current Is Nothing AndAlso servicesList.Count < 5 Then
-                If percentRoll(spawnChance) = True Then
+            If current Is Nothing Then
+                If percentRoll(spawnChance, r) = True Then
                     Dim tier As Integer
                     Select Case r.Next(1, 11)
                         Case 1 To 4 : tier = 1

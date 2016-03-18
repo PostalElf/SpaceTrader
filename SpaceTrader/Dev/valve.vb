@@ -111,8 +111,9 @@ Imports Microsoft.VisualBasic.FileIO
         Return s
     End Function
 
-    Public Function percentRoll(ByVal probability As Integer) As Boolean
-        Dim roll As Integer = rng.Next(1, 101)
+    Public Function percentRoll(ByVal probability As Integer, Optional ByRef r As Random = Nothing) As Boolean
+        If r Is Nothing Then r = rng
+        Dim roll As Integer = r.Next(1, 101)
         If roll <= probability Then Return True Else Return False
     End Function
     Public Function lumpyRng(ByVal min As Integer, ByVal max As Integer, Optional ByRef r As Random = Nothing)

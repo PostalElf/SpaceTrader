@@ -298,7 +298,7 @@
         For Each saleable In servicesList
             With saleable
                 Dim cost As Integer = .saleCost / getServicePrice(.service) * 100
-                Console.WriteLine(indd & "└ " & fakeTab(.name & ":", ftlen2) & "¥" & cost.ToString("N0"))
+                Console.WriteLine(indd & "└ " & fakeTab(.name & ":", ftlen2) & "¥" & cost.ToString("N0") & " [" & .saleTimer & "]")
             End With
         Next
     End Sub

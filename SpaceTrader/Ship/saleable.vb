@@ -4,7 +4,17 @@
         _saleTier = tier
         _saleCost = cost
         _service = aService
-        _saleTimer = 10
+
+        Select Case saleTier
+            Case 1 : _saleTimer = 5
+            Case 2 : _saleTimer = 15
+            Case 3 : _saleTimer = 25
+            Case 4 : _saleTimer = 30
+            Case Else : _saleTimer = 10
+        End Select
+    End Sub
+    Friend Sub New(ByRef template As saleable)
+        Me.New(template.name, template.saleTier, template.saleCost, template.service, template.data)
     End Sub
     Friend Shared Function buildRandom(ByVal tier As Integer, ByVal service As eService, Optional ByRef r As Random = Nothing) As saleable
         If r Is Nothing Then r = rng
@@ -12,7 +22,8 @@
         If data.Count = 0 Then Return Nothing
 
         Dim roll As Integer = r.Next(data.Count - 1)
-        Return data(roll)
+        Dim template As saleable = data(roll)
+        Return New saleable(template)
     End Function
     Private Shared allSaleables As Dictionary(Of Integer, Dictionary(Of eService, List(Of saleable))) = buildAllSaleables()
     Private Shared Function buildAllSaleables() As Dictionary(Of Integer, Dictionary(Of eService, List(Of saleable)))

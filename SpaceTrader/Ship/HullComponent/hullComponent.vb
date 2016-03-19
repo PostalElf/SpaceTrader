@@ -16,6 +16,7 @@
 
         'initialise variables
         Dim type As String = ""
+        Dim blueprint As List(Of String) = Nothing
         Dim size As Integer
         Dim value As Integer
         Dim crewRace As eRace
@@ -43,6 +44,7 @@
 
             Select Case ln(0).ToLower
                 Case "type" : type = ln(1)
+                Case "blueprint" : blueprint = buildBlueprint(ln(1))
                 Case "size" : size = CInt(ln(1))
                 Case "value" : value = CInt(ln(1))
                 Case "crewrace" : crewRace = constants.getEnumFromString(ln(1), constants.raceArray)
@@ -71,6 +73,7 @@
             Case "producer" : hc = New hcProducer(targetName, size, resource, resourceProductionTimer, resourceSlot, resourceQtyPerUse)
             Case "weapon" : hc = New hcWeapon(targetName, size, damage, damageType, resourceSlot, resourceQtyPerUse)
         End Select
+        If hc Is Nothing = False Then hc.blueprint = blueprint
         buildCrewable(hc, crewableMin, crewableMax)
         Return hc
     End Function
@@ -82,6 +85,18 @@
         Dim i As ihcCrewable = CType(hc, ihcCrewable)
         i.crewable.SetProperties(crewableMin, crewableMax)
     End Sub
+    Private Shared Function buildBlueprint(ByVal rawstr As String) As List(Of String)
+        'sample format
+        '1 container, 5 struts
+
+        Dim total As New List(Of String)
+        Dim ln As String() = rawstr.Split(",")
+        For Each l In ln
+            l = l.Trim
+            total.Add(l)
+        Next
+        Return total
+    End Function
 
     Public Overrides Function ToString() As String
         Return name
@@ -94,7 +109,7 @@
     Friend Overridable ReadOnly Property alarms As List(Of String)
         Get
             Dim total As New List(Of String)
-            If resourceSlot <> Nothing AndAlso resourceQtyRemaining = 0 Then total.Add("No " & resourceSlot.ToString & " remaining.")
+            If resourceSlot <> Nothing AndAlso resourceQtyRemaining = 0 Then total.Add("Load more " & resourceSlot.ToString & ".")
             Return total
         End Get
     End Property
@@ -112,6 +127,7 @@
             Return _size
         End Get
     End Property
+    Private Property blueprint As New List(Of String)
     Friend MustOverride ReadOnly Property typeString As String
 
     Friend Overridable Sub tickTravel()

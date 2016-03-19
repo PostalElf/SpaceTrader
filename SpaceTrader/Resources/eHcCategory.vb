@@ -1,5 +1,4 @@
-﻿Public Enum eService
-    Repair = 1
+﻿Public Enum eHcCategory
     Storage         'cargo and crewquarters
     War             'weapons and defence
     Travel          'engine and jumpdrive

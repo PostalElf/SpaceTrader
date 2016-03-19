@@ -144,9 +144,9 @@ Imports Microsoft.VisualBasic.FileIO
         Dim range As Integer = max - min
         Return Int(range / 100 * value)
     End Function
-    Public Function coinFlip() As Boolean
-        Randomize()
-        If Int(Rnd() * 2) + 1 = 1 Then Return True Else Return False
+    Public Function coinFlip(Optional ByRef r As Random = Nothing) As Boolean
+        If r Is Nothing Then r = rng
+        If r.Next(0, 2) = 1 Then Return True Else Return False
     End Function
     Public Function pythogoras(ByVal xy1 As xy, ByVal xy2 As xy) As Integer
         Dim x As Integer = Math.Abs(xy1.x - xy2.x)

@@ -4,9 +4,9 @@
             Return System.Enum.GetValues(GetType(eResource))
         End Get
     End Property
-    Friend Shared ReadOnly Property serviceArray As Array
+    Friend Shared ReadOnly Property saleHullComponentArray As Array
         Get
-            Return System.Enum.GetValues(GetType(eService))
+            Return System.Enum.GetValues(GetType(eHcCategory))
         End Get
     End Property
     Friend Shared ReadOnly Property planetRoleArray As Array
@@ -60,12 +60,12 @@
         Next
         Return Nothing
     End Function
-    Friend Shared Function getServiceFromTypeString(ByVal str As String) As eService
+    Friend Shared Function getServiceFromTypeString(ByVal str As String) As eHcCategory
         Select Case str.ToLower
-            Case "cargo", "crewquarters" : Return eService.Storage
-            Case "defence", "weapon" : Return eService.War
-            Case "engine", "jumpdrive" : Return eService.Travel
-            Case "producer" : Return eService.Production
+            Case "cargo", "crewquarters" : Return eHcCategory.Storage
+            Case "defence", "weapon" : Return eHcCategory.War
+            Case "engine", "jumpdrive" : Return eHcCategory.Travel
+            Case "producer" : Return eHcCategory.Production
             Case Else
                 MsgBox("getServiceFromTypeString exception")
                 Return Nothing

@@ -19,6 +19,7 @@
         ship.addComponent(hullComponent.build("Food Megastorage"))
         ship.addComponent(hullComponent.build("Crew Cabin"))
         ship.addComponent(hullComponent.build("Uplifted Maintenance Bay"))
+        ship.addComponent(hullComponent.build("Metal Containers"))
         For n = 1 To 3
             ship.addCrew(crew.build(eRace.Human))
         Next
@@ -168,14 +169,14 @@
     Private Sub cmdBuyShipyard(ByRef cmd As String())
         If ship.planet Is Nothing Then Exit Sub
         Dim i As Integer = CInt(cmd(1))
-        If i < 1 OrElse i > ship.planet.servicesList.Count Then Exit Sub
-        Dim s As saleable = ship.planet.servicesList(i - 1)
+        If i < 1 OrElse i > ship.planet.saleHullComponentList.Count Then Exit Sub
+        Dim s As saleable = ship.planet.saleHullComponentList(i - 1)
         If s Is Nothing Then Exit Sub
 
         Dim ind As String = vbSpace(1)
-        If menu.confirmChoice(0, vbCrLf & ind & "Buy " & s.name & " for ¥" & ship.planet.getServicePrice(s).ToString("N0") & "? ") = False Then Exit Sub
+        If menu.confirmChoice(0, vbCrLf & ind & "Buy " & s.name & " for ¥" & ship.planet.getSaleHullComponentPrice(s).ToString("N0") & "? ") = False Then Exit Sub
 
-        Dim cost As Integer = ship.planet.getServicePrice(s)
+        Dim cost As Integer = ship.planet.getSaleHullComponentPrice(s)
         If player.addCreditsCheck(-cost) = False Then
             Console.WriteLine("Insufficient credits!")
             Console.ReadKey()
@@ -190,7 +191,7 @@
 
         player.addCredits(-cost)
         ship.addComponent(hc)
-        ship.planet.servicesList(i - 1).expire()
+        ship.planet.saleHullComponentList(i - 1).expire()
     End Sub
     Private Sub cmdSellShipyard(ByRef cmd As String())
         If ship.planet Is Nothing Then Exit Sub
@@ -206,7 +207,7 @@
         Dim armour As Integer = defences(0)
         Dim armourMax As Integer = defences(1)
         Dim empty As Integer = armourMax - armour
-        Dim price As Integer = ship.planet.getServicePriceModifier(eService.Repair)
+        Dim price As Integer = ship.planet.getRepairCost()
         Dim totalPrice As Integer = empty * price
 
         Console.WriteLine()
@@ -251,12 +252,12 @@
         If ship.planet Is Nothing Then Exit Sub
         If cmd.Length < 2 Then Exit Sub
         Dim index As Integer = CInt(cmd(1))
-        If index < 1 OrElse index > ship.planet.servicesList.Count Then Exit Sub
-        Dim s As saleable = ship.planet.servicesList(index - 1)
+        If index < 1 OrElse index > ship.planet.saleHullComponentList.Count Then Exit Sub
+        Dim s As saleable = ship.planet.saleHullComponentList(index - 1)
         If s Is Nothing Then Exit Sub
 
         Dim ind As String = vbSpace(1)
-        Dim cost As Integer = ship.planet.getServicePrice(s)
+        Dim cost As Integer = ship.planet.getSaleHullComponentPrice(s)
         Const ftlen As Integer = 14
 
         Console.WriteLine()

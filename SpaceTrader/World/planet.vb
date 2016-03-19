@@ -3,11 +3,11 @@
         For Each kvp In productPricesDefault
             productsPrices.Add(kvp.Key, kvp.Value)
         Next
-        For Each kvp In servicePricesDefault
-            servicesPrices.Add(kvp.Key, kvp.Value)
+        For Each kvp In saleHullComponentPricesDefault
+            saleHullComponentPrices.Add(kvp.Key, kvp.Value)
         Next
-        For Each s In constants.serviceArray
-            services.Add(s, Nothing)
+        For Each s In constants.saleHullComponentArray
+            saleHullComponents.Add(s, Nothing)
         Next
     End Sub
     Friend Shared Function build(ByRef star As star, ByVal planetNumber As Integer, ByRef r As Random) As planet
@@ -43,11 +43,11 @@
             ._distanceToGate = buildDistanceToGate(.type, r)
             .habitation = buildHabitation(.type, r)
 
-            .servicesAvailability = buildServiceAvailability(.role, .type)
+            .saleHullComponentAvailability = buildServiceAvailability(.role, .type)
             For n = 1 To 5
                 .adjustPrices(r)
             Next
-            .adjustServices(r)
+            .adjustSaleHullComponents(r)
         End With
         Return planet
     End Function
@@ -176,8 +176,8 @@
                 Return Nothing
         End Select
     End Function
-    Private Shared Function buildServiceAvailability(ByVal role As ePlanetRole, ByVal type As ePlanetType) As Dictionary(Of eService, Integer)
-        Dim total As New Dictionary(Of eService, Integer)
+    Private Shared Function buildServiceAvailability(ByVal role As ePlanetRole, ByVal type As ePlanetType) As Dictionary(Of eHcCategory, Integer)
+        Dim total As New Dictionary(Of eHcCategory, Integer)
 
         Dim storage As Integer = 100
         Dim war As Integer = 100
@@ -232,11 +232,10 @@
         End Select
 
         With total
-            .Add(eService.Repair, 100)
-            .Add(eService.Storage, constrain(storage, 15, 100))
-            .Add(eService.War, constrain(war, 15, 100))
-            .Add(eService.Travel, constrain(travel, 15, 100))
-            .Add(eService.Production, constrain(production, 15, 100))
+            .Add(eHcCategory.Storage, constrain(storage, 15, 100))
+            .Add(eHcCategory.War, constrain(war, 15, 100))
+            .Add(eHcCategory.Travel, constrain(travel, 15, 100))
+            .Add(eHcCategory.Production, constrain(production, 15, 100))
         End With
         Return total
     End Function
@@ -284,13 +283,13 @@
 
         Console.WriteLine(ind & "Shipyard:")
         Dim ftlen2 As Integer = 0
-        For Each saleable In servicesList
+        For Each saleable In saleHullComponentList
             If saleable.name.Length > ftlen2 Then ftlen2 = saleable.name.Length
         Next
         ftlen2 += 3
-        For Each saleable In servicesList
+        For Each saleable In saleHullComponentList
             With saleable
-                Dim cost As Integer = getServicePrice(saleable)
+                Dim cost As Integer = getSaleHullComponentPrice(saleable)
                 Console.WriteLine(indd & "└ " & fakeTab(.name & ":", ftlen2) & "[" & .saleTimer.ToString("00") & "] " & "¥" & cost.ToString("N0"))
             End With
         Next
@@ -353,19 +352,24 @@
         If iList.Contains(res) = False Then Exit Sub
         iList.Remove(res)
     End Sub
-    Private services As New Dictionary(Of eService, saleable)
-    Private servicesAvailability As New Dictionary(Of eService, Integer)
-    Private servicesPrices As New Dictionary(Of eService, Integer)
-    Friend Function getServicePriceModifier(ByVal service As eService) As Integer
-        Return servicesPrices(service)
+    Private repairCost As Integer = 10
+    Private repairCostRange As New range(repairCost * priceMin, repairCost * priceMax)
+    Friend Function getRepairCost() As Integer
+        Return repairCost
     End Function
-    Friend Function getServicePrice(ByRef saleable As saleable) As Integer
-        Dim cost As Integer = saleable.saleCost / getServicePriceModifier(saleable.service) * 100
+    Private saleHullComponents As New Dictionary(Of eHcCategory, saleHullcomponent)
+    Private saleHullComponentAvailability As New Dictionary(Of eHcCategory, Integer)
+    Private saleHullComponentPrices As New Dictionary(Of eHcCategory, Integer)
+    Friend Function getSaleHullComponentPriceModifier(ByVal service As eHcCategory) As Integer
+        Return saleHullComponentPrices(service)
+    End Function
+    Friend Function getSaleHullComponentPrice(ByRef saleable As saleable) As Integer
+        Dim cost As Integer = saleable.saleCost / getSaleHullComponentPriceModifier(saleable.service) * 100
         Return cost
     End Function
-    Friend Function servicesList() As List(Of saleable)
+    Friend Function saleHullComponentList() As List(Of saleable)
         Dim total As New List(Of saleable)
-        For Each kvp In services
+        For Each kvp In saleHullComponents
             If kvp.Value Is Nothing = False Then total.Add(kvp.Value)
         Next
         Return total
@@ -407,23 +411,20 @@
         End With
         Return total
     End Function
-    Private Shared servicePricesDefault As Dictionary(Of eService, Integer) = buildServicePricesDefault()
-    Private Shared Function buildServicePricesDefault() As Dictionary(Of eService, Integer)
-        Dim total As New Dictionary(Of eService, Integer)
-        For Each es In constants.serviceArray
+    Private Shared saleHullComponentPricesDefault As Dictionary(Of eHcCategory, Integer) = buildSaleHullComponentPricesDefault()
+    Private Shared Function buildSaleHullComponentPricesDefault() As Dictionary(Of eHcCategory, Integer)
+        'represents percentage of base product cost
+        Dim total As New Dictionary(Of eHcCategory, Integer)
+        For Each es In constants.saleHullComponentArray
             total.Add(es, 100)
         Next
-
-        'for repair, represents cost per armour
-        'for all other services, represents percentage of base product cost
-        total(eService.Repair) = 10
         Return total
     End Function
-    Friend Shared servicePricesRange As Dictionary(Of eService, range) = buildServicePricesRange()
-    Private Shared Function buildServicePricesRange() As Dictionary(Of eService, range)
-        Dim total As New Dictionary(Of eService, range)
+    Friend Shared saleHullComponentPricesRange As Dictionary(Of eHcCategory, range) = buildSaleHullComponentPricesRange()
+    Private Shared Function buildSaleHullComponentPricesRange() As Dictionary(Of eHcCategory, range)
+        Dim total As New Dictionary(Of eHcCategory, range)
         With total
-            For Each kvp In servicePricesDefault
+            For Each kvp In saleHullComponentPricesDefault
                 Dim min As Integer = kvp.Value * priceMin
                 Dim max As Integer = kvp.Value * priceMax
                 .Add(kvp.Key, New range(min, max))
@@ -434,7 +435,7 @@
 
     Friend Sub tick()
         adjustPrices()
-        adjustServices()
+        adjustSaleHullComponents()
     End Sub
     Private Sub adjustPrices(Optional ByRef r As Random = Nothing)
         If r Is Nothing Then r = rng
@@ -444,20 +445,24 @@
             productsPrices(res) += variance
             productsPrices(res) = constrain(productsPrices(res), productPricesRange(res))
         Next
-        For Each s In constants.serviceArray
-            Dim maxVariance As Integer = (servicesPrices(s) * 0.1)
+
+        For Each s In constants.saleHullComponentArray
+            Dim maxVariance As Integer = (saleHullComponentPrices(s) * 0.1)
             Dim variance As Integer = lumpyRng(-maxVariance, maxVariance, r)
-            servicesPrices(s) += variance
-            servicesPrices(s) = constrain(servicesPrices(s), servicePricesRange(s))
+            saleHullComponentPrices(s) += variance
+            saleHullComponentPrices(s) = constrain(saleHullComponentPrices(s), saleHullComponentPricesRange(s))
         Next
+
+        Dim repairVariance As Integer
+        If coinFlip(r) = True Then repairVariance = 1 Else repairVariance = -1
+        repairCost += repairVariance
+        repairCost = constrain(repairCost, repairCostRange)
     End Sub
-    Private Sub adjustServices(Optional ByRef r As Random = Nothing)
+    Private Sub adjustSaleHullComponents(Optional ByRef r As Random = Nothing)
         If r Is Nothing Then r = rng
 
-        For Each service As eService In constants.serviceArray
-            If service = eService.Repair Then Continue For
-
-            Dim current As saleable = services(service)
+        For Each service As eHcCategory In constants.saleHullComponentArray
+            Dim current As saleable = saleHullComponents(service)
 
             'tick if current is present
             If current Is Nothing = False Then current.tickSale()
@@ -466,7 +471,7 @@
             'roll spawnchance if current is empty
             'this is outside of tick check because there's a chance that the current may have expired,
             'in which case a new saleable is now added
-            Dim spawnChance As Integer = servicesAvailability(service)
+            Dim spawnChance As Integer = saleHullComponentAvailability(service)
             If current Is Nothing Then
                 If percentRoll(spawnChance, r) = True Then
                     Dim tier As Integer
@@ -477,10 +482,10 @@
                         Case 10 : tier = 4
                     End Select
 
-                    Dim s As saleable = saleable.buildRandom(tier, service, r)
+                    Dim s As saleHullcomponent = saleHullcomponent.buildRandom(tier, service, r)
                     If s Is Nothing = False Then
-                        s.parentServices = services
-                        services(service) = s
+                        s.parentServices = saleHullComponents
+                        saleHullComponents(service) = s
                     End If
                 End If
             End If

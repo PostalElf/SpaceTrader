@@ -82,6 +82,8 @@
                 cmdBuySell(cmd, False)
             Case "shipyardbuy", "sybuy"
                 cmdBuyShipyard(cmd)
+            Case "shipyardsell", "sysell"
+                cmdSellShipyard(cmd)
             Case "examine", "ex"
                 cmdExamine(cmd)
             Case "shipyardexamine", "syex"
@@ -189,6 +191,13 @@
         player.addCredits(-cost)
         ship.addComponent(hc)
         ship.planet.servicesList(i - 1).expire()
+    End Sub
+    Private Sub cmdSellShipyard(ByRef cmd As String())
+        If ship.planet Is Nothing Then Exit Sub
+
+        Console.WriteLine()
+        Dim hc As hullComponent = menu.getListChoice(ship.hullComponentsList, 0, "Disassemble which hull component?")
+        If hc Is Nothing Then Exit Sub
     End Sub
     Private Sub cmdRepair()
         If ship.planet Is Nothing Then Exit Sub

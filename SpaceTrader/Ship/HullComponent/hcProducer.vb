@@ -41,4 +41,9 @@
     End Sub
 
     Friend Property crewable As New shcCrewable(Me) Implements ihcCrewable.crewable
+    Friend Overrides ReadOnly Property typeString As String
+        Get
+            Return "Producer"
+        End Get
+    End Property
 End Class

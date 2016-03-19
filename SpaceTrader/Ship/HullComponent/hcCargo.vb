@@ -12,4 +12,10 @@
 
     Friend resource As eResource
     Friend value As Integer
+
+    Friend Overrides ReadOnly Property typeString As String
+        Get
+            Return "Cargo"
+        End Get
+    End Property
 End Class

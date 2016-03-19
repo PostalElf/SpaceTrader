@@ -112,6 +112,7 @@
             Return _size
         End Get
     End Property
+    Friend MustOverride ReadOnly Property typeString As String
 
     Friend Overridable Sub tickTravel()
         'handle in subclass if necessary

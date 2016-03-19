@@ -65,4 +65,10 @@
             Next
         End If
     End Sub
+
+    Friend Overrides ReadOnly Property typeString As String
+        Get
+            Return "CrewQuarters"
+        End Get
+    End Property
 End Class

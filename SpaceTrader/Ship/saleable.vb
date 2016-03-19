@@ -1,9 +1,9 @@
 ﻿Public Class saleable
-    Friend Sub New(ByVal aName As String, ByVal tier As Integer, ByVal cost As Integer, ByVal aService As eService, ByRef aData As Queue(Of String))
+    Friend Sub New(ByVal aName As String, ByVal tier As Integer, ByVal cost As Integer, ByVal type As String, ByRef aData As Queue(Of String))
         _name = aName
         _saleTier = tier
         _saleCost = cost
-        _service = aService
+        _type = type
 
         Select Case saleTier
             Case 1 : _saleTimer = 5
@@ -14,7 +14,7 @@
         End Select
     End Sub
     Friend Sub New(ByRef template As saleable)
-        Me.New(template.name, template.saleTier, template.saleCost, template.service, template.data)
+        Me.New(template.name, template.saleTier, template.saleCost, template._type, template.data)
     End Sub
     Friend Shared Function buildRandom(ByVal tier As Integer, ByVal service As eService, Optional ByRef r As Random = Nothing) As saleable
         If r Is Nothing Then r = rng
@@ -55,8 +55,8 @@
                 End Select
             End While
 
-            Dim es As eService = constants.getServiceFromTypeString(type)
-            Dim s As New saleable(name, tier, cost, es, q)
+            Dim s As New saleable(name, tier, cost, type, q)
+            Dim es As eService = s.service
             total(tier)(es).Add(s)
         Next
 
@@ -91,16 +91,17 @@
             Return _saleTimer
         End Get
     End Property
-    Private _service As eService
+    Private _type As String
     Friend ReadOnly Property service As eService
         Get
-            Return _service
+            Return constants.getServiceFromTypeString(_type)
         End Get
     End Property
     Private data As Queue(Of String)
 
     Friend Function unpack() As hullComponent
-        Return hullComponent.build(data)
+        If service <> Nothing Then Return hullComponent.build(data)
+        Return Nothing
     End Function
 
     Friend ReadOnly Property isExpired As Boolean

@@ -281,6 +281,12 @@
             Console.WriteLine(indd & "└ " & fakeTab(product.ToString & ":", ftLen) & getProductPriceBuy(product) & "/" & getProductPriceSell(product))
         Next
 
+        Console.WriteLine(ind & "Shipyard Prices:")
+        Const ftlen1 As Integer = 13
+        For Each hcc As eHcCategory In constants.saleHullComponentArray
+            Console.WriteLine(indd & "└ " & fakeTab(hcc.ToString & ":", ftlen1) & getSaleHullComponentPriceModifier(hcc) & "%")
+        Next
+
         Console.WriteLine(ind & "Shipyard:")
         Dim ftlen2 As Integer = 0
         For Each saleable In saleHullComponentList
@@ -464,8 +470,8 @@
     Private Sub adjustSaleHullComponents(Optional ByRef r As Random = Nothing)
         If r Is Nothing Then r = rng
 
-        For Each service As eHcCategory In constants.saleHullComponentArray
-            Dim current As saleable = saleHullComponents(service)
+        For Each s As eHcCategory In constants.saleHullComponentArray
+            Dim current As saleable = saleHullComponents(s)
 
             'tick if current is present
             If current Is Nothing = False Then current.tickSale()
@@ -474,7 +480,7 @@
             'roll spawnchance if current is empty
             'this is outside of tick check because there's a chance that the current may have expired,
             'in which case a new saleable is now added
-            Dim spawnChance As Integer = saleHullComponentAvailability(service)
+            Dim spawnChance As Integer = saleHullComponentAvailability(s)
             If current Is Nothing Then
                 If percentRoll(spawnChance, r) = True Then
                     Dim tier As Integer
@@ -485,10 +491,10 @@
                         Case 10 : tier = 4
                     End Select
 
-                    Dim s As saleHullcomponent = saleHullcomponent.buildRandom(tier, service, r)
-                    If s Is Nothing = False Then
-                        s.parentServices = saleHullComponents
-                        saleHullComponents(service) = s
+                    Dim shc As saleHullcomponent = saleHullcomponent.buildRandom(tier, s, r)
+                    If shc Is Nothing = False Then
+                        shc.parentServices = saleHullComponents
+                        saleHullComponents(s) = shc
                     End If
                 End If
             End If

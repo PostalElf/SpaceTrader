@@ -4,6 +4,7 @@
         _saleTier = tier
         _saleCost = cost
         _type = type
+        data = aData
 
         Select Case saleTier
             Case 1 : _saleTimer = 5
@@ -66,6 +67,17 @@
     Public Overrides Function ToString() As String
         Return name
     End Function
+    Friend ReadOnly Property consoleDescription() As String
+        Get
+            Dim o = unpack()
+            If TypeOf o Is hullComponent Then
+                Dim hc As hullComponent = CType(o, hullComponent)
+                Return hc.consoleDescription()
+            End If
+
+            Return Nothing
+        End Get
+    End Property
 
     Private _name As String
     Friend ReadOnly Property name As String
@@ -97,19 +109,25 @@
             Return constants.getServiceFromTypeString(_type)
         End Get
     End Property
+    Friend parentServices As Dictionary(Of eService, saleable)
     Private data As Queue(Of String)
 
-    Friend Function unpack() As hullComponent
+    Friend Function unpack() As Object
         If service <> Nothing Then Return hullComponent.build(data)
         Return Nothing
     End Function
 
-    Friend ReadOnly Property isExpired As Boolean
-        Get
-            If _saleTimer <= 0 Then Return True Else Return False
-        End Get
-    End Property
     Friend Sub tickSale()
         _saleTimer -= 1
+        If _saleTimer <= 0 Then expire()
+    End Sub
+    Friend Sub expire()
+        If parentServices Is Nothing = False Then
+            parentServices(service) = Nothing
+            parentServices = Nothing
+        End If
+
+        _saleTimer = 0
+        data = Nothing
     End Sub
 End Class

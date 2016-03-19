@@ -80,8 +80,12 @@
                 cmdBuySell(cmd, True)
             Case "sell"
                 cmdBuySell(cmd, False)
+            Case "shipyardbuy", "sybuy"
+                cmdBuyShipyard(cmd)
             Case "examine", "ex"
                 cmdExamine(cmd)
+            Case "shipyardexamine", "syex"
+                cmdExamineShipyard(cmd)
             Case "repair", "rep"
                 cmdRepair()
         End Select
@@ -159,6 +163,33 @@
             player.addCredits(totalPrice)
         End If
     End Sub
+    Private Sub cmdBuyShipyard(ByRef cmd As String())
+        If ship.planet Is Nothing Then Exit Sub
+        Dim i As Integer = CInt(cmd(1))
+        If i < 1 OrElse i > ship.planet.servicesList.Count Then Exit Sub
+        Dim s As saleable = ship.planet.servicesList(i - 1)
+        If s Is Nothing Then Exit Sub
+
+        Dim ind As String = vbSpace(1)
+        If menu.confirmChoice(0, vbCrLf & ind & "Buy " & s.name & " for ¥" & ship.planet.getServicePrice(s).ToString("N0") & "? ") = False Then Exit Sub
+
+        Dim cost As Integer = ship.planet.getServicePrice(s)
+        If player.addCreditsCheck(-cost) = False Then
+            Console.WriteLine("Insufficient credits!")
+            Console.ReadKey()
+            Exit Sub
+        End If
+        Dim hc As hullComponent = s.unpack
+        If ship.addComponentCheck(hc) = False Then
+            Console.WriteLine("Insufficient hull space on ship!")
+            Console.ReadKey()
+            Exit Sub
+        End If
+
+        player.addCredits(-cost)
+        ship.addComponent(hc)
+        ship.planet.servicesList(i - 1).expire()
+    End Sub
     Private Sub cmdRepair()
         If ship.planet Is Nothing Then Exit Sub
 
@@ -166,7 +197,7 @@
         Dim armour As Integer = defences(0)
         Dim armourMax As Integer = defences(1)
         Dim empty As Integer = armourMax - armour
-        Dim price As Integer = ship.planet.getServicePrice(eService.Repair)
+        Dim price As Integer = ship.planet.getServicePriceModifier(eService.Repair)
         Dim totalPrice As Integer = empty * price
 
         Console.WriteLine()
@@ -205,6 +236,25 @@
             Console.WriteLine(ind & fakeTab("Sell:", ftlen) & "¥" & .getProductPriceSell(r))
             Console.WriteLine(ind & fakeTab("Range:", ftlen) & "¥" & planet.productPricesRange(r).min & " - ¥" & planet.productPricesRange(r).max)
         End With
+        Console.ReadKey()
+    End Sub
+    Private Sub cmdExamineShipyard(ByRef cmd As String())
+        If ship.planet Is Nothing Then Exit Sub
+        If cmd.Length < 2 Then Exit Sub
+        Dim index As Integer = CInt(cmd(1))
+        If index < 1 OrElse index > ship.planet.servicesList.Count Then Exit Sub
+        Dim s As saleable = ship.planet.servicesList(index - 1)
+        If s Is Nothing Then Exit Sub
+
+        Dim ind As String = vbSpace(1)
+        Dim cost As Integer = ship.planet.getServicePrice(s)
+        Const ftlen As Integer = 14
+
+        Console.WriteLine()
+        Console.WriteLine(s.name)
+        Console.WriteLine(ind & fakeTab("Sale Period:", ftlen) & s.saleTimer & " ticks remaining")
+        Console.WriteLine(ind & fakeTab("Sale Cost:", ftlen) & "¥" & cost.ToString("N0"))
+        Console.WriteLine(ind & fakeTab("Effect:", ftlen) & s.consoleDescription)
         Console.ReadKey()
     End Sub
     Private Sub cmdTravel(ByRef cmd As String())

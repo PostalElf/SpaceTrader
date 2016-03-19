@@ -290,8 +290,8 @@
         ftlen2 += 3
         For Each saleable In servicesList
             With saleable
-                Dim cost As Integer = .saleCost / getServicePrice(.service) * 100
-                Console.WriteLine(indd & "└ " & fakeTab(.name & ":", ftlen2) & "¥" & cost.ToString("N0") & " [" & .saleTimer & "]")
+                Dim cost As Integer = getServicePrice(saleable)
+                Console.WriteLine(indd & "└ " & fakeTab(.name & ":", ftlen2) & "[" & .saleTimer.ToString("00") & "] " & "¥" & cost.ToString("N0"))
             End With
         Next
     End Sub
@@ -325,6 +325,7 @@
     Private role As ePlanetRole
     Private type As ePlanetType
     Private habitation As String
+
     Private productsPrices As New Dictionary(Of eResource, Integer)
     Friend Function getProductPriceSell(ByVal product As eResource) As Integer
         Dim total As Integer = productsPrices(product)
@@ -352,14 +353,17 @@
         If iList.Contains(res) = False Then Exit Sub
         iList.Remove(res)
     End Sub
-
     Private services As New Dictionary(Of eService, saleable)
     Private servicesAvailability As New Dictionary(Of eService, Integer)
     Private servicesPrices As New Dictionary(Of eService, Integer)
-    Friend Function getServicePrice(ByVal service As eService) As Integer
+    Friend Function getServicePriceModifier(ByVal service As eService) As Integer
         Return servicesPrices(service)
     End Function
-    Private Function servicesList() As List(Of saleable)
+    Friend Function getServicePrice(ByRef saleable As saleable) As Integer
+        Dim cost As Integer = saleable.saleCost / getServicePriceModifier(saleable.service) * 100
+        Return cost
+    End Function
+    Friend Function servicesList() As List(Of saleable)
         Dim total As New List(Of saleable)
         For Each kvp In services
             If kvp.Value Is Nothing = False Then total.Add(kvp.Value)
@@ -456,10 +460,8 @@
             Dim current As saleable = services(service)
 
             'tick if current is present
-            If current Is Nothing = False Then
-                current.tickSale()
-                If current.isExpired = True Then services(service) = Nothing
-            End If
+            If current Is Nothing = False Then current.tickSale()
+            'If current.isExpired = True Then services(service) = Nothing
 
             'roll spawnchance if current is empty
             'this is outside of tick check because there's a chance that the current may have expired,
@@ -475,7 +477,11 @@
                         Case 10 : tier = 4
                     End Select
 
-                    services(service) = saleable.buildRandom(tier, service, r)
+                    Dim s As saleable = saleable.buildRandom(tier, service, r)
+                    If s Is Nothing = False Then
+                        s.parentServices = services
+                        services(service) = s
+                    End If
                 End If
             End If
         Next

@@ -374,6 +374,12 @@
         hullComponents(hc.GetType).Add(hc)
         hc.ship = Me
     End Sub
+    Friend Function addComponentCheck(ByRef hc As hullComponent) As Boolean
+        If hc Is Nothing Then Return False
+        If hullSpaceOccupied + hc.size > hullSpaceEmpty Then Return False
+
+        Return True
+    End Function
     Friend Sub removeComponent(ByRef hc As hullComponent)
         If hullComponents.ContainsKey(hc.GetType) = False Then Exit Sub
         If hullComponents(hc.GetType).Contains(hc) = False Then Exit Sub

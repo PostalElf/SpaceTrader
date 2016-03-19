@@ -454,7 +454,10 @@
         Next
 
         Dim repairVariance As Integer
-        If coinFlip(r) = True Then repairVariance = 1 Else repairVariance = -1
+        If repairCost = repairCostRange.min Then : repairVariance = 1
+        ElseIf repairCost = repairCostRange.max Then : repairCost = -1
+        Else : If coinFlip(r) = True Then repairVariance = 1 Else repairVariance = -1
+        End If
         repairCost += repairVariance
         repairCost = constrain(repairCost, repairCostRange)
     End Sub

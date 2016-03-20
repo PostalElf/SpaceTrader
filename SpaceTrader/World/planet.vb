@@ -45,7 +45,7 @@
                 .adjustPrices(r)
             Next
             .adjustSaleHullComponents(r)
-            .adjustSaleCraftComponents()
+            .adjustSaleCraftComponents(r)
         End With
         Return planet
     End Function

@@ -436,6 +436,20 @@
         Next
     End Sub
 
+    Friend craftComponents As New Dictionary(Of String, Integer)
+    Friend Sub addCraftComponent(ByVal name As String, ByVal value As Integer)
+        If craftComponents.ContainsKey(name) = False Then craftComponents.Add(name, 0)
+        craftComponents(name) += value
+        If craftComponents(name) <= 0 Then craftComponents.Remove(name)
+    End Sub
+    Friend Function addCraftComponentCheck(ByVal name As String, ByVal value As Integer)
+        If value < 0 Then
+            If craftComponents.ContainsKey(name) = False Then Return False
+            If craftComponents(name) + value < 0 Then Return False
+        End If
+        Return True
+    End Function
+
     Friend Function getCrews(Optional ByVal isIdleOnly As Boolean = False) As List(Of crew)
         Dim total As New List(Of crew)
         For Each hc In hullComponents(GetType(hcCrewQuarters))

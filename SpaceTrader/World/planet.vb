@@ -394,14 +394,14 @@
         Next
         Return total
     End Function
-    Private craftComponents As New List(Of saleCraftComponent)
+    Friend craftComponents As New List(Of saleCraftComponent)
     Private craftComponentsPriceModifier As Integer = 100
     Friend Function getCraftComponentPriceSell(ByVal c As String) As Integer
         Dim total As Integer = saleCraftComponent.getDefaultPrice(c) * craftComponentsPriceModifier / 100
         Return total
     End Function
     Friend Function getCraftComponentPriceBuy(ByVal c As String) As Integer
-        Dim total As Integer = getCraftComponentPriceBuy(c) * 0.75
+        Dim total As Integer = getCraftComponentPriceSell(c) * 0.75
         Return total
     End Function
 

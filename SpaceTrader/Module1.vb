@@ -85,9 +85,9 @@
             Case "examine", "ex"
                 cmdExamine(cmd)
             Case "craftbuy", "crbuy"
-
+                cmdBuyCraft(cmd)
             Case "craftsell", "crsell"
-
+                cmdSellCraft(cmd)
             Case "craftexamine", "crex"
 
             Case "shipyardbuy", "sybuy"
@@ -206,6 +206,52 @@
         Console.WriteLine()
         Dim hc As hullComponent = menu.getListChoice(ship.hullComponentsList, 0, "Disassemble which hull component?")
         If hc Is Nothing Then Exit Sub
+    End Sub
+    Private Sub cmdBuyCraft(ByRef cmd As String())
+        If ship.planet Is Nothing Then Exit Sub
+
+        Console.WriteLine()
+        Dim scc As saleCraftComponent = menu.getListChoice(ship.planet.craftComponents, 1, "Buy which component?")
+        If scc Is Nothing Then Exit Sub
+
+        Dim cost As Integer = ship.planet.getCraftComponentPriceSell(scc.name)
+        If menu.confirmChoice(0, "Buy " & scc.name & " for ¥" & cost.ToString("N0") & "? ") = False Then Exit Sub
+        If player.addCreditsCheck(-cost) = False Then
+            Console.WriteLine(vbCrLf & "Insufficient credits!")
+            Console.ReadKey()
+            Exit Sub
+        End If
+        If ship.addCraftComponentCheck(scc.name, 1) = False Then
+            Console.WriteLine(vbCrLf & "Insufficient space!")
+            Console.ReadKey()
+            Exit Sub
+        End If
+
+        player.addCredits(-cost)
+        ship.addCraftComponent(scc.name, 1)
+        scc.expire()
+    End Sub
+    Private Sub cmdSellCraft(ByRef cmd As String())
+        If ship.planet Is Nothing Then Exit Sub
+
+        Console.WriteLine()
+        Dim objList As New List(Of String)
+        For Each kvp In ship.craftComponents
+            objList.Add(kvp.Key)
+        Next
+        If objList.Count = 0 Then Exit Sub
+
+        Dim choice As String = menu.getListChoice(objList, 1, "Sell which component?")
+        Dim cost As Integer = ship.planet.getCraftComponentPriceBuy(choice)
+        If menu.confirmChoice(0, "Sell " & choice & " for ¥" & cost.ToString("N0") & "? ") = False Then Exit Sub
+        If ship.addCraftComponentCheck(choice, -1) = False Then
+            Console.WriteLine(vbCrLf & "Insufficient " & choice & ".")
+            Console.ReadKey()
+            Exit Sub
+        End If
+
+        ship.addCraftComponent(choice, -1)
+        player.addCredits(cost)
     End Sub
     Private Sub cmdRepair()
         If ship.planet Is Nothing Then Exit Sub

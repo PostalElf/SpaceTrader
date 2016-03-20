@@ -1,9 +1,8 @@
 ﻿Public MustInherit Class saleable
-    Friend Sub New(ByVal aName As String, ByVal tier As Integer, ByVal cost As Integer, ByVal type As String, ByRef aData As Queue(Of String))
+    Friend Sub New(ByVal aName As String, ByVal tier As Integer, ByVal cost As Integer, ByRef aData As Queue(Of String))
         _name = aName
         _saleTier = tier
         _saleCost = cost
-        _type = type
         data = aData
 
         Select Case saleTier
@@ -15,23 +14,13 @@
         End Select
     End Sub
     Friend Sub New(ByRef template As saleable)
-        Me.New(template.name, template.saleTier, template.saleCost, template._type, template.data)
+        Me.New(template.name, template.saleTier, template.saleCost, template.data)
     End Sub
 
     Public Overrides Function ToString() As String
         Return name
     End Function
-    Friend ReadOnly Property consoleDescription() As String
-        Get
-            Dim o = unpack()
-            If TypeOf o Is hullComponent Then
-                Dim hc As hullComponent = CType(o, hullComponent)
-                Return hc.consoleDescription()
-            End If
-
-            Return Nothing
-        End Get
-    End Property
+    Friend MustOverride ReadOnly Property consoleDescription() As String
 
     Private _name As String
     Friend ReadOnly Property name As String
@@ -55,12 +44,6 @@
     Friend ReadOnly Property saleTimer As Integer
         Get
             Return _saleTimer
-        End Get
-    End Property
-    Private _type As String
-    Friend ReadOnly Property service As eHcCategory
-        Get
-            Return constants.getServiceFromTypeString(_type)
         End Get
     End Property
     Protected data As Queue(Of String)

@@ -1,11 +1,8 @@
 ﻿Public Class planet
     Public Sub New(ByRef r As Random)
-        For Each kvp In productPricesDefault
-            productsPrices.Add(kvp.Key, kvp.Value)
-        Next
-        For Each kvp In saleHullComponentPricesDefault
-            saleHullComponentPrices.Add(kvp.Key, kvp.Value)
-        Next
+        productsPrices = New Dictionary(Of eResource, Integer)(productPricesDefault)
+        saleHullComponentPrices = New Dictionary(Of eHcCategory, Integer)(saleHullComponentPricesDefault)
+
         For Each s In constants.saleHullComponentArray
             saleHullComponents.Add(s, Nothing)
         Next
@@ -48,6 +45,7 @@
                 .adjustPrices(r)
             Next
             .adjustSaleHullComponents(r)
+            .adjustSaleCraftComponents()
         End With
         Return planet
     End Function
@@ -300,6 +298,21 @@
             End With
         Next
     End Sub
+    Friend Sub consoleReportShipyard(ByVal indent As Integer)
+        Dim ind As String = vbSpace(indent)
+        Dim indd As String = vbSpace(indent + 1)
+
+        Dim ftlen As Integer = 0
+        For Each c In craftComponents
+            If c.name.Length > ftlen Then ftlen = c.name.Length
+        Next
+        ftlen += 3
+
+        Console.WriteLine(ind & "Craft Components:")
+        For Each c In craftComponents
+            Console.WriteLine(indd & fakeTab(c.name & ":", ftlen) & "¥" & getCraftComponentPriceSell(c.name).ToString("N0"))
+        Next
+    End Sub
 
     Private _star As star
     Friend ReadOnly Property star As star
@@ -331,7 +344,7 @@
     Private type As ePlanetType
     Private habitation As String
 
-    Private productsPrices As New Dictionary(Of eResource, Integer)
+    Private productsPrices As Dictionary(Of eResource, Integer)
     Friend Function getProductPriceSell(ByVal product As eResource) As Integer
         Dim total As Integer = productsPrices(product)
         If productsImport.Contains(product) Then total *= 1.5
@@ -358,8 +371,9 @@
         If iList.Contains(res) = False Then Exit Sub
         iList.Remove(res)
     End Sub
-    Private repairCost As Integer = 10
-    Private repairCostRange As New range(repairCost * priceMin, repairCost * priceMax)
+    Const repairCostDefault As Integer = 10
+    Private repairCost As Integer = repairCostDefault
+    Private repairCostRange As New range(repairCostDefault * priceMin, repairCostDefault * priceMax)
     Friend Function getRepairCost() As Integer
         Return repairCost
     End Function
@@ -369,8 +383,8 @@
     Friend Function getSaleHullComponentPriceModifier(ByVal service As eHcCategory) As Integer
         Return saleHullComponentPrices(service)
     End Function
-    Friend Function getSaleHullComponentPrice(ByRef saleable As saleable) As Integer
-        Dim cost As Integer = saleable.saleCost / getSaleHullComponentPriceModifier(saleable.service) * 100
+    Friend Function getSaleHullComponentPrice(ByRef s As saleHullcomponent) As Integer
+        Dim cost As Integer = s.saleCost / getSaleHullComponentPriceModifier(s.service) * 100
         Return cost
     End Function
     Friend Function saleHullComponentList() As List(Of saleable)
@@ -380,6 +394,16 @@
         Next
         Return total
     End Function
+    Private craftComponents As New List(Of saleCraftComponent)
+    Friend Function getCraftComponentPriceSell(ByVal c As String) As Integer
+        Dim total As Integer = saleCraftComponent.getDefaultPrice(c)
+        Return total
+    End Function
+    Friend Function getCraftComponentPriceBuy(ByVal c As String) As Integer
+        Dim total As Integer = saleCraftComponent.getDefaultPrice(c) * 0.75
+        Return total
+    End Function
+
 
     Private Const priceMin As Double = 0.5
     Private Const priceMax As Double = 1.5
@@ -405,17 +429,8 @@
         End With
         Return total
     End Function
-    Friend Shared productPricesRange As Dictionary(Of eResource, range) = buildProductPricesRange()
-    Private Shared Function buildProductPricesRange()
-        Dim total As New Dictionary(Of eResource, range)
-        With total
-            For Each kvp In productPricesDefault
-                Dim min As Integer = kvp.Value * priceMin
-                Dim max As Integer = kvp.Value * priceMax
-                .Add(kvp.Key, New range(min, max))
-            Next
-        End With
-        Return total
+    Friend Shared Function productPricesRange(ByVal p As eResource) As range
+        Return New range(productPricesDefault(p) * priceMin, productPricesDefault(p) * priceMax)
     End Function
     Private Shared saleHullComponentPricesDefault As Dictionary(Of eHcCategory, Integer) = buildSaleHullComponentPricesDefault()
     Private Shared Function buildSaleHullComponentPricesDefault() As Dictionary(Of eHcCategory, Integer)
@@ -426,17 +441,8 @@
         Next
         Return total
     End Function
-    Friend Shared saleHullComponentPricesRange As Dictionary(Of eHcCategory, range) = buildSaleHullComponentPricesRange()
-    Private Shared Function buildSaleHullComponentPricesRange() As Dictionary(Of eHcCategory, range)
-        Dim total As New Dictionary(Of eHcCategory, range)
-        With total
-            For Each kvp In saleHullComponentPricesDefault
-                Dim min As Integer = kvp.Value * priceMin
-                Dim max As Integer = kvp.Value * priceMax
-                .Add(kvp.Key, New range(min, max))
-            Next
-        End With
-        Return total
+    Friend Shared Function saleHullComponentPricesRange(ByVal s As eHcCategory) As range
+        Return New range(saleHullComponentPricesDefault(s) * priceMin, saleHullComponentPricesDefault(s) * priceMax)
     End Function
 
     Friend Sub tick()
@@ -446,14 +452,14 @@
     Private Sub adjustPrices(Optional ByRef r As Random = Nothing)
         If r Is Nothing Then r = rng
         For Each res In constants.resourceArray
-            Dim maxVariance As Integer = (productsPrices(res) * 0.1)
+            Dim maxVariance As Integer = productsPrices(res) * 0.1
             Dim variance As Integer = lumpyRng(-maxVariance, maxVariance, r)
             productsPrices(res) += variance
             productsPrices(res) = constrain(productsPrices(res), productPricesRange(res))
         Next
 
         For Each s In constants.saleHullComponentArray
-            Dim maxVariance As Integer = (saleHullComponentPrices(s) * 0.1)
+            Dim maxVariance As Integer = saleHullComponentPrices(s) * 0.1
             Dim variance As Integer = lumpyRng(-maxVariance, maxVariance, r)
             saleHullComponentPrices(s) += variance
             saleHullComponentPrices(s) = constrain(saleHullComponentPrices(s), saleHullComponentPricesRange(s))
@@ -475,7 +481,6 @@
 
             'tick if current is present
             If current Is Nothing = False Then current.tickSale()
-            'If current.isExpired = True Then services(service) = Nothing
 
             'roll spawnchance if current is empty
             'this is outside of tick check because there's a chance that the current may have expired,
@@ -499,5 +504,20 @@
                 End If
             End If
         Next
+    End Sub
+    Private Sub adjustSaleCraftComponents(Optional ByRef r As Random = Nothing)
+        If r Is Nothing Then r = rng
+
+        While craftComponents.Count < 5
+            Dim tier As Integer
+            Select Case r.Next(1, 11)
+                Case 1 To 4 : tier = 1
+                Case 5 To 7 : tier = 2
+                Case 8 To 9 : tier = 3
+                Case 10 : tier = 4
+            End Select
+
+            craftComponents.Add(saleCraftComponent.buildRandom(tier, r))
+        End While
     End Sub
 End Class

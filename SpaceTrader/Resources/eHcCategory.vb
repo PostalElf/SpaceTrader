@@ -1,5 +1,5 @@
 ﻿Public Enum eHcCategory
-    Storage         'cargo and crewquarters
+    Storage = 1     'cargo and crewquarters
     War             'weapons and defence
     Travel          'engine and jumpdrive
     Production      'producer

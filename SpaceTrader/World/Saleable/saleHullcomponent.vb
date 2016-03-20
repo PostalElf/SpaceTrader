@@ -1,19 +1,21 @@
-﻿Public Class saleHullcomponent
+﻿Public Class saleHullComponent
     Inherits saleable
-    Friend Sub New(ByVal aName As String, ByVal tier As Integer, ByVal cost As Integer, ByVal type As String, ByRef aData As Queue(Of String))
-        MyBase.New(aName, tier, cost, type, aData)
+    Friend Sub New(ByVal aName As String, ByVal tier As Integer, ByVal cost As Integer, ByVal aType As String, ByRef aData As Queue(Of String))
+        MyBase.New(aName, tier, cost, aData)
+        type = aType
     End Sub
-    Public Sub New(ByVal template As saleable)
+    Public Sub New(ByVal template As saleHullcomponent)
         MyBase.New(template)
+        type = template.type
     End Sub
-    Private Shared allSaleHullcomponents As Dictionary(Of Integer, Dictionary(Of eHcCategory, List(Of saleable))) = buildAllSaleables()
-    Private Shared Function buildAllSaleables() As Dictionary(Of Integer, Dictionary(Of eHcCategory, List(Of saleable)))
+    Private Shared allSaleHullcomponents As Dictionary(Of Integer, Dictionary(Of eHcCategory, List(Of saleHullcomponent))) = buildAllSaleables()
+    Private Shared Function buildAllSaleables() As Dictionary(Of Integer, Dictionary(Of eHcCategory, List(Of saleHullcomponent)))
         'initialise dictionary
-        Dim total As New Dictionary(Of Integer, Dictionary(Of eHcCategory, List(Of saleable)))
+        Dim total As New Dictionary(Of Integer, Dictionary(Of eHcCategory, List(Of saleHullcomponent)))
         For tier = 1 To 4
-            total.Add(tier, New Dictionary(Of eHcCategory, List(Of saleable)))
+            total.Add(tier, New Dictionary(Of eHcCategory, List(Of saleHullcomponent)))
             For Each es In constants.saleHullComponentArray
-                total(tier).Add(es, New List(Of saleable))
+                total(tier).Add(es, New List(Of saleHullcomponent))
             Next
         Next
 
@@ -43,17 +45,35 @@
 
         Return total
     End Function
-    Friend Shared Function buildRandom(ByVal tier As Integer, ByVal service As eHcCategory, Optional ByRef r As Random = Nothing) As saleable
+    Friend Shared Function buildRandom(ByVal tier As Integer, ByVal cat As eHcCategory, Optional ByRef r As Random = Nothing) As saleable
         If r Is Nothing Then r = rng
-        Dim data As List(Of saleable) = allSaleHullcomponents(tier)(service)
+        Dim data As List(Of saleHullcomponent) = allSaleHullcomponents(tier)(cat)
         If data.Count = 0 Then Return Nothing
 
-        Dim roll As Integer = r.Next(data.Count - 1)
+        Dim roll As Integer = r.Next(data.Count)
         Dim template As saleable = data(roll)
         Return New saleHullcomponent(template)
     End Function
 
+    Public Overrides Function ToString() As String
+        Return name
+    End Function
+    Friend Overrides ReadOnly Property consoleDescription As String
+        Get
+            Dim q As New Queue(Of String)(data)
+            Dim hc As hullComponent = hullComponent.build(q)
+            Return hc.consoleDescription
+        End Get
+    End Property
+
+    Private type As String
+    Friend ReadOnly Property service As eHcCategory
+        Get
+            Return constants.getServiceFromTypeString(type)
+        End Get
+    End Property
     Friend parentServices As Dictionary(Of eHcCategory, saleHullcomponent)
+
     Friend Overrides Function unpack() As Object
         Return hullComponent.build(data)
     End Function

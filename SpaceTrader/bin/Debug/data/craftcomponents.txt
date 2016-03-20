@@ -1,0 +1,15 @@
+[Container]
+Tier: 1
+Cost: 500
+
+[Generator]
+Tier: 2
+Cost: 1000
+
+[Shock Absorbers]
+Tier: 3
+Cost: 2000
+
+[Frixion]
+Tier: 4
+Cost: 5000

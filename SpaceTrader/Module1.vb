@@ -77,6 +77,11 @@
                 ship.planet.consoleReport(0)
                 ship.planet.consoleReportShop(1)
                 Console.ReadKey()
+            Case "shipyardshop", "sysh"
+                If ship.planet Is Nothing Then Exit Sub
+                Console.Clear()
+                ship.planet.consoleReportShipyard(0)
+                Console.ReadKey()
             Case "buy"
                 cmdBuySell(cmd, True)
             Case "sell"

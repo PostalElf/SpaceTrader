@@ -298,7 +298,7 @@
             End With
         Next
     End Sub
-    Friend Sub consoleReportShipyard(ByVal indent As Integer)
+    Friend Sub consoleReportCraft(ByVal indent As Integer)
         Dim ind As String = vbSpace(indent)
         Dim indd As String = vbSpace(indent + 1)
 
@@ -310,7 +310,7 @@
 
         Console.WriteLine(ind & "Craft Components:")
         For Each c In craftComponents
-            Console.WriteLine(indd & fakeTab(c.name & ":", ftlen) & "¥" & getCraftComponentPriceSell(c.name).ToString("N0"))
+            Console.WriteLine(indd & fakeTab(c.name & ":", ftlen) & "[" & c.saleTimer.ToString("00") & "] " & "¥" & getCraftComponentPriceSell(c.name).ToString("N0"))
         Next
     End Sub
 
@@ -395,12 +395,13 @@
         Return total
     End Function
     Private craftComponents As New List(Of saleCraftComponent)
+    Private craftComponentsPriceModifier As Integer = 100
     Friend Function getCraftComponentPriceSell(ByVal c As String) As Integer
-        Dim total As Integer = saleCraftComponent.getDefaultPrice(c)
+        Dim total As Integer = saleCraftComponent.getDefaultPrice(c) * craftComponentsPriceModifier / 100
         Return total
     End Function
     Friend Function getCraftComponentPriceBuy(ByVal c As String) As Integer
-        Dim total As Integer = saleCraftComponent.getDefaultPrice(c) * 0.75
+        Dim total As Integer = getCraftComponentPriceBuy(c) * 0.75
         Return total
     End Function
 
@@ -448,6 +449,7 @@
     Friend Sub tick()
         adjustPrices()
         adjustSaleHullComponents()
+        adjustSaleCraftComponents()
     End Sub
     Private Sub adjustPrices(Optional ByRef r As Random = Nothing)
         If r Is Nothing Then r = rng
@@ -472,6 +474,12 @@
         End If
         repairCost += repairVariance
         repairCost = constrain(repairCost, repairCostRange)
+
+        Dim craftComponentVarianceMax As Integer = craftComponentsPriceModifier * 0.1
+        Dim craftComponentVariance As Integer = lumpyRng(-craftComponentVarianceMax, craftComponentVarianceMax, r)
+        Dim craftComponentVarianceRange As New range(50, 150)
+        craftComponentsPriceModifier += craftComponentVariance
+        craftComponentsPriceModifier = constrain(craftComponentsPriceModifier, craftComponentVarianceRange)
     End Sub
     Private Sub adjustSaleHullComponents(Optional ByRef r As Random = Nothing)
         If r Is Nothing Then r = rng
@@ -508,6 +516,11 @@
     Private Sub adjustSaleCraftComponents(Optional ByRef r As Random = Nothing)
         If r Is Nothing Then r = rng
 
+        For n = craftComponents.Count - 1 To 0 Step -1
+            Dim c As saleCraftComponent = craftComponents(n)
+            c.tickSale()
+        Next
+
         While craftComponents.Count < 5
             Dim tier As Integer
             Select Case r.Next(1, 11)
@@ -517,7 +530,9 @@
                 Case 10 : tier = 4
             End Select
 
-            craftComponents.Add(saleCraftComponent.buildRandom(tier, r))
+            Dim c As saleCraftComponent = saleCraftComponent.buildRandom(tier, r)
+            c.parentSaleList = craftComponents
+            craftComponents.Add(c)
         End While
     End Sub
 End Class

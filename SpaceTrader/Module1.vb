@@ -76,22 +76,24 @@
                 Console.Clear()
                 ship.planet.consoleReport(0)
                 ship.planet.consoleReportShop(1)
-                Console.ReadKey()
-            Case "shipyardshop", "sysh"
-                If ship.planet Is Nothing Then Exit Sub
-                Console.Clear()
-                ship.planet.consoleReportShipyard(0)
+                ship.planet.consoleReportCraft(1)
                 Console.ReadKey()
             Case "buy"
                 cmdBuySell(cmd, True)
             Case "sell"
                 cmdBuySell(cmd, False)
+            Case "examine", "ex"
+                cmdExamine(cmd)
+            Case "craftbuy", "crbuy"
+
+            Case "craftsell", "crsell"
+
+            Case "craftexamine", "crex"
+
             Case "shipyardbuy", "sybuy"
                 cmdBuyShipyard(cmd)
             Case "shipyardsell", "sysell"
                 cmdSellShipyard(cmd)
-            Case "examine", "ex"
-                cmdExamine(cmd)
             Case "shipyardexamine", "syex"
                 cmdExamineShipyard(cmd)
             Case "repair", "rep"

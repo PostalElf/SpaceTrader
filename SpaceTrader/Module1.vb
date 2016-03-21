@@ -89,10 +89,10 @@
             Case "craftsell", "crsell"
                 cmdSellCraft(cmd)
             Case "craftexamine", "crex"
-
+                cmdExamineCraft(cmd)
             Case "shipyardbuy", "sybuy"
                 cmdBuyShipyard(cmd)
-            Case "shipyardsell", "sysell"
+            Case "shipyardsell", "sysell", "disassemble", "dis"
                 cmdSellShipyard(cmd)
             Case "shipyardexamine", "syex"
                 cmdExamineShipyard(cmd)
@@ -130,19 +130,26 @@
         Console.ReadKey()
     End Sub
     Private Sub cmdBuySell(ByRef cmd As String(), ByVal isBuying As Boolean)
+        If ship.planet Is Nothing Then Exit Sub
+
         Dim ind As String = vbSpace(1)
-        Dim r As eResource = getResourceFromStr(cmd(1))
         Dim descriptor As String
         If isBuying = True Then descriptor = "Buy" Else descriptor = "Sell"
 
-        If ship.planet Is Nothing Then Exit Sub
+        Dim r As eResource
+        If cmd.Length = 1 Then
+            Dim rList As New List(Of String)
+            For Each r In constants.resourceArray
+                rList.Add(r.ToString)
+            Next
+            Dim choice As String = menu.getListChoice(rList, 2, vbCrLf & ind & descriptor & " which resource? ")
+            r = constants.getEnumFromString(choice, constants.resourceArray)
+        Else
+            r = getResourceFromStr(cmd(1))
+        End If
         If r = Nothing Then Exit Sub
 
-        Console.Write(vbCrLf & ind & descriptor & " how many pods of " & r.ToString & "? ")
-        Dim qtyInput As String = Console.ReadLine()
-        If IsNumeric(qtyInput) = False Then Exit Sub
-
-        Dim qty As Integer = CInt(qtyInput)
+        Dim qty As Integer = menu.getNumInput(0, 0, 100, vbCrLf & ind & descriptor & " how many pods of " & r.ToString & "? ")
         Dim price As Integer
         If isBuying = True Then price = ship.planet.getProductPriceSell(r) Else price = ship.planet.getProductPriceBuy(r)
         Dim totalPrice As Integer = qty * price
@@ -311,13 +318,45 @@
 
         Dim ind As String = vbSpace(1)
         Dim cost As Integer = ship.planet.getSaleHullComponentPrice(s)
-        Const ftlen As Integer = 14
+        Const ftlen As Integer = 9
 
         Console.WriteLine()
         Console.WriteLine(s.name)
-        Console.WriteLine(ind & fakeTab("Sale Period:", ftlen) & s.saleTimer & " ticks remaining")
-        Console.WriteLine(ind & fakeTab("Sale Cost:", ftlen) & "¥" & cost.ToString("N0"))
+        Console.WriteLine(ind & fakeTab("TTL:", ftlen) & s.saleTimer & " ticks")
+        Console.WriteLine(ind & fakeTab("Tier:", ftlen) & s.saleTier)
+        Console.WriteLine(ind & fakeTab("Cost:", ftlen) & "¥" & cost.ToString("N0"))
         Console.WriteLine(ind & fakeTab("Effect:", ftlen) & s.consoleDescription)
+        Console.ReadKey()
+    End Sub
+    Private Sub cmdExamineCraft(ByRef cmd As String())
+        If ship.planet Is Nothing Then Exit Sub
+
+        Dim cr As saleCraftComponent = Nothing
+        If cmd.Length = 1 Then
+            Dim cList As New List(Of String)
+            For Each c In ship.planet.craftComponents
+                cList.Add(c.name)
+            Next
+            Dim choice As String = menu.getListChoice(cList, 0, vbCrLf & "Examine which component?")
+            Dim i As Integer = cList.IndexOf(choice)
+            cr = ship.planet.craftComponents(i)
+        Else
+            If IsNumeric(cmd(1)) = False Then Exit Sub
+            Dim i As Integer = CInt(cmd(1))
+            If 1 <= 0 OrElse i > ship.planet.craftComponents.Count Then Exit Sub
+            cr = ship.planet.craftComponents(i)
+        End If
+        If cr Is Nothing Then Exit Sub
+
+        Dim ind As String = vbSpace(1)
+        Const ftlen As Integer = 7
+        Console.WriteLine()
+        Console.WriteLine(cr.name)
+        Console.WriteLine(ind & fakeTab("TTL:", ftlen) & cr.saleTimer & " ticks")
+        Console.WriteLine(ind & fakeTab("Tier:", ftlen) & cr.saleTier)
+        Console.WriteLine(ind & fakeTab("Buy:", ftlen) & "¥" & ship.planet.getCraftComponentPriceBuy(cr.name).ToString("N0"))
+        Console.WriteLine(ind & fakeTab("Sell:", ftlen) & "¥" & ship.planet.getCraftComponentPriceSell(cr.name).ToString("N0"))
+        Console.WriteLine()
         Console.ReadKey()
     End Sub
     Private Sub cmdTravel(ByRef cmd As String())

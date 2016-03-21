@@ -16,9 +16,12 @@
         End If
     End Sub
     Friend Overrides Function consoleDescription() As String
+        Dim total As String = ""
         With damage
-            Return .damageGlancing & "-" & .damageFull & " " & .type.ToString & " damage @ " & .accuracy & " accuracy"
+            If .damageGlancing = .damageFull Then total &= .damageGlancing Else total &= .damageGlancing & "-" & .damageFull
+            total &= " " & .type.ToString & " damage @ " & .accuracy & " accuracy"
         End With
+        Return total
     End Function
     Friend Overrides ReadOnly Property alarms As List(Of String)
         Get

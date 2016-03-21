@@ -21,6 +21,7 @@
         ship.addComponent(hullComponent.build("Uplifted Maintenance Bay"))
         ship.addComponent(hullComponent.build("Metal Containers"))
         ship.addComponent(hullComponent.build("NQ-14 Drone Bay"))
+        ship.addComponent(hullComponent.build("Chaingun"))
         For n = 1 To 3
             ship.addCrew(crew.build(eRace.Human))
         Next
@@ -57,11 +58,8 @@
                 Console.ReadKey()
             Case "travel", "t"
                 cmdTravel(cmd)
-            Case "ctick"
-                ship.tickCombat()
-            Case "carrier"
-                Dim hc As hcWeapon = CType(ship.getComponents(GetType(hcWeapon))(0), hcWeapon)
-                hc.attack(ship)
+            Case "battlefield", "battle"
+                cmdBattlefield()
 
             Case "adddamage"
                 If cmd.Length <> 3 Then Exit Sub
@@ -407,6 +405,63 @@
         If choice.loadResource() = False Then
             Console.WriteLine("Load failure.")
             Console.ReadKey()
+        End If
+    End Sub
+
+    Private Sub cmdBattlefield()
+        Dim enemy As New player
+        Dim enemyShip As ship = ship.build(enemy, eShipType.Crusier)
+
+        Dim battlefield As New battlefield(New List(Of player) From {enemy, player})
+
+        Console.Clear()
+        While True
+            Console.Clear()
+            ship.consoleReportCombat(0)
+            Console.WriteLine(vbSpace(1) & "Alarms:")
+            ship.consoleReportAlarms(2)
+            Console.WriteLine()
+            alert.allConsoleReport(0, 5)
+
+            Console.Write("> ")
+            If handleInputBattlefield(Console.ReadLine(), battlefield) = True Then Exit While
+        End While
+    End Sub
+    Private Function handleInputBattlefield(ByVal rawstr As String, ByRef battlefield As battlefield) As Boolean
+        Dim cmd As String() = rawstr.Split(" ")
+        Select Case cmd(0)
+            Case ""
+                battlefield.tickCombat()
+            Case "attack"
+                cmdAttack(battlefield)
+            Case "exit"
+                battlefield.Close()
+                Return True
+        End Select
+        Return False
+    End Function
+    Private Sub cmdAttack(ByRef battlefield As battlefield)
+        Dim hcList As New List(Of hullComponent)
+        hcList.AddRange(ship.getComponents(GetType(hcWeapon)))
+        For Each hc As hcDefence In ship.getComponents(GetType(hcDefence))
+            If hc.defType = eDefenceType.PointDefence Then hcList.Add(hc)
+        Next
+        Dim choice As hullComponent = menu.getListChoice(hcList, 1, vbCrLf & "Select an attack:")
+
+        If TypeOf choice Is hcWeapon Then
+            Dim enemies As New List(Of ship)
+            For Each kvp In battlefield.ships
+                If kvp.Key.Equals(player) = False Then enemies.AddRange(kvp.Value)
+            Next
+            Dim target As ship = menu.getListChoice(enemies, 1, vbCrLf & "Select a target:")
+            If target Is Nothing Then Exit Sub
+
+            Dim hcw As hcWeapon = CType(choice, hcWeapon)
+            hcw.attack(target)
+        ElseIf TypeOf choice Is hcDefence Then
+            Dim enemies As List(Of interceptor) = ship.enemyInterceptors
+            Dim target As interceptor = menu.getListChoice(enemies, 1, vbCrLf & "Select a target:")
+            target.destroy()
         End If
     End Sub
 

@@ -31,6 +31,25 @@
         End Get
     End Property
 
+    Friend Overrides Sub tickTravel()
+        tickRechargeShields()
+    End Sub
+    Friend Overrides Sub tickIdle()
+        tickRechargeShields()
+    End Sub
+    Private Sub tickRechargeShields()
+        If defType = eDefenceType.Shields Then
+            Dim shieldsRaw As Integer() = ship.getDefences(eDefenceType.Shields)
+            Dim shields As Integer = shieldsRaw(0)
+            Dim shieldsMax As Integer = shieldsRaw(1)
+            If shields < shieldsMax Then
+                If crewable.isManned = False Then Exit Sub
+                If useResource() = False Then Exit Sub
+                ship.repair(eDefenceType.Shields, 1)
+            End If
+        End If
+    End Sub
+
     Friend Property crewable As New shcCrewable(Me) Implements ihcCrewable.crewable
     Friend Overrides ReadOnly Property typeString As String
         Get

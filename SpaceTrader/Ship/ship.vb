@@ -24,6 +24,8 @@
             .buildDefaultShip()
             .fullRepair()
         End With
+
+        player.ships.Add(ship)
         Return ship
     End Function
     Private Sub buildDefaultShip()
@@ -62,12 +64,14 @@
     End Sub
     Private Shared shipNames As New List(Of String)
 
+    Public Overrides Function ToString() As String
+        Return name
+    End Function
     Friend Sub consoleReport(ByVal indent As Integer)
         Dim ind As String = vbSpace(indent)
         Dim indd As String = vbSpace(indent + 1)
         Dim inddd As String = vbSpace(indent + 2)
         Const ftlen As Integer = 16
-
 
         Console.WriteLine(ind & name)
         Console.WriteLine(indd & fakeTab("Credits:", ftlen) & "¥" & player.credits.ToString("N0"))
@@ -75,7 +79,18 @@
         If _planet Is Nothing Then Console.WriteLine(travelDescription) Else Console.WriteLine(_planet.ToString)
         If travelDestination Is Nothing = False Then Console.WriteLine(indd & fakeTab("Target:", ftlen) & travelDestination.name)
         Console.WriteLine(indd & fakeTab("Speed:", ftlen) & travelSpeed(True) & " jump + " & travelSpeed(False) & " sublight")
+        Console.WriteLine(indd & fakeTab("Hull:", ftlen) & hullSpaceOccupied & "/" & hullSpaceMaxBase)
+        consoleReportHullComponents(indent + 2, "└ ")
 
+        consoleReportCrew(indent + 1)
+        consoleReportCargo(indent + 1)
+    End Sub
+    Friend Sub consoleReportCombat(ByVal indent As Integer)
+        Dim ind As String = vbSpace(indent)
+        Dim indd As String = vbSpace(indent + 1)
+        Const ftlen As Integer = 16
+
+        Console.WriteLine(ind & name)
         For Each d As eDefenceType In constants.defenceTypeArray
             Dim def As String = d.ToString
             If d = eDefenceType.PointDefence Then def = "Point Defence"
@@ -84,14 +99,9 @@
             Else
                 Console.WriteLine(indd & fakeTab(def & ":", ftlen) & defences(d))
             End If
-
         Next
-
         Console.WriteLine(indd & fakeTab("Hull:", ftlen) & hullSpaceOccupied & "/" & hullSpaceMaxBase)
-        consoleReportHullComponents(indent + 1, "└ ")
-
-        consoleReportCrew(indent + 1)
-        consoleReportCargo(indent + 1)
+        consoleReportHullComponents(indent + 2, "└ ")
     End Sub
     Private Sub consoleReportHullComponents(ByVal indent As Integer, Optional ByVal prefix As String = "")
         Dim ind As String = vbSpace(indent) & prefix
@@ -231,6 +241,10 @@
         travelDistancePlanet1 = 0
         travelDistancePlanet2 = 0
     End Sub
+
+    Friend Sub tick()
+        If travelDestination Is Nothing Then tickIdle() Else tickTravel()
+    End Sub
     Private Sub tickTravel()
         If travelDestination Is Nothing Then Exit Sub
 
@@ -269,16 +283,15 @@
         Next
     End Sub
 
-    Friend Sub tick()
-        If travelDestination Is Nothing Then tickIdle() Else tickTravel()
-    End Sub
-
-    Friend Sub enterCombat()
+    Private battlefield As battlefield
+    Friend Sub enterCombat(ByRef aBattlefield As battlefield)
         combatEnergy = combatEnergyMax
         For Each d In constants.defenceTypeArray
             defenceRoundBoosts(d) = 0
             defenceCombatDebuffs(d) = 0
         Next
+
+        battlefield = aBattlefield
     End Sub
     Friend Sub tickCombat()
         combatEnergy = combatEnergyMax
@@ -296,11 +309,12 @@
             defenceRoundBoosts(d) = 0
             defenceCombatDebuffs(d) = 0
         Next
-    End Sub
 
+        battlefield = Nothing
+    End Sub
     Private Const combatEnergyMax As Integer = 20
     Private combatEnergy As Integer
-    Private enemyInterceptors As New List(Of interceptor)
+    Friend enemyInterceptors As New List(Of interceptor)
     Private _defences As New Dictionary(Of eDefenceType, Integer)
     Private Property defences(ByVal defenceType As eDefenceType) As Integer
         Get
@@ -407,7 +421,10 @@
     Friend Sub addInterceptor(ByRef attacker As iCombatant, ByVal interceptor As interceptor)
         enemyInterceptors.Add(interceptor)
     End Sub
-    Private Sub destroy()
+    Friend Sub removeInterceptor(ByRef interceptor As interceptor)
+        enemyInterceptors.Remove(interceptor)
+    End Sub
+    Private Sub destroy() Implements iCombatant.destroy
         alert.Add("Ship Destruction", _name & " was destroyed!", 0)
     End Sub
 

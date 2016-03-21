@@ -20,4 +20,10 @@
     Friend Sub tickCombat()
         target.addDamage(Me, damage)
     End Sub
+    Friend Sub destroy() Implements iCombatant.destroy
+        target.removeInterceptor(Me)
+        parent = Nothing
+        target = Nothing
+        damage = Nothing
+    End Sub
 End Class

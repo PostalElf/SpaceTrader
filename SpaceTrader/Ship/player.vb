@@ -12,4 +12,6 @@
         If value > _credits Then Return False
         Return True
     End Function
+
+    Friend ships As New List(Of ship)
 End Class

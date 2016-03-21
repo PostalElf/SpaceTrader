@@ -1,5 +1,5 @@
 ﻿Public Enum eDigitalAttack
-    Virus = 1
+    SynapticVirus = 1
     Trojan
-    Worm
+    NetworkWorm
 End Enum

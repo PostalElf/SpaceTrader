@@ -273,20 +273,27 @@
     Private _defences As New Dictionary(Of eDefenceType, Integer)
     Private Property defences(ByVal defenceType As eDefenceType) As Integer
         Get
-            If defenceType = eDefenceType.Dodge Then
-                Dim totalDodge As Integer = defencesMaxBase(defenceType)
-                For Each hc As hcEngine In hullComponents(GetType(hcEngine))
-                    totalDodge += hc.dodge
-                Next
-                Return totalDodge
-            Else
-                Return _defences(defenceType)
-            End If
+            Select Case defenceType
+                Case eDefenceType.Dodge
+                    Dim totalDodge As Integer = defencesMaxBase(defenceType)
+                    For Each hc As hcEngine In hullComponents(GetType(hcEngine))
+                        totalDodge += hc.dodge
+                    Next
+                    Return totalDodge + defenceDodgeBoost - defenceDodgeDebuff
+                Case eDefenceType.Firewall : Return _defences(defenceType) + defenceFirewallBoost - defenceFirewallDebuff
+                Case eDefenceType.PointDefence : Return _defences(defenceType) - defencePointDefenceDebuff
+                Case Else : Return _defences(defenceType)
+            End Select
         End Get
         Set(ByVal value As Integer)
             If defenceType <> eDefenceType.Dodge Then _defences(defenceType) = value
         End Set
     End Property
+    Private defenceFirewallBoost As Integer             'reset every round
+    Private defenceDodgeBoost As Integer                'reset every round
+    Private defenceFirewallDebuff As Integer            'reset at end of combat
+    Private defenceDodgeDebuff As Integer               'reset at end of combat
+    Private defencePointDefenceDebuff As Integer        'reset at end of combat
     Private defencesMaxBase As New Dictionary(Of eDefenceType, Integer)
     Private Function defencesMax(ByVal defenceType As eDefenceType) As Integer
         Dim total As Integer = defencesMaxBase(defenceType)
@@ -313,14 +320,30 @@
         With damage
             If .type = eDamageType.Digital Then
                 'digital attack
-                If .accuracy >= defences(eDefenceType.Firewall) Then addDigitalDamage(attacker, .digitalPayload)
+                alert.Add("Attack", attacker.name & " successfully hacks into " & name & "'s systems.", 2)
+                If .accuracy >= defences(eDefenceType.Firewall) Then
+                    Select Case .digitalPayload
+                        Case eDigitalAttack.Trojan
+                            defenceFirewallDebuff += .damageFull
+                            alert.Add("Trojan", name & " has been infected with a Trojan, reducing its Firewall to " & defences(eDefenceType.Firewall) & ".", 2)
+                        Case eDigitalAttack.SynapticVirus
+                            defenceDodgeDebuff += .damageFull
+                            alert.Add("Synaptic Virus", name & "'s engines have been infected with a Virus, reducing its Dodge to " & defences(eDefenceType.Dodge) & ".", 2)
+                        Case eDigitalAttack.NetworkWorm
+                            defencePointDefenceDebuff += .damageFull
+                            alert.Add("Network Worm", name & "'s network has been infected with a Worm, reducing its Point Defence to " & defences(eDefenceType.PointDefence) & ".", 2)
+                        Case Else
+                            MsgBox("addDamage: unexpected digitalPayload")
+                            Exit Sub
+                    End Select
+                End If
             Else
                 'conventional attack
                 Dim dmgValue As Integer
                 If .type = eDamageType.Missile Then .accuracy -= defences(eDefenceType.PointDefence)
                 If .accuracy >= defences(eDefenceType.Dodge) Then dmgValue = .damageFull Else dmgValue = .damageGlancing
 
-                alert.Add("Damage", attacker.name & " hits " & name & " for " & dmgValue & " " & .type.ToString & " damage.", 2)
+                alert.Add("Attack", attacker.name & " hits " & name & " for " & dmgValue & " " & .type.ToString & " damage.", 2)
                 If defences(eDefenceType.Shields) > 0 Then
                     If .type = eDamageType.Energy Then dmgValue *= 1.5
                     defences(eDefenceType.Shields) -= dmgValue
@@ -339,12 +362,6 @@
                 If defences(eDefenceType.Armour) <= 0 Then destroy() Else alert.Add("Armour", name & " has " & defences(eDefenceType.Armour) & " armour remaining.", 2)
             End If
         End With
-    End Sub
-    Private Sub addDigitalDamage(ByRef attacker As ship, ByVal digitalPayload As eDigitalAttack)
-        Select Case digitalPayload
-            Case eDigitalAttack.Trojan
-            Case eDigitalAttack.Virus
-        End Select
     End Sub
     Private Sub destroy()
         alert.Add("Ship Destruction", _name & " was destroyed!", 0)

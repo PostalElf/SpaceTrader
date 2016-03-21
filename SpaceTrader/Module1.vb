@@ -20,6 +20,7 @@
         ship.addComponent(hullComponent.build("Crew Cabin"))
         ship.addComponent(hullComponent.build("Uplifted Maintenance Bay"))
         ship.addComponent(hullComponent.build("Metal Containers"))
+        ship.addComponent(hullComponent.build("NQ-14 Drone Bay"))
         For n = 1 To 3
             ship.addCrew(crew.build(eRace.Human))
         Next
@@ -56,7 +57,11 @@
                 Console.ReadKey()
             Case "travel", "t"
                 cmdTravel(cmd)
-
+            Case "ctick"
+                ship.tickCombat()
+            Case "carrier"
+                Dim hc As hcWeapon = CType(ship.getComponents(GetType(hcWeapon))(0), hcWeapon)
+                hc.attack(ship)
 
             Case "adddamage"
                 If cmd.Length <> 3 Then Exit Sub

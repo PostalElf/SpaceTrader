@@ -92,6 +92,8 @@
     <Compile Include="Resources\eHcCategory.vb" />
     <Compile Include="Ship\Combat\damage.vb" />
     <Compile Include="Ship\Combat\eDigitalAttack.vb" />
+    <Compile Include="Ship\Combat\iCombatant.vb" />
+    <Compile Include="Ship\Combat\interceptor.vb" />
     <Compile Include="Ship\Crew\crew.vb" />
     <Compile Include="Ship\Crew\eRace.vb" />
     <Compile Include="Ship\Combat\eDamageType.vb" />

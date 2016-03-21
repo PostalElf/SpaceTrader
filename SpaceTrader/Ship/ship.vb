@@ -1,4 +1,5 @@
 ﻿Public Class ship
+    Implements iCombatant
     Public Sub New()
         For Each r In constants.resourceArray
             resources.Add(r, 0)
@@ -145,7 +146,7 @@
     End Sub
 
     Private _name As String
-    Friend ReadOnly Property name As String
+    Friend ReadOnly Property name As String Implements iCombatant.name
         Get
             Return getTypePrefix() & " " & _name
         End Get
@@ -284,6 +285,10 @@
         For Each d In constants.defenceTypeArray
             defenceRoundBoosts(d) = 0
         Next
+
+        For Each interceptor In enemyInterceptors
+            interceptor.tickCombat()
+        Next
     End Sub
     Friend Sub leaveCombat()
         combatEnergy = 0
@@ -295,6 +300,7 @@
 
     Private Const combatEnergyMax As Integer = 20
     Private combatEnergy As Integer
+    Private enemyInterceptors As New List(Of interceptor)
     Private _defences As New Dictionary(Of eDefenceType, Integer)
     Private Property defences(ByVal defenceType As eDefenceType) As Integer
         Get
@@ -350,7 +356,7 @@
     Friend Sub repair(ByVal defenceType As eDefenceType, ByVal value As Integer)
         defences(defenceType) = constrain(defences(defenceType) + value, 0, defencesMax(defenceType))
     End Sub
-    Friend Sub addDamage(ByRef attacker As ship, ByVal damage As damage)
+    Friend Sub addDamage(ByRef attacker As iCombatant, ByVal damage As damage)
         With damage
             If .type = eDamageType.Digital Then
                 'digital attack
@@ -397,6 +403,9 @@
                 If defences(eDefenceType.Armour) <= 0 Then destroy() Else alert.Add("Armour", name & " has " & defences(eDefenceType.Armour) & " armour remaining.", 2)
             End If
         End With
+    End Sub
+    Friend Sub addInterceptor(ByRef attacker As iCombatant, ByVal interceptor As interceptor)
+        enemyInterceptors.Add(interceptor)
     End Sub
     Private Sub destroy()
         alert.Add("Ship Destruction", _name & " was destroyed!", 0)

@@ -626,7 +626,22 @@ Type: Weapon
 Size: 5
 Tier: 1
 Cost: 2000
-Damage: 1
+Accuracy: 75
+DamageFull: 1
+DamageGlancing: 1
 DamageType: Ballistic
 CrewableMin: 1
 CrewableMax: 1
+
+[NQ-14 Drone Bay]
+Type: Weapon
+Size: 5
+Tier: 1
+Cost: 4000
+DamageType: Interceptors
+InterceptorName: NQ-14 Drone
+Accuracy: 75
+DamageFull: 1
+DamageGlancing: 1
+ResourceSlot: Machines
+ResourceQtyPerUse: 25

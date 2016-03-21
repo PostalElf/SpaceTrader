@@ -24,6 +24,11 @@
             Return System.Enum.GetValues(GetType(eDamageType))
         End Get
     End Property
+    Friend Shared ReadOnly Property digitalAttackArray As Array
+        Get
+            Return System.Enum.GetValues(GetType(eDigitalAttack))
+        End Get
+    End Property
     Friend Shared ReadOnly Property defenceTypeArray As Array
         Get
             Return System.Enum.GetValues(GetType(eDefenceType))

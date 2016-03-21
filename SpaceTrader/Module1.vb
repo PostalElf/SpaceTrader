@@ -263,7 +263,7 @@
     Private Sub cmdRepair()
         If ship.planet Is Nothing Then Exit Sub
 
-        Dim defences As Integer() = ship.getDefences("armour")
+        Dim defences As Integer() = ship.getDefences(eDefenceType.Armour)
         Dim armour As Integer = defences(0)
         Dim armourMax As Integer = defences(1)
         Dim empty As Integer = armourMax - armour
@@ -286,7 +286,7 @@
                 Exit Sub
             End If
             player.addCredits(-totalPrice)
-            ship.repair(empty)
+            ship.repair(eDefenceType.Armour, empty)
         Else
 
         End If

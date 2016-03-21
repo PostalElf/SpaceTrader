@@ -7,6 +7,10 @@
         For Each t As Type In constants.hcTypeList
             hullComponents.Add(t, New List(Of hullComponent))
         Next
+        For Each d In constants.defenceTypeArray
+            defences.Add(d, 0)
+            defencesMaxBase.Add(d, 0)
+        Next
     End Sub
     Friend Shared Function build(ByRef player As player, ByVal type As eShipType) As ship
         Dim ship As New ship
@@ -23,32 +27,32 @@
         Select Case type
             Case eShipType.Corvette
                 hullSpaceMaxBase = 20
-                shieldsMaxBase = 5
-                armourMaxBase = 10
+                defencesMaxBase(eDefenceType.Shields) = 5
+                defencesMaxBase(eDefenceType.Armour) = 10
                 travelSublightSpeedBase = 5
                 travelJumpSpeedBase = 1
             Case eShipType.Frigate
                 hullSpaceMaxBase = 50
-                shieldsMaxBase = 10
-                armourMaxBase = 10
+                defencesMaxBase(eDefenceType.Shields) = 10
+                defencesMaxBase(eDefenceType.Armour) = 10
                 travelSublightSpeedBase = 5
                 travelJumpSpeedBase = 1
             Case eShipType.Crusier
                 hullSpaceMaxBase = 75
-                shieldsMaxBase = 20
-                armourMaxBase = 10
+                defencesMaxBase(eDefenceType.Shields) = 20
+                defencesMaxBase(eDefenceType.Armour) = 10
                 travelSublightSpeedBase = 5
                 travelJumpSpeedBase = 1
             Case eShipType.Destroyer
                 hullSpaceMaxBase = 100
-                shieldsMaxBase = 20
-                armourMaxBase = 20
+                defencesMaxBase(eDefenceType.Shields) = 20
+                defencesMaxBase(eDefenceType.Armour) = 20
                 travelSublightSpeedBase = 5
                 travelJumpSpeedBase = 1
             Case eShipType.Dreadnought
                 hullSpaceMaxBase = 150
-                shieldsMaxBase = 20
-                armourMaxBase = 40
+                defencesMaxBase(eDefenceType.Shields) = 20
+                defencesMaxBase(eDefenceType.Armour) = 40
                 travelSublightSpeedBase = 5
                 travelJumpSpeedBase = 1
         End Select
@@ -59,16 +63,21 @@
         Dim ind As String = vbSpace(indent)
         Dim indd As String = vbSpace(indent + 1)
         Dim inddd As String = vbSpace(indent + 2)
-        Const ftlen As Integer = 11
+        Const ftlen As Integer = 16
+
 
         Console.WriteLine(ind & name)
         Console.WriteLine(indd & fakeTab("Credits:", ftlen) & "¥" & player.credits.ToString("N0"))
         Console.Write(indd & fakeTab("Location:", ftlen))
         If _planet Is Nothing Then Console.WriteLine(travelDescription) Else Console.WriteLine(_planet.ToString)
         If travelDestination Is Nothing = False Then Console.WriteLine(indd & fakeTab("Target:", ftlen) & travelDestination.name)
-        Console.WriteLine(indd & fakeTab("Shields:", ftlen) & shields & "/" & shieldsMax)
-        Console.WriteLine(indd & fakeTab("Armour:", ftlen) & armour & "/" & armourMaxBase)
         Console.WriteLine(indd & fakeTab("Speed:", ftlen) & travelSpeed(True) & " jump + " & travelSpeed(False) & " sublight")
+
+        For Each kvp In defences
+            Dim def As String = kvp.Key.ToString
+            If kvp.Key = eDefenceType.PointDefence Then def = "Point Defence"
+            Console.WriteLine(indd & fakeTab(def & ":", ftlen) & defences(kvp.Key) & "/" & defencesMax(kvp.Key))
+        Next
 
         Console.WriteLine(indd & fakeTab("Hull:", ftlen) & hullSpaceOccupied & "/" & hullSpaceMaxBase)
         consoleReportHullComponents(indent + 2, "└ ")
@@ -256,78 +265,46 @@
         If travelDestination Is Nothing Then tickIdle() Else tickTravel()
     End Sub
 
-    Private shields As Integer
-    Private shieldsMaxBase As Integer
-    Private ReadOnly Property shieldsMax As Integer
-        Get
-            Dim total As Integer = shieldsMaxBase
-            For Each hc As hcDefence In hullComponents(GetType(hcDefence))
-                If hc.defType = eDefenceType.Shields Then total += hc.value
-            Next
-            Return total
-        End Get
-    End Property
-    Private armour As Integer
-    Private armourMaxBase As Integer
-    Private ReadOnly Property armourMax As Integer
-        Get
-            Dim total As Integer = armourMaxBase
-            For Each hc As hcDefence In hullComponents(GetType(hcDefence))
-                If hc.defType = eDefenceType.Armour Then total += hc.value
-            Next
-            Return total
-        End Get
-    End Property
-    Private ReadOnly Property dodge As Integer
-        Get
-            Dim total As Integer = 0
-            For Each hc As hcEngine In hullComponents(GetType(hcEngine))
-                If hc.isActive = True Then total += hc.dodge
-            Next
-            Return total
-        End Get
-    End Property
-    Friend Function getDefences(ByVal defenceType As String) As Integer()
-        Dim total(1) As Integer
-        Select Case defenceType.ToLower
-            Case "shields"
-                total(0) = shields
-                total(1) = shieldsMax
-            Case "armour"
-                total(0) = armour
-                total(1) = armourMax
-            Case "dodge"
-                total(0) = dodge
-                total(1) = dodge
-            Case Else
-                MsgBox("getDefences unrecognised defenceType string")
-                Return Nothing
-        End Select
+    Private defences As New Dictionary(Of eDefenceType, Integer)
+    Private defencesMaxBase As New Dictionary(Of eDefenceType, Integer)
+    Private Function defencesMax(ByVal defenceType As eDefenceType) As Integer
+        Dim total As Integer = defencesMaxBase(defenceType)
+        For Each hc As hcDefence In hullComponents(GetType(hcDefence))
+            If hc.defType = defenceType Then total += hc.value
+        Next
         Return total
     End Function
+
     Friend Sub fullRepair()
-        shields = shieldsMax
-        armour = armourMaxBase
+        For Each d In constants.defenceTypeArray
+            defences(d) = defencesMax(d)
+        Next
     End Sub
+    Friend Sub repair(ByVal defenceType As eDefenceType, ByVal value As Integer)
+        defences(defenceType) = constrain(defences(defenceType) + value, 0, defencesMax(defenceType))
+    End Sub
+    Friend Function getDefences(ByVal defenceType As eDefenceType) As Integer()
+        Dim total(1) As Integer
+        total(0) = defences(defenceType)
+        total(1) = defencesMax(defenceType)
+        Return total
+    End Function
     Friend Sub addDamage(ByVal damage As Integer, ByVal damageType As eDamageType)
-        If shields > 0 Then
-            shields -= damage
-            If shields < 0 Then
-                damage = shields * -1
-                shields = 0
+        If defences(eDefenceType.Shields) > 0 Then
+            defences(eDefenceType.Shields) -= damage
+            If defences(eDefenceType.Shields) < 0 Then
+                damage = defences(eDefenceType.Shields) * -1
+                defences(eDefenceType.Shields) = 0
                 alert.Add("Shields Down", name & "'s shields are down.", 2)
             Else
-                alert.Add("Shields", name & " has " & shields & " shields remaining.", 2)
+                alert.Add("Shields", name & " has " & defences(eDefenceType.Shields) & " shields remaining.", 2)
                 Exit Sub
             End If
         End If
         If damage > 0 Then
-            armour -= damage
-            If armour <= 0 Then destroy() Else alert.Add("Armour", name & " has " & armour & " armour remaining.", 2)
+            defences(eDefenceType.Armour) -= damage
+            If defences(eDefenceType.Armour) <= 0 Then destroy() Else alert.Add("Armour", name & " has " & defences(eDefenceType.Armour) & " armour remaining.", 2)
         End If
-    End Sub
-    Friend Sub repair(ByVal value As Integer)
-        armour = constrain(armour + value, 0, armourMax)
     End Sub
     Private Sub destroy()
         alert.Add("Ship Destruction", _name & " was destroyed!", 0)

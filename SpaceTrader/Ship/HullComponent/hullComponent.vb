@@ -158,15 +158,16 @@
         alert.Add("Load", name & " loaded a pod of " & resourceSlot.ToString & " from the cargo hold.", 7)
         Return True
     End Function
-    Protected Function useResource() As Boolean
+    Protected Function useResource(Optional ByVal value As Integer = 1) As Boolean
         If resourceSlot = Nothing Then Return True
-        If resourceQtyPerUse > resourceQtyRemaining Then
+        Dim trueQty As Integer = resourceQtyPerUse * value
+        If trueQty > resourceQtyRemaining Then
             If autoloadResource = True Then loadResource()
             alert.Add("Use Failure", name & " is out of " & resourceSlot.ToString & "!", 5)
             Return False
         End If
 
-        resourceQtyRemaining -= resourceQtyPerUse
+        resourceQtyRemaining -= trueQty
         Return True
     End Function
 End Class

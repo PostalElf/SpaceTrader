@@ -59,8 +59,11 @@
 
 
             Case "adddamage"
+                If cmd.Length <> 3 Then Exit Sub
                 Dim dmgValue As Integer = CInt(cmd(1))
-                ship.addDamage(ship, New damage(eDamageType.Ballistic, 100, dmgValue, dmgValue))
+                Dim dmgType As eDamageType = constants.getEnumFromString(cmd(2), constants.damageTypeArray)
+                If dmgType = Nothing Then Exit Sub
+                ship.addDamage(ship, New damage(dmgType, 100, dmgValue, dmgValue))
             Case "addimport"
                 If ship.planet Is Nothing Then Exit Sub
                 ship.planet.addShipment(getResourceFromStr(cmd(1)), True)

@@ -90,10 +90,12 @@
     </Compile>
     <Compile Include="Dev\valve.vb" />
     <Compile Include="Resources\eHcCategory.vb" />
+    <Compile Include="Ship\Combat\damage.vb" />
+    <Compile Include="Ship\Combat\eDigitalAttack.vb" />
     <Compile Include="Ship\Crew\crew.vb" />
     <Compile Include="Ship\Crew\eRace.vb" />
-    <Compile Include="Ship\eDamageType.vb" />
-    <Compile Include="Ship\eDefenceType.vb" />
+    <Compile Include="Ship\Combat\eDamageType.vb" />
+    <Compile Include="Ship\Combat\eDefenceType.vb" />
     <Compile Include="Ship\eShipType.vb" />
     <Compile Include="Ship\HullComponent\hcCargo.vb" />
     <Compile Include="Ship\HullComponent\hcCrewQuarters.vb" />

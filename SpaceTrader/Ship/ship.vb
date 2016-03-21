@@ -304,7 +304,7 @@
                     total += hc.dodge
                 Next
             Else
-                total = _defences(eDefenceType.Dodge)
+                total = _defences(defenceType)
             End If
             total += defenceRoundBoosts(defenceType) - defenceCombatDebuffs(defenceType)
             Return total
@@ -344,6 +344,7 @@
     Friend Sub fullRepair()
         For Each d In constants.defenceTypeArray
             defences(d) = defencesMax(d)
+            Debug.Print(d.ToString & ":" & defences(d))
         Next
     End Sub
     Friend Sub repair(ByVal defenceType As eDefenceType, ByVal value As Integer)
@@ -376,16 +377,17 @@
                 If .type = eDamageType.Missile Then .accuracy -= defences(eDefenceType.PointDefence)
                 If .accuracy >= defences(eDefenceType.Dodge) Then dmgValue = .damageFull Else dmgValue = .damageGlancing
 
-                alert.Add("Attack", attacker.name & " hits " & name & " for " & dmgValue & " " & .type.ToString & " damage.", 2)
                 If defences(eDefenceType.Shields) > 0 Then
                     If .type = eDamageType.Energy Then dmgValue *= 1.5
                     defences(eDefenceType.Shields) -= dmgValue
-                    If defences(eDefenceType.Shields) < 0 AndAlso .type <> eDamageType.Energy Then
-                        dmgValue = defences(eDefenceType.Shields) * -1
+                    alert.Add("Attack", attacker.name & " hits " & name & " for " & dmgValue & " " & .type.ToString & " damage.", 2)
+                    If defences(eDefenceType.Shields) < 0 Then
+                        If .type = eDamageType.Energy Then dmgValue = 0 Else dmgValue = defences(eDefenceType.Shields) * -1
                         defences(eDefenceType.Shields) = 0
                         alert.Add("Shields Down", name & "'s shields are down.", 2)
                     Else
                         alert.Add("Shields", name & " has " & defences(eDefenceType.Shields) & " shields remaining.", 2)
+                        dmgValue = 0
                     End If
                 End If
 

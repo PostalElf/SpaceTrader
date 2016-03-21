@@ -313,14 +313,14 @@
         With damage
             If .type = eDamageType.Digital Then
                 'digital attack
-
-
+                If .accuracy >= defences(eDefenceType.Firewall) Then addDigitalDamage(attacker, .digitalPayload)
             Else
                 'conventional attack
                 Dim dmgValue As Integer
                 If .type = eDamageType.Missile Then .accuracy -= defences(eDefenceType.PointDefence)
                 If .accuracy >= defences(eDefenceType.Dodge) Then dmgValue = .damageFull Else dmgValue = .damageGlancing
 
+                alert.Add("Damage", attacker.name & " hits " & name & " for " & dmgValue & " " & .type.ToString & " damage.", 2)
                 If defences(eDefenceType.Shields) > 0 Then
                     If .type = eDamageType.Energy Then dmgValue *= 1.5
                     defences(eDefenceType.Shields) -= dmgValue
@@ -339,6 +339,12 @@
                 If defences(eDefenceType.Armour) <= 0 Then destroy() Else alert.Add("Armour", name & " has " & defences(eDefenceType.Armour) & " armour remaining.", 2)
             End If
         End With
+    End Sub
+    Private Sub addDigitalDamage(ByRef attacker As ship, ByVal digitalPayload As eDigitalAttack)
+        Select Case digitalPayload
+            Case eDigitalAttack.Trojan
+            Case eDigitalAttack.Virus
+        End Select
     End Sub
     Private Sub destroy()
         alert.Add("Ship Destruction", _name & " was destroyed!", 0)

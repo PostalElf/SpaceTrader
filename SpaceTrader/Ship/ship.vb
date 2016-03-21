@@ -10,7 +10,6 @@
         Next
         For Each d In constants.defenceTypeArray
             _defences.Add(d, 0)
-            defencesMaxBase.Add(d, 0)
             defenceRoundBoosts.Add(d, 0)
             defenceCombatDebuffs.Add(d, 0)
         Next
@@ -32,32 +31,32 @@
         Select Case type
             Case eShipType.Corvette
                 hullSpaceMaxBase = 20
-                defencesMaxBase(eDefenceType.Shields) = 5
-                defencesMaxBase(eDefenceType.Armour) = 10
+                addComponent(New hcDefence("Hull Plating", 0, eDefenceType.Armour, 10))
+                addComponent(New hcDefence("Voidshields", 0, eDefenceType.Shields, 10))
                 travelSublightSpeedBase = 5
                 travelJumpSpeedBase = 1
             Case eShipType.Frigate
                 hullSpaceMaxBase = 50
-                defencesMaxBase(eDefenceType.Shields) = 10
-                defencesMaxBase(eDefenceType.Armour) = 10
+                addComponent(New hcDefence("Hull Plating", 0, eDefenceType.Armour, 20))
+                addComponent(New hcDefence("Voidshields", 0, eDefenceType.Shields, 10))
                 travelSublightSpeedBase = 5
                 travelJumpSpeedBase = 1
             Case eShipType.Crusier
                 hullSpaceMaxBase = 75
-                defencesMaxBase(eDefenceType.Shields) = 20
-                defencesMaxBase(eDefenceType.Armour) = 10
+                addComponent(New hcDefence("Hull Plating", 0, eDefenceType.Armour, 30))
+                addComponent(New hcDefence("Voidshields", 0, eDefenceType.Shields, 10))
                 travelSublightSpeedBase = 5
                 travelJumpSpeedBase = 1
             Case eShipType.Destroyer
                 hullSpaceMaxBase = 100
-                defencesMaxBase(eDefenceType.Shields) = 20
-                defencesMaxBase(eDefenceType.Armour) = 20
+                addComponent(New hcDefence("Hull Plating", 0, eDefenceType.Armour, 50))
+                addComponent(New hcDefence("Voidshields", 0, eDefenceType.Shields, 10))
                 travelSublightSpeedBase = 5
                 travelJumpSpeedBase = 1
             Case eShipType.Dreadnought
                 hullSpaceMaxBase = 150
-                defencesMaxBase(eDefenceType.Shields) = 20
-                defencesMaxBase(eDefenceType.Armour) = 40
+                addComponent(New hcDefence("Hull Plating", 0, eDefenceType.Armour, 50))
+                addComponent(New hcDefence("Voidshields", 0, eDefenceType.Shields, 10))
                 travelSublightSpeedBase = 5
                 travelJumpSpeedBase = 1
         End Select
@@ -335,9 +334,8 @@
     End Property
     Private defenceRoundBoosts As New Dictionary(Of eDefenceType, Integer)
     Private defenceCombatDebuffs As New Dictionary(Of eDefenceType, Integer)
-    Private defencesMaxBase As New Dictionary(Of eDefenceType, Integer)
     Private Function defencesMax(ByVal defenceType As eDefenceType) As Integer
-        Dim total As Integer = defencesMaxBase(defenceType)
+        Dim total As Integer = 0
         For Each hc As hcDefence In hullComponents(GetType(hcDefence))
             If hc.defType = defenceType Then total += hc.value
         Next

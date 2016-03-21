@@ -21,7 +21,9 @@
         Dim value As Integer
         Dim crewRace As eRace
         Dim crewMax As Integer
-        Dim damage As Integer
+        Dim accuracy As Integer
+        Dim damageFull As Integer
+        Dim damageGlancing As Integer
         Dim damageType As eDamageType
         Dim defenceType As eDefenceType
         Dim speed As Integer
@@ -49,7 +51,9 @@
                 Case "value" : value = CInt(ln(1))
                 Case "crewrace" : crewRace = constants.getEnumFromString(ln(1), constants.raceArray)
                 Case "crewmax" : crewMax = CInt(ln(1))
-                Case "damage" : damage = CInt(ln(1))
+                Case "accuracy" : accuracy = CInt(ln(1))
+                Case "damagefull" : damageFull = CInt(ln(1))
+                Case "damageglancing" : damageGlancing = CInt(ln(1))
                 Case "damagetype" : damageType = constants.getEnumFromString(ln(1), constants.damageTypeArray)
                 Case "defencetype" : defenceType = constants.getEnumFromString(ln(1), constants.defenceTypeArray)
                 Case "speed" : speed = CInt(ln(1))
@@ -71,7 +75,7 @@
             Case "engine" : hc = New hcEngine(targetName, size, speed, dodge, resourceSlot, resourceQtyPerUse)
             Case "jumpdrive" : hc = New hcJumpDrive(targetName, size, speed, resourceSlot, resourceQtyPerUse)
             Case "producer" : hc = New hcProducer(targetName, size, resource, resourceProductionTimer, resourceSlot, resourceQtyPerUse)
-            Case "weapon" : hc = New hcWeapon(targetName, size, damage, damageType, resourceSlot, resourceQtyPerUse)
+            Case "weapon" : hc = New hcWeapon(targetName, size, damageType, accuracy, damageFull, damageGlancing, resourceSlot, resourceQtyPerUse)
         End Select
         If hc Is Nothing = False Then hc.blueprint = blueprint
         buildCrewable(hc, crewableMin, crewableMax)

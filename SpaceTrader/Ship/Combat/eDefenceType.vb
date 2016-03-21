@@ -1,6 +1,7 @@
 ﻿Public Enum eDefenceType
-    Shields
+    Shields = 1
     Armour
     PointDefence
     Dodge
+    Firewall
 End Enum

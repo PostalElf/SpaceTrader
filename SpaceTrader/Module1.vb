@@ -60,7 +60,7 @@
 
             Case "adddamage"
                 Dim damage As Integer = CInt(cmd(1))
-                ship.addDamage(damage, eDamageType.Ballistic)
+                'ship.addDamage(damage, eDamageType.Ballistic)
             Case "addimport"
                 If ship.planet Is Nothing Then Exit Sub
                 ship.planet.addShipment(getResourceFromStr(cmd(1)), True)

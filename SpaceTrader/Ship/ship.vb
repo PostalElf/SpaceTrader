@@ -309,22 +309,36 @@
     Friend Sub repair(ByVal defenceType As eDefenceType, ByVal value As Integer)
         defences(defenceType) = constrain(defences(defenceType) + value, 0, defencesMax(defenceType))
     End Sub
-    Friend Sub addDamage(ByVal damage As Integer, ByVal damageType As eDamageType)
-        If defences(eDefenceType.Shields) > 0 Then
-            defences(eDefenceType.Shields) -= damage
-            If defences(eDefenceType.Shields) < 0 Then
-                damage = defences(eDefenceType.Shields) * -1
-                defences(eDefenceType.Shields) = 0
-                alert.Add("Shields Down", name & "'s shields are down.", 2)
+    Friend Sub addDamage(ByRef attacker As ship, ByVal damage As damage)
+        With damage
+            If .type = eDamageType.Digital Then
+                'digital attack
+
+
             Else
-                alert.Add("Shields", name & " has " & defences(eDefenceType.Shields) & " shields remaining.", 2)
-                Exit Sub
+                'conventional attack
+                Dim dmgValue As Integer
+                If .type = eDamageType.Missile Then .accuracy -= defences(eDefenceType.PointDefence)
+                If .accuracy >= defences(eDefenceType.Dodge) Then dmgValue = .damageFull Else dmgValue = .damageGlancing
+
+                If defences(eDefenceType.Shields) > 0 Then
+                    If .type = eDamageType.Energy Then dmgValue *= 1.5
+                    defences(eDefenceType.Shields) -= dmgValue
+                    If defences(eDefenceType.Shields) < 0 AndAlso .type <> eDamageType.Energy Then
+                        dmgValue = defences(eDefenceType.Shields) * -1
+                        defences(eDefenceType.Shields) = 0
+                        alert.Add("Shields Down", name & "'s shields are down.", 2)
+                    Else
+                        alert.Add("Shields", name & " has " & defences(eDefenceType.Shields) & " shields remaining.", 2)
+                    End If
+                End If
+
+                If dmgValue <= 0 Then Exit Sub
+
+                defences(eDefenceType.Armour) -= dmgValue
+                If defences(eDefenceType.Armour) <= 0 Then destroy() Else alert.Add("Armour", name & " has " & defences(eDefenceType.Armour) & " armour remaining.", 2)
             End If
-        End If
-        If damage > 0 Then
-            defences(eDefenceType.Armour) -= damage
-            If defences(eDefenceType.Armour) <= 0 Then destroy() Else alert.Add("Armour", name & " has " & defences(eDefenceType.Armour) & " armour remaining.", 2)
-        End If
+        End With
     End Sub
     Private Sub destroy()
         alert.Add("Ship Destruction", _name & " was destroyed!", 0)

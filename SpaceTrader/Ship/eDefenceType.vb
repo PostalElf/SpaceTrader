@@ -2,4 +2,5 @@
     Shields
     Armour
     PointDefence
+    Dodge
 End Enum

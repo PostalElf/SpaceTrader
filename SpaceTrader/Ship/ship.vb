@@ -8,7 +8,7 @@
             hullComponents.Add(t, New List(Of hullComponent))
         Next
         For Each d In constants.defenceTypeArray
-            defences.Add(d, 0)
+            _defences.Add(d, 0)
             defencesMaxBase.Add(d, 0)
         Next
     End Sub
@@ -73,14 +73,19 @@
         If travelDestination Is Nothing = False Then Console.WriteLine(indd & fakeTab("Target:", ftlen) & travelDestination.name)
         Console.WriteLine(indd & fakeTab("Speed:", ftlen) & travelSpeed(True) & " jump + " & travelSpeed(False) & " sublight")
 
-        For Each kvp In defences
-            Dim def As String = kvp.Key.ToString
-            If kvp.Key = eDefenceType.PointDefence Then def = "Point Defence"
-            Console.WriteLine(indd & fakeTab(def & ":", ftlen) & defences(kvp.Key) & "/" & defencesMax(kvp.Key))
+        For Each d As eDefenceType In constants.defenceTypeArray
+            Dim def As String = d.ToString
+            If d = eDefenceType.PointDefence Then def = "Point Defence"
+            If d = eDefenceType.Shields OrElse d = eDefenceType.Armour Then
+                Console.WriteLine(indd & fakeTab(def & ":", ftlen) & defences(d) & "/" & defencesMax(d))
+            Else
+                Console.WriteLine(indd & fakeTab(def & ":", ftlen) & defences(d))
+            End If
+
         Next
 
         Console.WriteLine(indd & fakeTab("Hull:", ftlen) & hullSpaceOccupied & "/" & hullSpaceMaxBase)
-        consoleReportHullComponents(indent + 2, "└ ")
+        consoleReportHullComponents(indent + 1, "└ ")
 
         consoleReportCrew(indent + 1)
         consoleReportCargo(indent + 1)
@@ -265,7 +270,23 @@
         If travelDestination Is Nothing Then tickIdle() Else tickTravel()
     End Sub
 
-    Private defences As New Dictionary(Of eDefenceType, Integer)
+    Private _defences As New Dictionary(Of eDefenceType, Integer)
+    Private Property defences(ByVal defenceType As eDefenceType) As Integer
+        Get
+            If defenceType = eDefenceType.Dodge Then
+                Dim totalDodge As Integer = defencesMaxBase(defenceType)
+                For Each hc As hcEngine In hullComponents(GetType(hcEngine))
+                    totalDodge += hc.dodge
+                Next
+                Return totalDodge
+            Else
+                Return _defences(defenceType)
+            End If
+        End Get
+        Set(ByVal value As Integer)
+            If defenceType <> eDefenceType.Dodge Then _defences(defenceType) = value
+        End Set
+    End Property
     Private defencesMaxBase As New Dictionary(Of eDefenceType, Integer)
     Private Function defencesMax(ByVal defenceType As eDefenceType) As Integer
         Dim total As Integer = defencesMaxBase(defenceType)
@@ -274,7 +295,12 @@
         Next
         Return total
     End Function
-
+    Friend Function getDefences(ByVal defenceType As eDefenceType) As Integer()
+        Dim total(1) As Integer
+        total(0) = defences(defenceType)
+        total(1) = defencesMax(defenceType)
+        Return total
+    End Function
     Friend Sub fullRepair()
         For Each d In constants.defenceTypeArray
             defences(d) = defencesMax(d)
@@ -283,12 +309,6 @@
     Friend Sub repair(ByVal defenceType As eDefenceType, ByVal value As Integer)
         defences(defenceType) = constrain(defences(defenceType) + value, 0, defencesMax(defenceType))
     End Sub
-    Friend Function getDefences(ByVal defenceType As eDefenceType) As Integer()
-        Dim total(1) As Integer
-        total(0) = defences(defenceType)
-        total(1) = defencesMax(defenceType)
-        Return total
-    End Function
     Friend Sub addDamage(ByVal damage As Integer, ByVal damageType As eDamageType)
         If defences(eDefenceType.Shields) > 0 Then
             defences(eDefenceType.Shields) -= damage

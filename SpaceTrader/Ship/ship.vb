@@ -10,6 +10,8 @@
         For Each d In constants.defenceTypeArray
             _defences.Add(d, 0)
             defencesMaxBase.Add(d, 0)
+            defenceRoundBoosts.Add(d, 0)
+            defenceCombatDebuffs.Add(d, 0)
         Next
     End Sub
     Friend Shared Function build(ByRef player As player, ByVal type As eShipType) As ship
@@ -270,30 +272,49 @@
         If travelDestination Is Nothing Then tickIdle() Else tickTravel()
     End Sub
 
+    Friend Sub enterCombat()
+        combatEnergy = combatEnergyMax
+        For Each d In constants.defenceTypeArray
+            defenceRoundBoosts(d) = 0
+            defenceCombatDebuffs(d) = 0
+        Next
+    End Sub
+    Friend Sub tickCombat()
+        combatEnergy = combatEnergyMax
+        For Each d In constants.defenceTypeArray
+            defenceRoundBoosts(d) = 0
+        Next
+    End Sub
+    Friend Sub leaveCombat()
+        combatEnergy = 0
+        For Each d In constants.defenceTypeArray
+            defenceRoundBoosts(d) = 0
+            defenceCombatDebuffs(d) = 0
+        Next
+    End Sub
+
+    Private Const combatEnergyMax As Integer = 20
+    Private combatEnergy As Integer
     Private _defences As New Dictionary(Of eDefenceType, Integer)
     Private Property defences(ByVal defenceType As eDefenceType) As Integer
         Get
-            Select Case defenceType
-                Case eDefenceType.Dodge
-                    Dim totalDodge As Integer = defencesMaxBase(defenceType)
-                    For Each hc As hcEngine In hullComponents(GetType(hcEngine))
-                        totalDodge += hc.dodge
-                    Next
-                    Return totalDodge + defenceDodgeBoost - defenceDodgeDebuff
-                Case eDefenceType.Firewall : Return _defences(defenceType) + defenceFirewallBoost - defenceFirewallDebuff
-                Case eDefenceType.PointDefence : Return _defences(defenceType) - defencePointDefenceDebuff
-                Case Else : Return _defences(defenceType)
-            End Select
+            Dim total As Integer
+            If defenceType = eDefenceType.Dodge Then
+                For Each hc As hcEngine In hullComponents(GetType(hcEngine))
+                    total += hc.dodge
+                Next
+            Else
+                total = _defences(eDefenceType.Dodge)
+            End If
+            total += defenceRoundBoosts(defenceType) - defenceCombatDebuffs(defenceType)
+            Return total
         End Get
         Set(ByVal value As Integer)
             If defenceType <> eDefenceType.Dodge Then _defences(defenceType) = value
         End Set
     End Property
-    Private defenceFirewallBoost As Integer             'reset every round
-    Private defenceDodgeBoost As Integer                'reset every round
-    Private defenceFirewallDebuff As Integer            'reset at end of combat
-    Private defenceDodgeDebuff As Integer               'reset at end of combat
-    Private defencePointDefenceDebuff As Integer        'reset at end of combat
+    Private defenceRoundBoosts As New Dictionary(Of eDefenceType, Integer)
+    Private defenceCombatDebuffs As New Dictionary(Of eDefenceType, Integer)
     Private defencesMaxBase As New Dictionary(Of eDefenceType, Integer)
     Private Function defencesMax(ByVal defenceType As eDefenceType) As Integer
         Dim total As Integer = defencesMaxBase(defenceType)
@@ -308,6 +329,18 @@
         total(1) = defencesMax(defenceType)
         Return total
     End Function
+    Friend Sub addBoost(ByVal defenceType As eDefenceType, ByVal value As Integer)
+        combatEnergy -= value
+        Select Case defenceType
+            Case eDefenceType.Firewall : defences(eDefenceType.Firewall) += value
+            Case eDefenceType.Dodge : defences(eDefenceType.Dodge) += value
+        End Select
+    End Sub
+    Friend Function addBoostCheck(ByVal defenceType As eDefenceType, ByVal value As Integer) As Boolean
+        If combatEnergy < value Then Return False
+        Return True
+    End Function
+
     Friend Sub fullRepair()
         For Each d In constants.defenceTypeArray
             defences(d) = defencesMax(d)
@@ -324,13 +357,13 @@
                 If .accuracy >= defences(eDefenceType.Firewall) Then
                     Select Case .digitalPayload
                         Case eDigitalAttack.Trojan
-                            defenceFirewallDebuff += .damageFull
+                            defenceCombatDebuffs(eDefenceType.Firewall) += .damageFull
                             alert.Add("Trojan", name & " has been infected with a Trojan, reducing its Firewall to " & defences(eDefenceType.Firewall) & ".", 2)
                         Case eDigitalAttack.SynapticVirus
-                            defenceDodgeDebuff += .damageFull
+                            defenceCombatDebuffs(eDefenceType.Dodge) += .damageFull
                             alert.Add("Synaptic Virus", name & "'s engines have been infected with a Virus, reducing its Dodge to " & defences(eDefenceType.Dodge) & ".", 2)
                         Case eDigitalAttack.NetworkWorm
-                            defencePointDefenceDebuff += .damageFull
+                            defenceCombatDebuffs(eDefenceType.PointDefence) += .damageFull
                             alert.Add("Network Worm", name & "'s network has been infected with a Worm, reducing its Point Defence to " & defences(eDefenceType.PointDefence) & ".", 2)
                         Case Else
                             MsgBox("addDamage: unexpected digitalPayload")

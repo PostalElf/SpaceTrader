@@ -22,6 +22,7 @@
         ship.addComponent(hullComponent.build("Metal Containers"))
         ship.addComponent(hullComponent.build("NQ-14 Drone Bay"))
         ship.addComponent(hullComponent.build("Chaingun"))
+        ship.addComponent(New hcWeapon("Hellfire Missiles", 5, 5, eDamageType.Missile, 100, 20, 20, Nothing))
         For n = 1 To 3
             ship.addCrew(crew.build(eRace.Human))
         Next
@@ -415,7 +416,7 @@
         Dim battlefield As New battlefield(New List(Of player) From {enemy, player})
 
         Console.Clear()
-        While True
+        While battlefield.isActive = True
             Console.Clear()
             ship.consoleReportCombat(0)
             Console.WriteLine(vbSpace(1) & "Alarms:")
@@ -453,15 +454,24 @@
             For Each kvp In battlefield.ships
                 If kvp.Key.Equals(player) = False Then enemies.AddRange(kvp.Value)
             Next
+            If enemies.Count = 0 Then
+                Console.WriteLine("No valid targets.")
+                Console.ReadKey()
+                Exit Sub
+            End If
             Dim target As ship = menu.getListChoice(enemies, 1, vbCrLf & "Select a target:")
             If target Is Nothing Then Exit Sub
-
-            Dim hcw As hcWeapon = CType(choice, hcWeapon)
-            hcw.attack(target)
+            CType(choice, hcWeapon).attack(target)
         ElseIf TypeOf choice Is hcDefence Then
             Dim enemies As List(Of interceptor) = ship.enemyInterceptors
+            If enemies.Count = 0 Then
+                Console.WriteLine("No interceptors within range.")
+                Console.ReadKey()
+                Exit Sub
+            End If
             Dim target As interceptor = menu.getListChoice(enemies, 1, vbCrLf & "Select a target:")
-            target.destroy()
+            If target Is Nothing Then Exit Sub
+            CType(choice, hcDefence).attack(target)
         End If
     End Sub
 

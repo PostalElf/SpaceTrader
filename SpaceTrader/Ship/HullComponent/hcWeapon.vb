@@ -36,9 +36,19 @@
     Friend interceptorName As String
     Private damage As damage
     Friend Sub attack(ByRef target As ship)
-        If crewable.isManned = False Then Exit Sub
+        If crewable.isManned = False Then
+            Console.WriteLine(name & " is not crewed!")
+            Console.ReadKey()
+            Exit Sub
+        End If
+        If ship.addEnergyCheck(-energyCost) = False Then
+            Console.WriteLine("Insufficient energy!")
+            Console.ReadKey()
+            Exit Sub
+        End If
         If useResource() = False Then Exit Sub
 
+        ship.addEnergy(-energyCost)
         If isCarrier = True Then
             target.addInterceptor(ship, New interceptor(interceptorName, ship, target, damage))
         Else

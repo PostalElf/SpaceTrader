@@ -77,11 +77,14 @@
         Select Case type.ToLower
             Case "cargo" : hc = New hcCargo(targetName, size, resource, value, resourceSlot, resourceQtyPerUse)
             Case "crewquarters" : hc = New hcCrewQuarters(targetName, size, crewMax, crewRace, resourceSlot, resourceQtyPerUse)
-            Case "defence" : hc = New hcDefence(targetName, size, defenceType, value, resourceSlot, resourceQtyPerUse)
+            Case "defence"
+                hc = New hcDefence(targetName, size, defenceType, value, resourceSlot, resourceQtyPerUse)
+                CType(hc, hcDefence).pdEnergyCost = energyCost
             Case "engine" : hc = New hcEngine(targetName, size, speed, dodge, resourceSlot, resourceQtyPerUse)
             Case "jumpdrive" : hc = New hcJumpDrive(targetName, size, speed, resourceSlot, resourceQtyPerUse)
             Case "producer" : hc = New hcProducer(targetName, size, resource, resourceProductionTimer, resourceSlot, resourceQtyPerUse)
-            Case "weapon" : hc = New hcWeapon(targetName, size, energyCost, damageType, accuracy, damageFull, damageGlancing, digitalPayload, resourceSlot, resourceQtyPerUse)
+            Case "weapon"
+                hc = New hcWeapon(targetName, size, energyCost, damageType, accuracy, damageFull, damageGlancing, digitalPayload, resourceSlot, resourceQtyPerUse)
                 CType(hc, hcWeapon).interceptorName = interceptorName
         End Select
         If hc Is Nothing = False Then hc.blueprint = blueprint

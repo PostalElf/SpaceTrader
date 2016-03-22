@@ -78,6 +78,8 @@
         If _planet Is Nothing Then Console.WriteLine(travelDescription) Else Console.WriteLine(_planet.ToString)
         If travelDestination Is Nothing = False Then Console.WriteLine(indd & fakeTab("Target:", ftlen) & travelDestination.name)
         Console.WriteLine(indd & fakeTab("Speed:", ftlen) & travelSpeed(True) & " jump + " & travelSpeed(False) & " sublight")
+        Console.WriteLine(indd & fakeTab("Shields:", ftlen) & defences(eDefenceType.Shields) & "/" & defencesMax(eDefenceType.Shields))
+        Console.WriteLine(indd & fakeTab("Armour:", ftlen) & defences(eDefenceType.Armour) & "/" & defencesMax(eDefenceType.Armour))
         Console.WriteLine(indd & fakeTab("Hull:", ftlen) & hullSpaceOccupied & "/" & hullSpaceMaxBase)
         consoleReportHullComponents(indent + 2, "└ ")
 
@@ -90,6 +92,7 @@
         Const ftlen As Integer = 16
 
         Console.WriteLine(ind & name)
+        Console.WriteLine(indd & fakeTab("Energy:", ftlen) & combatEnergy & "/" & combatEnergyMax)
         For Each d As eDefenceType In constants.defenceTypeArray
             Dim def As String = d.ToString
             If d = eDefenceType.PointDefence Then def = "Point Defence"
@@ -313,6 +316,16 @@
     End Sub
     Private Const combatEnergyMax As Integer = 20
     Private combatEnergy As Integer
+    Friend Sub addEnergy(ByVal value As Integer)
+        combatEnergy += value
+        combatEnergy = constrain(combatEnergy, 0, combatEnergyMax)
+    End Sub
+    Friend Function addEnergyCheck(ByVal value As Integer) As Boolean
+        If value < 0 Then
+            If combatEnergy - value < 0 Then Return False
+        End If
+        Return True
+    End Function
     Friend enemyInterceptors As New List(Of interceptor)
     Private _defences As New Dictionary(Of eDefenceType, Integer)
     Private Property defences(ByVal defenceType As eDefenceType) As Integer
@@ -362,7 +375,6 @@
     Friend Sub fullRepair()
         For Each d In constants.defenceTypeArray
             defences(d) = defencesMax(d)
-            Debug.Print(d.ToString & ":" & defences(d))
         Next
     End Sub
     Friend Sub repair(ByVal defenceType As eDefenceType, ByVal value As Integer)
@@ -424,6 +436,21 @@
     End Sub
     Private Sub destroy() Implements iCombatant.destroy
         alert.Add("Ship Destruction", _name & " was destroyed!", 0)
+
+        If battlefield Is Nothing = False Then
+            battlefield.ships(player).Remove(Me)
+            battlefield = Nothing
+        End If
+
+        _planet = Nothing
+        travelDestination = Nothing
+        _defences = Nothing
+        defenceRoundBoosts = Nothing
+        defenceCombatDebuffs = Nothing
+        hullComponents = Nothing
+        resources = Nothing
+        resourcesMaxBase = Nothing
+        craftComponents = Nothing
     End Sub
 
     Private hullComponents As New Dictionary(Of Type, List(Of hullComponent))

@@ -9,7 +9,6 @@
             hullComponents.Add(t, New List(Of hullComponent))
         Next
         For Each d In constants.defenceTypeArray
-            _defences.Add(d, 0)
             defenceRoundBoosts.Add(d, 0)
             defenceCombatDebuffs.Add(d, 0)
         Next
@@ -340,22 +339,38 @@
         Return True
     End Function
     Friend enemyInterceptors As New List(Of interceptor)
-    Private _defences As New Dictionary(Of eDefenceType, Integer)
+    Friend Sub addInterceptor(ByRef attacker As iCombatant, ByVal interceptor As interceptor)
+        enemyInterceptors.Add(interceptor)
+    End Sub
+    Friend Sub removeInterceptor(ByRef interceptor As interceptor)
+        enemyInterceptors.Remove(interceptor)
+    End Sub
+
+    Private shields As Integer
+    Private armour As Integer
     Private Property defences(ByVal defenceType As eDefenceType) As Integer
         Get
             Dim total As Integer
-            If defenceType = eDefenceType.Dodge Then
-                For Each hc As hcEngine In hullComponents(GetType(hcEngine))
-                    total += hc.dodge
-                Next
-            Else
-                total = _defences(defenceType)
-            End If
+            Select Case defenceType
+                Case eDefenceType.Dodge
+                    For Each hc As hcEngine In hullComponents(GetType(hcEngine))
+                        total += hc.dodge
+                    Next
+                Case eDefenceType.Shields : total = shields
+                Case eDefenceType.Armour : total = armour
+                Case Else
+                    For Each hc As hcDefence In hullComponents(GetType(hcDefence))
+                        If hc.defType = defenceType Then total += hc.value
+                    Next
+            End Select
             total += defenceRoundBoosts(defenceType) - defenceCombatDebuffs(defenceType)
             Return total
         End Get
         Set(ByVal value As Integer)
-            If defenceType <> eDefenceType.Dodge Then _defences(defenceType) = value
+            Select Case defenceType
+                Case eDefenceType.Shields : shields = value
+                Case eDefenceType.Armour : armour = value
+            End Select
         End Set
     End Property
     Private defenceRoundBoosts As New Dictionary(Of eDefenceType, Integer)
@@ -376,15 +391,14 @@
     Friend Sub addBoost(ByVal defenceType As eDefenceType, ByVal value As Integer)
         combatEnergy -= value
         Select Case defenceType
-            Case eDefenceType.Firewall : defences(eDefenceType.Firewall) += value
-            Case eDefenceType.Dodge : defences(eDefenceType.Dodge) += value
+            Case eDefenceType.Firewall : defenceRoundBoosts(eDefenceType.Firewall) += value
+            Case eDefenceType.Dodge : defenceRoundBoosts(eDefenceType.Dodge) += value
         End Select
     End Sub
     Friend Function addBoostCheck(ByVal defenceType As eDefenceType, ByVal value As Integer) As Boolean
         If combatEnergy < value Then Return False
         Return True
     End Function
-
     Friend Sub fullRepair()
         For Each d In constants.defenceTypeArray
             defences(d) = defencesMax(d)
@@ -445,17 +459,11 @@
                 player.addAlert("Attack", attacker.name & " hits " & name & "'s armour for " & dmgValue & " " & .type.ToString & " damage.", 2)
                 attacker.addAlert("Attack", attacker.name & " hits " & name & "'s armour for " & dmgValue & " " & .type.ToString & " damage.", 2)
                 If defences(eDefenceType.Armour) <= 0 Then
+                    attacker.addAlert("Ship Destruction", name & " was destroyed!", 2)
                     destroy()
-                    attacker.addAlert("Ship Destruction", name & " was destroyed!", 0)
                 End If
             End If
         End With
-    End Sub
-    Friend Sub addInterceptor(ByRef attacker As iCombatant, ByVal interceptor As interceptor)
-        enemyInterceptors.Add(interceptor)
-    End Sub
-    Friend Sub removeInterceptor(ByRef interceptor As interceptor)
-        enemyInterceptors.Remove(interceptor)
     End Sub
     Private Sub destroy() Implements iCombatant.destroy
         player.addAlert("Ship Destruction", _name & " was destroyed!", 0)
@@ -467,7 +475,6 @@
 
         _planet = Nothing
         travelDestination = Nothing
-        _defences = Nothing
         defenceRoundBoosts = Nothing
         defenceCombatDebuffs = Nothing
         hullComponents = Nothing

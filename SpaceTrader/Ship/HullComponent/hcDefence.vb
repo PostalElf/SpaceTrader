@@ -8,7 +8,9 @@
         _value = aValue
     End Sub
     Friend Overrides Function consoleDescription() As String
-        Return withSign(value) & " " & defType.ToString
+        Dim def As String
+        If defType = eDefenceType.PointDefence Then def = "Point Defence" Else def = defType.ToString
+        Return withSign(value) & " " & def
     End Function
     Friend Overrides ReadOnly Property alarms As List(Of String)
         Get

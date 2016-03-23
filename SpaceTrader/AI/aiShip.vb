@@ -17,10 +17,12 @@
             Case eShipType.Corvette
                 Select Case role
                     Case eAiShipRole.Striker
-                        addComponent(New hcWeapon("Mass Driver", 5, 3, eDamageType.Ballistic, 20, 3, 1, Nothing))
+                        addComponent(New hcWeapon("Mass Driver", 5, 5, eDamageType.Ballistic, 20, 3, 1, Nothing))
                         addComponent(New hcWeapon("Spiral-X Missiles", 5, 5, eDamageType.Missile, 10, 3, 3, Nothing))
                         addComponent(New hcDefence("Quantum Shield Battery", 5, eDefenceType.Shields, 10))
-                        addComponent(New hcDefence("Point-Defence Turret", 5, eDefenceType.PointDefence, 5))
+                        Dim pd As New hcDefence("Point-Defence Turret", 5, eDefenceType.PointDefence, 5)
+                        pd.pdEnergyCost = 5
+                        addComponent(pd)
                     Case eAiShipRole.Tank
                     Case eAiShipRole.Artillery
                     Case eAiShipRole.Beehive

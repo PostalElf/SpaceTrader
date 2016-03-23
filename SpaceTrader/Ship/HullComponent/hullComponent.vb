@@ -6,7 +6,7 @@
     End Sub
     Friend Shared Function build(ByVal targetName As String) As hullComponent
         Dim inputList As Queue(Of String) = bracketFileget("data/hullcomponents.txt", targetName)
-        If inputList Is Nothing Then Return Nothing
+        If inputList Is Nothing OrElse inputList.Count = 0 Then Return Nothing
         Return build(inputList)
     End Function
     Friend Shared Function build(ByVal inputlist As Queue(Of String)) As hullComponent
@@ -23,9 +23,9 @@
         Dim crewMax As Integer
         Dim energyCost As Integer
         Dim accuracy As Integer
-        Dim interceptorName As String = "Interceptor"
-        Dim damageFull As Integer
-        Dim damageGlancing As Integer
+        Dim interceptorName As String = ""
+        Dim damageFull As Double
+        Dim damageGlancing As Double
         Dim digitalPayload As eDigitalAttack
         Dim damageType As eDamageType
         Dim defenceType As eDefenceType

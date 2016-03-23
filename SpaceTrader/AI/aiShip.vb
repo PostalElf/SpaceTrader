@@ -227,7 +227,7 @@
                 If role = eAiShipRole.Hacker Then total += 0.5
             End If
         End With
-        Return total
+        Return total / hcw.energyCost
     End Function
 
     Private enemyAttacksMadeLastTurn As New List(Of damage)

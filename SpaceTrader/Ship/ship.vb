@@ -21,32 +21,32 @@
         Select Case type
             Case eShipType.Corvette
                 hullSpaceMaxBase = 20
-                addComponent(New hcDefence("Hull Plating", 0, eDefenceType.Armour, 10))
-                addComponent(New hcDefence("Voidshields", 0, eDefenceType.Shields, 10))
+                addComponent(New hcDefence("Hull Plating", 0, eDefenceType.Armour, 100))
+                addComponent(New hcDefence("Voidshields", 0, eDefenceType.Shields, 100))
                 travelSublightSpeedBase = 5
                 travelJumpSpeedBase = 1
             Case eShipType.Frigate
                 hullSpaceMaxBase = 50
-                addComponent(New hcDefence("Hull Plating", 0, eDefenceType.Armour, 20))
-                addComponent(New hcDefence("Voidshields", 0, eDefenceType.Shields, 10))
+                addComponent(New hcDefence("Hull Plating", 0, eDefenceType.Armour, 200))
+                addComponent(New hcDefence("Voidshields", 0, eDefenceType.Shields, 100))
                 travelSublightSpeedBase = 5
                 travelJumpSpeedBase = 1
             Case eShipType.Crusier
                 hullSpaceMaxBase = 75
-                addComponent(New hcDefence("Hull Plating", 0, eDefenceType.Armour, 30))
-                addComponent(New hcDefence("Voidshields", 0, eDefenceType.Shields, 10))
+                addComponent(New hcDefence("Hull Plating", 0, eDefenceType.Armour, 300))
+                addComponent(New hcDefence("Voidshields", 0, eDefenceType.Shields, 100))
                 travelSublightSpeedBase = 5
                 travelJumpSpeedBase = 1
             Case eShipType.Destroyer
                 hullSpaceMaxBase = 100
-                addComponent(New hcDefence("Hull Plating", 0, eDefenceType.Armour, 50))
-                addComponent(New hcDefence("Voidshields", 0, eDefenceType.Shields, 10))
+                addComponent(New hcDefence("Hull Plating", 0, eDefenceType.Armour, 500))
+                addComponent(New hcDefence("Voidshields", 0, eDefenceType.Shields, 100))
                 travelSublightSpeedBase = 5
                 travelJumpSpeedBase = 1
             Case eShipType.Dreadnought
                 hullSpaceMaxBase = 150
-                addComponent(New hcDefence("Hull Plating", 0, eDefenceType.Armour, 50))
-                addComponent(New hcDefence("Voidshields", 0, eDefenceType.Shields, 10))
+                addComponent(New hcDefence("Hull Plating", 0, eDefenceType.Armour, 500))
+                addComponent(New hcDefence("Voidshields", 0, eDefenceType.Shields, 100))
                 travelSublightSpeedBase = 5
                 travelJumpSpeedBase = 1
         End Select

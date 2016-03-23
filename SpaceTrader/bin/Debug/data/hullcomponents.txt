@@ -249,16 +249,6 @@ ResourceQtyPerUse: 1
 
 
 
---Defence--
-[Shield Battery]
-Type: Defence
-Size: 5
-Tier: 1
-Cost: 5000
-Value: 5
-
-
-
 --Engine--
 [Z-21 'Wynn']
 Type: Engine
@@ -486,6 +476,16 @@ ResourceProductionTimer: 10
 ResourceSlot: Machines
 ResourceQtyPerUse: 10
 
+[Manufactorium]
+Type: Producer
+Size: 2
+Tier: 1
+Cost: 5000
+Resource: Machines
+ResourceProductionTimer: 10
+ResourceSlot: Slaves
+ResourceQtyPerUse: 10
+
 [Pirate Broadcaster]
 Type: Producer
 Size: 2
@@ -495,6 +495,26 @@ Resource: Media
 ResourceProductionTimer: 10
 ResourceSlot: Bandwidth
 ResourceQtyPerUse: 10
+
+[Gladitorial Arena]
+Type: Producer
+Size: 2
+Tier: 1
+Cost: 5000
+Resource: Media
+ResourceProductionTimer: 10
+ResourceSlot: Slaves
+ResourceQtyPerUse: 10
+
+[Thoughtspinner]
+Type: Producer
+Size: 2
+Tier: 2
+Cost: 8000
+Resource: Media
+ResourceProductionTimer: 30
+ResourceSlot: Savants
+ResourceQtyPerUse: 5
 
 [Soleas Chamber]
 Type: Producer
@@ -621,31 +641,739 @@ ResourceQtyPerUse: 10
 
 
 --Weapon--
-[Chaingun]
+[Mass Driver]
 Type: Weapon
 Size: 5
 Tier: 1
 Cost: 2000
-EnergyCost: 2
-Accuracy: 75
-DamageGlancing: 1
-DamageFull: 2
+EnergyCost: 4
+Accuracy: 10
+DamageGlancing: 10
+DamageFull: 20
 DamageType: Ballistic
 ResourceSlot: Ammunition
-ResourceQtyPerUse: 1
-CrewableMin: 1
-CrewableMax: 1
+ResourceQtyPerUse: 5
 
-[NQ-14 Drone Bay]
+[Nuclear Railgun]
+Type: Weapon
+Size: 5
+Tier: 2
+Cost: 5000
+EnergyCost: 5
+Accuracy: 15
+DamageGlancing: 5
+DamageFull: 25
+DamageType: Ballistic
+ResourceSlot: Ammunition
+ResourceQtyPerUse: 10
+
+[Micrometeorite Launcher]
+Type: Weapon
+Size: 5
+Tier: 2
+Cost: 5000
+EnergyCost: 8
+Accuracy: 5
+DamageGlancing: 20
+DamageFull: 40
+DamageType: Ballistic
+ResourceSlot: Ammunition
+ResourceQtyPerUse: 15
+
+[Quantum Railgun]
+Type: Weapon
+Size: 5
+Tier: 3
+Cost: 10000
+EnergyCost: 5
+Accuracy: 25
+DamageGlancing: 15
+DamageFull: 35
+DamageType: Ballistic
+ResourceSlot: Ammunition
+ResourceQtyPerUse: 10
+
+[Meteorite Launcher]
+Type: Weapon
+Size: 5
+Tier: 3
+Cost: 10000
+EnergyCost: 10
+Accuracy: 5
+DamageGlancing: 40
+DamageFull: 60
+DamageType: Ballistic
+ResourceSlot: Ammunition
+ResourceQtyPerUse: 20
+
+[Quantum Railgun]
+Type: Weapon
+Size: 5
+Tier: 4
+Cost: 18000
+EnergyCost: 7
+Accuracy: 30
+DamageGlancing: 20
+DamageFull: 45
+DamageType: Ballistic
+ResourceSlot: Ammunition
+ResourceQtyPerUse: 10
+
+[Meteorite Launcher]
+Type: Weapon
+Size: 5
+Tier: 4
+Cost: 18000
+EnergyCost: 10
+Accuracy: 5
+DamageGlancing: 40
+DamageFull: 75
+DamageType: Ballistic
+ResourceSlot: Ammunition
+ResourceQtyPerUse: 50
+
+
+
+[Laser Array]
 Type: Weapon
 Size: 5
 Tier: 1
+Cost: 2500
+EnergyCost: 5
+Accuracy: 10
+DamageGlancing: 10
+DamageFull: 20
+DamageType: Energy
+ResourceSlot: Chemicals
+ResourceQtyPerUse: 5
+CrewableMin: 1
+CrewableMax: 1
+
+[Scythian Beamcutter]
+Type: Weapon
+Size: 5
+Tier: 2
 Cost: 4000
 EnergyCost: 5
-InterceptorName: NQ-14 Drone
+Accuracy: 15
+DamageGlancing: 15
+DamageFull: 25
+DamageType: Energy
+ResourceSlot: Chemicals
+ResourceQtyPerUse: 5
+CrewableMin: 1
+CrewableMax: 1
+
+[Plasma Cannon]
+Type: Weapon
+Size: 5
+Tier: 2
+Cost: 4000
+EnergyCost: 7
+Accuracy: 5
+DamageGlancing: 20
+DamageFull: 25
+DamageType: Energy
+ResourceSlot: Chemicals
+ResourceQtyPerUse: 5
+CrewableMin: 1
+CrewableMax: 1
+
+[Fulsom Gatling Laser]
+Type: Weapon
+Size: 10
+Tier: 3
+Cost: 12000
+EnergyCost: 5
+Accuracy: 20
+DamageGlancing: 20
+DamageFull: 30
+DamageType: Energy
+ResourceSlot: Azoth
+ResourceQtyPerUse: 5
+CrewableMin: 1
+CrewableMax: 1
+
+[Torchbearer Pulse Cannon]
+Type: Weapon
+Size: 10
+Tier: 3
+Cost: 12000
+EnergyCost: 8
+Accuracy: 5
+DamageGlancing: 25
+DamageFull: 30
+DamageType: Energy
+ResourceSlot: Azoth
+ResourceQtyPerUse: 5
+CrewableMin: 1
+CrewableMax: 1
+
+[Supernova Beamthrower]
+Type: Weapon
+Size: 10
+Tier: 4
+Cost: 20000
+EnergyCost: 5
+Accuracy: 20
+DamageGlancing: 25
+DamageFull: 35
+DamageType: Energy
+ResourceSlot: Azoth
+ResourceQtyPerUse: 5
+CrewableMin: 2
+CrewableMax: 2
+
+[Disintegrator Cannon]
+Type: Weapon
+Size: 10
+Tier: 4
+Cost: 20000
+EnergyCost: 8
+Accuracy: 5
+DamageGlancing: 30
+DamageFull: 35
+DamageType: Energy
+ResourceSlot: Azoth
+ResourceQtyPerUse: 5
+CrewableMin: 2
+CrewableMax: 2
+
+
+
+['Galapagos' Viral Broadcaster]
+Type: Weapon
+Size: 5
+Tier: 1
+Cost: 2000
+EnergyCost: 3
+DamageType: Digital
+Digital: SynapticVirus
+Accuracy: 5
+DamageGlancing: 2
+DamageFull: 2
+
+['Sheldon' Viral Narrowcaster]
+Type: Weapon
+Size: 5
+Tier: 2
+Cost: 5000
+EnergyCost: 3
+DamageType: Digital
+Digital: SynapticVirus
+Accuracy: 5
+DamageGlancing: 5
+DamageFull: 5
+
+['Grue' Viral Needlecaster]
+Type: Weapon
+Size: 5
+Tier: 3
+Cost: 10000
+EnergyCost: 3
+DamageType: Digital
+Digital: SynapticVirus
+Accuracy: 5
+DamageGlancing: 10
+DamageFull: 10
+
+['Odysseus' Trojan Broadcaster]
+Type: Weapon
+Size: 5
+Tier: 1
+Cost: 2000
+EnergyCost: 3
+DamageType: Digital
+Digital: Trojan
+Accuracy: 15
+DamageGlancing: 2
+DamageFull: 2
+
+['Agamemnon' Trojan Narrowcaster]
+Type: Weapon
+Size: 5
+Tier: 2
+Cost: 5000
+EnergyCost: 3
+DamageType: Digital
+Digital: Trojan
+Accuracy: 20
+DamageGlancing: 5
+DamageFull: 5
+
+['Medea' Trojan Needlecaster]
+Type: Weapon
+Size: 5
+Tier: 3
+Cost: 10000
+EnergyCost: 3
+DamageType: Digital
+Digital: Trojan
+Accuracy: 30
+DamageGlancing: 5
+DamageFull: 5
+
+['Infiltrator' Worm Broadcaster]
+Type: Weapon
+Size: 5
+Tier: 1
+Cost: 2000
+EnergyCost: 3
+DamageType: Digital
+Digital: NetworkWorm
+Accuracy: 5
+DamageGlancing: 2
+DamageFull: 2
+
+['Golem' Worm Narrowcaster]
+Type: Weapon
+Size: 5
+Tier: 2
+Cost: 5000
+EnergyCost: 3
+DamageType: Digital
+Digital: NetworkWorm
+Accuracy: 5
+DamageGlancing: 5
+DamageFull: 5
+
+['Kether' Worm Needlecaster]
+Type: Weapon
+Size: 5
+Tier: 3
+Cost: 10000
+EnergyCost: 3
+DamageType: Digital
+Digital: NetworkWorm
+Accuracy: 5
+DamageGlancing: 10
+DamageFull: 10
+
+
+
+[Hellfire Missiles]
+Type: Weapon
+Size: 5
+Tier: 1
+Cost: 2000
+EnergyCost: 5
+DamageType: Missile
+Accuracy: 10
+DamageGlancing: 0
+DamageFull: 15
+ResourceSlot: Missiles
+ResourceQtyPerUse: 5
+
+[Dumbfire Torpedoes]
+Type: Weapon
+Size: 5
+Tier: 2
+Cost: 5000
+EnergyCost: 5
+DamageType: Missile
+Accuracy: 10
+DamageGlancing: 0
+DamageFull: 35
+ResourceSlot: Missiles
+ResourceQtyPerUse: 5
+
+['Tybalt' Micromissiles]
+Type: Weapon
+Size: 5
+Tier: 2
+Cost: 5000
+EnergyCost: 8
+DamageType: Missile
+Accuracy: 15
+DamageGlancing: 0
+DamageFull: 25
+ResourceSlot: Missiles
+ResourceQtyPerUse: 5
+
+[Photon Torpedoes]
+Type: Weapon
+Size: 5
+Tier: 3
+Cost: 10000
+EnergyCost: 5
+DamageType: Missile
+Accuracy: 15
+DamageGlancing: 0
+DamageFull: 40
+ResourceSlot: Missiles
+ResourceQtyPerUse: 10
+
+['Ophelia' Missile Swarm]
+Type: Weapon
+Size: 5
+Tier: 3
+Cost: 10000
+EnergyCost: 7
+DamageType: Missile
+Accuracy: 25
+DamageGlancing: 0
+DamageFull: 30
+ResourceSlot: Missiles
+ResourceQtyPerUse: 10
+
+[Phase Torpedoes]
+Type: Weapon
+Size: 5
+Tier: 4
+Cost: 18000
+EnergyCost: 5
+DamageType: Missile
+Accuracy: 15
+DamageGlancing: 0
+DamageFull: 55
+ResourceSlot: Missiles
+ResourceQtyPerUse: 15
+
+['Falstaff' Missile Storm]
+Type: Weapon
+Size: 5
+Tier: 4
+Cost: 18000
+EnergyCost: 7
+DamageType: Missile
+Accuracy: 35
+DamageGlancing: 0
+DamageFull: 40
+ResourceSlot: Missiles
+ResourceQtyPerUse: 20
+
+
+
+['Falcon' Bay]
+Type: Weapon
+Size: 10
+Tier: 1
+Cost: 7500
+EnergyCost: 5
+InterceptorName: Falcon Microbomber
 DamageType: Ballistic
-Accuracy: 75
-DamageGlancing: 1
-DamageFull: 1
+Accuracy: 15
+DamageGlancing: 10
+DamageFull: 30
+ResourceSlot: Machines
+ResourceQtyPerUse: 20
+CrewableMin: 1
+CrewableMax: 1
+
+['Kingfisher' Bay]
+Type: Weapon
+Size: 10
+Tier: 2
+Cost: 14000
+EnergyCost: 5
+InterceptorName: Kingfisher Bomber
+DamageType: Missile
+Accuracy: 15
+DamageGlancing: 0
+DamageFull: 45
 ResourceSlot: Machines
 ResourceQtyPerUse: 25
+CrewableMin: 1
+CrewableMax: 1
+
+['Stinger' Bay]
+Type: Weapon
+Size: 10
+Tier: 2
+Cost: 14000
+EnergyCost: 5
+InterceptorName: Stinger Interceptor
+DamageType: Ballistic
+Accuracy: 10
+DamageGlancing: 20
+DamageFull: 40
+ResourceSlot: Machines
+ResourceQtyPerUse: 25
+CrewableMin: 1
+CrewableMax: 1
+
+['Pelican' Bay]
+Type: Weapon
+Size: 10
+Tier: 3
+Cost: 20000
+EnergyCost: 7
+InterceptorName: Pelican Bomber
+DamageType: Missile
+Accuracy: 20
+DamageGlancing: 0
+DamageFull: 40
+ResourceSlot: Machines
+ResourceQtyPerUse: 25
+CrewableMin: 1
+CrewableMax: 1
+
+['Stiletto' Bay]
+Type: Weapon
+Size: 10
+Tier: 3
+Cost: 20000
+EnergyCost: 7
+InterceptorName: Stiletto Interceptor
+DamageType: Energy
+Accuracy: 10
+DamageGlancing: 20
+DamageFull: 50
+ResourceSlot: Machines
+ResourceQtyPerUse: 25
+CrewableMin: 1
+CrewableMax: 1
+
+['Goshawk' Bay]
+Type: Weapon
+Size: 10
+Tier: 4
+Cost: 25000
+EnergyCost: 7
+InterceptorName: Goshawk Bomber
+DamageType: Missile
+Accuracy: 25
+DamageGlancing: 0
+DamageFull: 55
+ResourceSlot: Machines
+ResourceQtyPerUse: 25
+CrewableMin: 1
+CrewableMax: 1
+
+['Cutlass' Bay]
+Type: Weapon
+Size: 10
+Tier: 4
+Cost: 25000
+EnergyCost: 7
+InterceptorName: Cutlass Interceptor
+DamageType: Energy
+Accuracy: 15
+DamageGlancing: 30
+DamageFull: 60
+ResourceSlot: Machines
+ResourceQtyPerUse: 25
+CrewableMin: 1
+CrewableMax: 1
+
+
+
+--Defence--
+[Weavespun Bubble]
+Type: Defence
+DefenceType: Shields
+Size: 5
+Tier: 1
+Cost: 5000
+Value: 25
+ResourceSlot: Chemicals
+ResourceQtyPerUse: 1
+
+[Quantum Shields]
+Type: Defence
+DefenceType: Shields
+Size: 5
+Tier: 2
+Cost: 12000
+Value: 50
+ResourceSlot: Azoth
+ResourceQtyPerUse: 1
+
+[Phased Shields]
+Type: Defence
+DefenceType: Shields
+Size: 10
+Tier: 3
+Cost: 20000
+Value: 150
+ResourceSlot: Azoth
+ResourceQtyPerUse: 3
+
+[Xothic Shields]
+Type: Defence
+DefenceType: Shields
+Size: 10
+Tier: 4
+Cost: 30000
+Value: 200
+ResourceSlot: Azoth
+ResourceQtyPerUse: 5
+CrewableMin: 1
+CrewableMax: 1
+
+
+
+[Buckyweave Plating]
+Type: Defence
+DefenceType: Armour
+Size: 5
+Tier: 1
+Cost: 2000
+Value: 25
+
+[Tenebrae Armour]
+Type: Defence
+DefenceType: Armour
+Size: 5
+Tier: 2
+Cost: 7500
+Value: 50
+
+[Ethereal Armour]
+Type: Defence
+DefenceType: Armour
+Size: 5
+Tier: 3
+Cost: 12000
+Value: 100
+
+[Transdimensional Armour]
+Type: Defence
+DefenceType: Armour
+Size: 5
+Tier: 4
+Cost: 20000
+Value: 150
+
+
+
+[Network Obfuscation]
+Type: Defence
+DefenceType: Firewall
+Size: 5
+Tier: 1
+Cost: 2000
+Value: 5
+
+[Encryption Protocol]
+Type: Defence
+DefenceType: Firewall
+Size: 5
+Tier: 2
+Cost: 5000
+Value: 10
+
+[Digital Mousetrap]
+Type: Defence
+DefenceType: Firewall
+Size: 10
+Tier: 2
+Cost: 5000
+Value: 15
+
+[Quantum Encryption]
+Type: Defence
+DefenceType: Firewall
+Size: 5
+Tier: 3
+Cost: 7500
+Value: 15
+
+[Digital Maze]
+Type: Defence
+DefenceType: Firewall
+Size: 10
+Tier: 3
+Cost: 7500
+Value: 20
+
+[Spectral Encryption]
+Type: Defence
+DefenceType: Firewall
+Size: 5
+Tier: 4
+Cost: 10000
+Value: 20
+
+[Digital Labrinyth]
+Type: Defence
+DefenceType: Firewall
+Size: 10
+Tier: 4
+Cost: 10000
+Value: 25
+
+
+
+[Sentinel Laser Grid]
+Type: Defence
+DefenceType: PointDefence
+EnergyCost: 10
+Size: 5
+Tier: 1
+Cost: 5000
+Value: 5
+ResourceSlot: Chemicals
+ResourceQtyPerUse: 20
+
+[Anti-Missile Drones]
+Type: Defence
+DefenceType: PointDefence
+EnergyCost: 8
+Size: 5
+Tier: 2
+Cost: 10000
+Value: 15
+ResourceSlot: Ammunition
+ResourceQtyPerUse: 20
+
+[Thebian Companions]
+Type: Defence
+DefenceType: PointDefence
+EnergyCost: 5
+Size: 5
+Tier: 2
+Cost: 10000
+Value: 5
+ResourceSlot: Ammunition
+ResourceQtyPerUse: 20
+CrewableMin: 1
+CrewableMax: 1
+
+[Point-Defence Turrets]
+Type: Defence
+DefenceType: PointDefence
+EnergyCost: 8
+Size: 5
+Tier: 3
+Cost: 15000
+Value: 20
+ResourceSlot: Ammunition
+ResourceQtyPerUse: 50
+
+[Scimitar Interceptors]
+Type: Defence
+DefenceType: PointDefence
+EnergyCost: 5
+Size: 5
+Tier: 3
+Cost: 15000
+Value: 10
+ResourceSlot: Ammunition
+ResourceQtyPerUse: 20
+CrewableMin: 1
+CrewableMax: 1
+
+[Cyclone Turrets]
+Type: Defence
+DefenceType: PointDefence
+EnergyCost: 10
+Size: 5
+Tier: 4
+Cost: 15000
+Value: 25
+ResourceSlot: Missiles
+ResourceQtyPerUse: 50
+
+[Hurricane Interceptors]
+Type: Defence
+DefenceType: PointDefence
+EnergyCost: 5
+Size: 5
+Tier: 4
+Cost: 20000
+Value: 10
+ResourceSlot: Missiles
+ResourceQtyPerUse: 20
+CrewableMin: 1
+CrewableMax: 1

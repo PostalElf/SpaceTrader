@@ -12,18 +12,23 @@
         'Return rng.Next(1, System.Enum.GetValues(GetType(eAiShipRole)).Length - 1)
         Return eAiShipRole.Striker
     End Function
+
     Private Sub outfitShip()
         Select Case type
             Case eShipType.Corvette
                 Select Case role
                     Case eAiShipRole.Striker
-                        addComponent(New hcWeapon("Mass Driver", 5, 5, eDamageType.Ballistic, 20, 3, 1, Nothing))
-                        addComponent(New hcWeapon("Spiral-X Missiles", 5, 5, eDamageType.Missile, 10, 3, 3, Nothing))
+                        outfitShipResources(3, eResource.Ammunition)
+                        outfitShipResources(1, eResource.Missiles)
+                        addComponent(New hcWeapon("Mass Driver", 5, 5, False, eDamageType.Ballistic, 20, 3, 1, Nothing, eResource.Ammunition, 10))
+                        addComponent(New hcWeapon("Spiral-X Missiles", 10, 5, False, eDamageType.Missile, 5, 3, 3, Nothing, eResource.Missiles, 25))
                         addComponent(New hcDefence("Quantum Shield Battery", 5, eDefenceType.Shields, 10))
-                        Dim pd As New hcDefence("Point-Defence Turret", 5, eDefenceType.PointDefence, 5)
-                        pd.pdEnergyCost = 5
-                        addComponent(pd)
+
                     Case eAiShipRole.Tank
+                        addComponent(New hcWeapon("Micrometeorite Launcher", 5, 7, False, eDamageType.Ballistic, 5, 3, 1, Nothing, eResource.Ammunition, 10))
+                        addComponent(New hcDefence("Quantum Shield Battery", 5, eDefenceType.Shields, 10))
+                        addComponent(New hcDefence("Steelfoam Hull", 5, eDefenceType.Armour, 15))
+
                     Case eAiShipRole.Artillery
                     Case eAiShipRole.Beehive
                     Case Else
@@ -35,6 +40,21 @@
                 MsgBox("aiShip.outfitShip: type out of bounds.")
                 Exit Sub
         End Select
+    End Sub
+    Private Sub outfitShipResources(ByVal value As Integer, Optional ByVal r As eResource = Nothing)
+        If r = Nothing Then
+            For Each r In constants.resourceArray
+                resourcesMaxBase(r) = value
+                addResource(r, value)
+            Next
+        Else
+            resourcesMaxBase(r) = value
+            addResource(r, value)
+        End If
+    End Sub
+    Friend Overrides Sub addComponent(ByRef hc As hullComponent)
+        MyBase.addComponent(hc)
+        hc.autoloadResource = True
     End Sub
 
     Private role As eAiShipRole
@@ -54,6 +74,7 @@
         If enemyInterceptors.Count > 0 Then attackInterceptors()
         While combatEnergy >= highestEnergyCost
             Dim target As ship = battlefield.getEnemyShipRandom(player)
+            If target Is Nothing Then Exit Sub
             Dim dodge As Integer = target.getDefences(eDefenceType.Dodge)(0)
             Dim weapon As hcWeapon = Nothing
             If dodge > 0 Then weapon = getWeaponBest(getWeapons(dodge), target)

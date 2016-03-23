@@ -1,19 +1,14 @@
 ﻿Public Class hcWeapon
     Inherits hullComponent
     Implements ihcCrewable
-    Friend Sub New(ByVal aName As String, ByVal aSize As Integer, ByVal aEnergyCost As Integer, _
+    Friend Sub New(ByVal aName As String, ByVal aSize As Integer, ByVal aEnergyCost As Integer, ByVal aIsCarrier As Boolean, _
                    ByVal aDamageType As eDamageType, ByVal aAccuracy As Integer, ByVal aDamageFull As Integer, ByVal aDamageGlancing As Integer, ByVal digitalPayload As eDigitalAttack, _
                    Optional ByVal aResourceSlot As eResource = Nothing, Optional ByVal aResourceQtyPerUse As Integer = 0)
         MyBase.New(aName, aSize, aResourceSlot, aResourceQtyPerUse)
 
         _energyCost = aEnergyCost
-        If aDamageType = eDamageType.Interceptors Then
-            isCarrier = True
-            _damage = New damage(eDamageType.Ballistic, aAccuracy, aDamageFull, aDamageGlancing, digitalPayload)
-        Else
-            isCarrier = False
-            _damage = New damage(aDamageType, aAccuracy, aDamageFull, aDamageGlancing, digitalPayload)
-        End If
+        isCarrier = aIsCarrier
+        _damage = New damage(aDamageType, aAccuracy, aDamageFull, aDamageGlancing, digitalPayload)
     End Sub
     Friend Overrides Function consoleDescription() As String
         Dim total As String = ""

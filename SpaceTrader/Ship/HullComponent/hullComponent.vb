@@ -23,6 +23,7 @@
         Dim crewMax As Integer
         Dim energyCost As Integer
         Dim accuracy As Integer
+        Dim isCarrier As Boolean = False
         Dim interceptorName As String = "Interceptor"
         Dim damageFull As Integer
         Dim damageGlancing As Integer
@@ -56,6 +57,7 @@
                 Case "crewmax" : crewMax = CInt(ln(1))
                 Case "energycost" : energyCost = CInt(ln(1))
                 Case "accuracy" : accuracy = CInt(ln(1))
+                Case "iscarrier" : isCarrier = True
                 Case "interceptorname" : interceptorName = ln(1)
                 Case "damagefull" : damageFull = CInt(ln(1))
                 Case "damageglancing" : damageGlancing = CInt(ln(1))
@@ -84,7 +86,7 @@
             Case "jumpdrive" : hc = New hcJumpDrive(targetName, size, speed, resourceSlot, resourceQtyPerUse)
             Case "producer" : hc = New hcProducer(targetName, size, resource, resourceProductionTimer, resourceSlot, resourceQtyPerUse)
             Case "weapon"
-                hc = New hcWeapon(targetName, size, energyCost, damageType, accuracy, damageFull, damageGlancing, digitalPayload, resourceSlot, resourceQtyPerUse)
+                hc = New hcWeapon(targetName, size, energyCost, isCarrier, damageType, accuracy, damageFull, damageGlancing, digitalPayload, resourceSlot, resourceQtyPerUse)
                 CType(hc, hcWeapon).interceptorName = interceptorName
         End Select
         If hc Is Nothing = False Then hc.blueprint = blueprint
@@ -175,8 +177,8 @@
     Protected Function useResource(Optional ByVal value As Integer = 1) As Boolean
         If resourceSlot = Nothing Then Return True
         Dim trueQty As Integer = resourceQtyPerUse * value
+        If trueQty > resourceQtyRemaining AndAlso autoloadResource = True Then loadResource()
         If trueQty > resourceQtyRemaining Then
-            If autoloadResource = True Then loadResource()
             ship.player.addAlert("Use Failure", name & " is out of " & resourceSlot.ToString & "!", 5)
             Return False
         End If

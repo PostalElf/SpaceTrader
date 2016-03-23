@@ -2,10 +2,11 @@
     Inherits hullComponent
     Implements ihcCrewable
     Friend Sub New(ByVal aName As String, ByVal aSize As Integer, ByVal aType As eDefenceType, ByVal aValue As Integer, _
-                   Optional ByVal aResourceSlot As eResource = Nothing, Optional ByVal aResourceQtyPerUse As Integer = 0)
+                   Optional ByVal aResourceSlot As eResource = Nothing, Optional ByVal aResourceQtyPerUse As Integer = 0, Optional ByVal aPdEnergyCost As Integer = 0)
         MyBase.New(aName, aSize, aResourceSlot, aResourceQtyPerUse)
         _defType = aType
         _value = aValue
+        pdEnergyCost = aPdEnergyCost
     End Sub
     Friend Overrides Function consoleDescription() As String
         Dim def As String

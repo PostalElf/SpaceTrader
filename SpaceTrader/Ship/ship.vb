@@ -17,21 +17,7 @@
         _name = getRandomAndRemove(shipNames, "data/shipnames.txt")
         _player = aPlayer
         type = aType
-        buildDefaultShip()
-        fullRepair()
-        aPlayer.ships.Add(Me)
-    End Sub
-    Friend Shared Function build(ByRef aPlayer As player, ByVal aType As eShipType) As ship
-        Dim ship As New ship
-        ship.initialise(aPlayer, aType)
-        Return ship
-    End Function
-    Friend Shared Function buildAiShip(ByRef aPlayer As player, ByVal aType As eShipType) As aiShip
-        Dim ship As New aiShip
-        ship.initialise(aPlayer, aType)
-        Return ship
-    End Function
-    Private Sub buildDefaultShip()
+
         Select Case type
             Case eShipType.Corvette
                 hullSpaceMaxBase = 20
@@ -64,7 +50,20 @@
                 travelSublightSpeedBase = 5
                 travelJumpSpeedBase = 1
         End Select
+
+        fullRepair()
+        aPlayer.ships.Add(Me)
     End Sub
+    Friend Shared Function build(ByRef aPlayer As player, ByVal aType As eShipType) As ship
+        Dim ship As New ship
+        ship.initialise(aPlayer, aType)
+        Return ship
+    End Function
+    Friend Shared Function buildAiShip(ByRef aPlayer As player, ByVal aType As eShipType) As aiShip
+        Dim ship As New aiShip
+        ship.initialise(aPlayer, aType)
+        Return ship
+    End Function
     Private Shared shipNames As New List(Of String)
 
     Public Overrides Function ToString() As String
@@ -481,6 +480,12 @@
         resources = Nothing
         resourcesMaxBase = Nothing
         craftComponents = Nothing
+        player.ships.Remove(Me)
+
+        If player.ships.Count = 0 AndAlso TypeOf player Is aiPlayer = False Then
+            MsgBox("Game Over")
+            End
+        End If
     End Sub
 
     Protected hullComponents As New Dictionary(Of Type, List(Of hullComponent))
@@ -519,7 +524,7 @@
             Return hullSpaceMaxBase - hullSpaceOccupied
         End Get
     End Property
-    Friend Sub addComponent(ByRef hc As hullComponent)
+    Friend Overridable Sub addComponent(ByRef hc As hullComponent)
         If hc Is Nothing Then Exit Sub
         hullComponents(hc.GetType).Add(hc)
         hc.ship = Me
@@ -543,7 +548,7 @@
     End Function
 
     Private resources As New Dictionary(Of eResource, Integer)
-    Private resourcesMaxBase As New Dictionary(Of eResource, Integer)
+    Protected resourcesMaxBase As New Dictionary(Of eResource, Integer)
     Private ReadOnly Property resourcesMax(ByVal resource As eResource)
         Get
             Dim total As Integer = resourcesMaxBase(resource)

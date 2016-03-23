@@ -51,7 +51,7 @@
     End Sub
 
     Friend pdEnergyCost As Integer
-    Friend Sub attack(ByVal target As interceptor)
+    Friend Sub pdAttack(ByVal target As interceptor)
         If defType <> eDefenceType.PointDefence Then Exit Sub
         If crewable.isManned = False Then
             Console.WriteLine(name & " is not crewed!")

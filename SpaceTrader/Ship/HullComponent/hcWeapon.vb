@@ -6,7 +6,7 @@
                    Optional ByVal aResourceSlot As eResource = Nothing, Optional ByVal aResourceQtyPerUse As Integer = 0)
         MyBase.New(aName, aSize, aResourceSlot, aResourceQtyPerUse)
 
-        energyCost = aEnergyCost
+        _energyCost = aEnergyCost
         If aDamageType = eDamageType.Interceptors Then
             isCarrier = True
             damage = New damage(eDamageType.Ballistic, aAccuracy, aDamageFull, aDamageGlancing, digitalPayload)
@@ -31,7 +31,12 @@
         End Get
     End Property
 
-    Private energyCost As Integer
+    Private _energyCost As Integer
+    Friend ReadOnly Property energyCost As Integer
+        Get
+            Return _energyCost
+        End Get
+    End Property
     Private isCarrier As Boolean
     Friend interceptorName As String
     Private damage As damage

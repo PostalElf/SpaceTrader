@@ -471,7 +471,7 @@
             End If
             Dim target As interceptor = menu.getListChoice(enemies, 1, vbCrLf & "Select a target:")
             If target Is Nothing Then Exit Sub
-            CType(choice, hcDefence).attack(target)
+            CType(choice, hcDefence).pdAttack(target)
         End If
     End Sub
 

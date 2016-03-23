@@ -285,7 +285,7 @@
         Next
     End Sub
 
-    Private battlefield As battlefield
+    Protected battlefield As battlefield
     Friend Sub enterCombat(ByRef aBattlefield As battlefield)
         combatEnergy = combatEnergyMax
         For Each d In constants.defenceTypeArray
@@ -295,7 +295,7 @@
 
         battlefield = aBattlefield
     End Sub
-    Friend Sub tickCombat()
+    Friend Overridable Sub tickCombat()
         combatEnergy = combatEnergyMax
         For Each d In constants.defenceTypeArray
             defenceRoundBoosts(d) = 0
@@ -315,7 +315,7 @@
         battlefield = Nothing
     End Sub
     Private Const combatEnergyMax As Integer = 20
-    Private combatEnergy As Integer
+    Protected combatEnergy As Integer
     Friend Sub addEnergy(ByVal value As Integer)
         combatEnergy += value
         combatEnergy = constrain(combatEnergy, 0, combatEnergyMax)
@@ -380,7 +380,7 @@
     Friend Sub repair(ByVal defenceType As eDefenceType, ByVal value As Integer)
         defences(defenceType) = constrain(defences(defenceType) + value, 0, defencesMax(defenceType))
     End Sub
-    Friend Sub addDamage(ByRef attacker As iCombatant, ByVal damage As damage)
+    Friend Overridable Sub addDamage(ByRef attacker As iCombatant, ByVal damage As damage)
         With damage
             If .type = eDamageType.Digital Then
                 'digital attack
@@ -453,7 +453,7 @@
         craftComponents = Nothing
     End Sub
 
-    Private hullComponents As New Dictionary(Of Type, List(Of hullComponent))
+    Protected hullComponents As New Dictionary(Of Type, List(Of hullComponent))
     Friend ReadOnly Property hullComponentsList As List(Of hullComponent)
         Get
             Dim total As New List(Of hullComponent)

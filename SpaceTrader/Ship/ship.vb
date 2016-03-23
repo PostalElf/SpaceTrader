@@ -18,7 +18,7 @@
         Dim ship As New ship
         With ship
             ._name = getRandomAndRemove(shipNames, "data/shipnames.txt")
-            .player = player
+            ._player = player
             .type = type
             .buildDefaultShip()
             .fullRepair()
@@ -73,7 +73,7 @@
         Const ftlen As Integer = 16
 
         Console.WriteLine(ind & name)
-        Console.WriteLine(indd & fakeTab("Credits:", ftlen) & "¥" & player.credits.ToString("N0"))
+        Console.WriteLine(indd & fakeTab("Credits:", ftlen) & "¥" & _player.credits.ToString("N0"))
         Console.Write(indd & fakeTab("Location:", ftlen))
         If _planet Is Nothing Then Console.WriteLine(travelDescription) Else Console.WriteLine(_planet.ToString)
         If travelDestination Is Nothing = False Then Console.WriteLine(indd & fakeTab("Target:", ftlen) & travelDestination.name)
@@ -163,7 +163,12 @@
             Return getTypePrefix() & " " & _name
         End Get
     End Property
-    Private player As player
+    Private _player As player
+    Friend ReadOnly Property player As player
+        Get
+            Return _player
+        End Get
+    End Property
     Private type As eShipType
     Private Function getTypePrefix() As String
         Select Case type
@@ -384,18 +389,18 @@
         With damage
             If .type = eDamageType.Digital Then
                 'digital attack
-                alert.Add("Attack", attacker.name & " successfully hacks into " & name & "'s systems.", 2)
+                player.addAlert("Attack", attacker.name & " successfully hacks into " & name & "'s systems.", 2)
                 If .accuracy >= defences(eDefenceType.Firewall) Then
                     Select Case .digitalPayload
                         Case eDigitalAttack.Trojan
                             defenceCombatDebuffs(eDefenceType.Firewall) += .damageFull
-                            alert.Add("Trojan", name & " has been infected with a Trojan, reducing its Firewall to " & defences(eDefenceType.Firewall) & ".", 2)
+                            player.addAlert("Trojan", name & " has been infected with a Trojan, reducing its Firewall to " & defences(eDefenceType.Firewall) & ".", 2)
                         Case eDigitalAttack.SynapticVirus
                             defenceCombatDebuffs(eDefenceType.Dodge) += .damageFull
-                            alert.Add("Synaptic Virus", name & "'s engines have been infected with a Virus, reducing its Dodge to " & defences(eDefenceType.Dodge) & ".", 2)
+                            player.addAlert("Synaptic Virus", name & "'s engines have been infected with a Virus, reducing its Dodge to " & defences(eDefenceType.Dodge) & ".", 2)
                         Case eDigitalAttack.NetworkWorm
                             defenceCombatDebuffs(eDefenceType.PointDefence) += .damageFull
-                            alert.Add("Network Worm", name & "'s network has been infected with a Worm, reducing its Point Defence to " & defences(eDefenceType.PointDefence) & ".", 2)
+                            player.addAlert("Network Worm", name & "'s network has been infected with a Worm, reducing its Point Defence to " & defences(eDefenceType.PointDefence) & ".", 2)
                         Case Else
                             MsgBox("addDamage: unexpected digitalPayload")
                             Exit Sub
@@ -410,13 +415,13 @@
                 If defences(eDefenceType.Shields) > 0 Then
                     If .type = eDamageType.Energy Then dmgValue *= 1.5
                     defences(eDefenceType.Shields) -= dmgValue
-                    alert.Add("Attack", attacker.name & " hits " & name & " for " & dmgValue & " " & .type.ToString & " damage.", 2)
+                    player.addAlert("Attack", attacker.name & " hits " & name & " for " & dmgValue & " " & .type.ToString & " damage.", 2)
                     If defences(eDefenceType.Shields) < 0 Then
                         If .type = eDamageType.Energy Then dmgValue = 0 Else dmgValue = defences(eDefenceType.Shields) * -1
                         defences(eDefenceType.Shields) = 0
-                        alert.Add("Shields Down", name & "'s shields are down.", 2)
+                        player.addAlert("Shields Down", name & "'s shields are down.", 2)
                     Else
-                        alert.Add("Shields", name & " has " & defences(eDefenceType.Shields) & " shields remaining.", 2)
+                        player.addAlert("Shields", name & " has " & defences(eDefenceType.Shields) & " shields remaining.", 2)
                         dmgValue = 0
                     End If
                 End If
@@ -424,7 +429,7 @@
                 If dmgValue <= 0 Then Exit Sub
 
                 defences(eDefenceType.Armour) -= dmgValue
-                If defences(eDefenceType.Armour) <= 0 Then destroy() Else alert.Add("Armour", name & " has " & defences(eDefenceType.Armour) & " armour remaining.", 2)
+                If defences(eDefenceType.Armour) <= 0 Then destroy() Else player.addAlert("Armour", name & " has " & defences(eDefenceType.Armour) & " armour remaining.", 2)
             End If
         End With
     End Sub
@@ -435,10 +440,10 @@
         enemyInterceptors.Remove(interceptor)
     End Sub
     Private Sub destroy() Implements iCombatant.destroy
-        alert.Add("Ship Destruction", _name & " was destroyed!", 0)
+        player.addAlert("Ship Destruction", _name & " was destroyed!", 0)
 
         If battlefield Is Nothing = False Then
-            battlefield.ships(player).Remove(Me)
+            battlefield.ships(_player).Remove(Me)
             battlefield = Nothing
         End If
 
@@ -532,14 +537,14 @@
     Friend Sub addResource(ByVal resource As eResource, ByVal value As Integer)
         If resources(resource) + value > resourcesMax(resource) Then
             Dim waste As Integer = resources(resource) + value - resourcesMax(resource)
-            alert.Add("Jettison", waste & " pod(s) of " & resource.ToString & " has been jettisoned.", 5)
+            player.addAlert("Jettison", waste & " pod(s) of " & resource.ToString & " has been jettisoned.", 5)
             resources(resource) = resourcesMax(resource)
         Else
             resources(resource) += value
             If value > 0 Then
-                alert.Add("Resource", value & " pod(s) of " & resource.ToString & " has been added to the cargo hold.", 9)
+                player.addAlert("Resource", value & " pod(s) of " & resource.ToString & " has been added to the cargo hold.", 9)
             Else
-                alert.Add("Resource", Math.Abs(value) & " pod(s) of " & resource.ToString & " has been removed from the cargo hold.", 9)
+                player.addAlert("Resource", Math.Abs(value) & " pod(s) of " & resource.ToString & " has been removed from the cargo hold.", 9)
             End If
 
         End If

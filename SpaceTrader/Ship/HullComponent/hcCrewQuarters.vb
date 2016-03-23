@@ -37,7 +37,7 @@
     Friend Sub addCrew(ByRef crew As crew)
         _crewList.Add(crew)
         crew.crewQuarters = Me
-        alert.Add("Berthing", crew.name & " is now berthing in " & name & ".", 9)
+        ship.player.addAlert("Berthing", crew.name & " is now berthing in " & name & ".", 9)
     End Sub
     Friend Function addCrewCheck(ByRef crew As crew) As Boolean
         If crewList.Contains(crew) Then Return False
@@ -58,7 +58,7 @@
         Next
 
         If crewStarvation = True Then
-            alert.Add("Starvation", "The crew in " & name & " is starving.", 5)
+            ship.player.addAlert("Starvation", "The crew in " & name & " is starving.", 5)
             For n = _crewList.Count - 1 To 0 Step -1
                 Dim c As crew = _crewList(n)
                 If percentRoll(65) = True Then c.destroy("starvation")

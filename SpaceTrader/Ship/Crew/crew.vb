@@ -23,6 +23,12 @@
 
     Friend crewQuarters As hcCrewQuarters
     Friend crewAssignment As shcCrewable
+    Private ReadOnly Property ship As ship
+        Get
+            If crewQuarters Is Nothing Then Return Nothing
+            Return crewQuarters.ship
+        End Get
+    End Property
 
     Private nameFirst As String
     Private nameLast As String
@@ -48,8 +54,8 @@
         If crewAssignment Is Nothing = False Then crewAssignment.unassignCrew(Me)
 
         Select Case cause.ToLower
-            Case "starvation" : alert.Add("Crew Dead", name & " has starved to death.", 1)
-            Case Else : alert.Add("Crew Dead", name & " is dead.", 1)
+            Case "starvation" : ship.player.addAlert("Crew Dead", name & " has starved to death.", 1)
+            Case Else : ship.player.addAlert("Crew Dead", name & " is dead.", 1)
         End Select
     End Sub
 End Class

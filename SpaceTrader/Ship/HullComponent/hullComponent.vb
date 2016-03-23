@@ -163,13 +163,13 @@
         If resourceSlot = Nothing Then Return True
         If resourceQtyRemaining >= 100 Then Return False
         If ship.addResourceCheck(resourceSlot, -1) = False Then
-            alert.Add("Load Failure", name & " was unable to load " & resourceSlot.ToString & " from the cargo hold.", 5)
+            ship.player.addAlert("Load Failure", name & " was unable to load " & resourceSlot.ToString & " from the cargo hold.", 5)
             Return False
         End If
 
         ship.addResource(resourceSlot, -1)
         resourceQtyRemaining += 100
-        alert.Add("Load", name & " loaded a pod of " & resourceSlot.ToString & " from the cargo hold.", 7)
+        ship.player.addAlert("Load", name & " loaded a pod of " & resourceSlot.ToString & " from the cargo hold.", 7)
         Return True
     End Function
     Protected Function useResource(Optional ByVal value As Integer = 1) As Boolean
@@ -177,7 +177,7 @@
         Dim trueQty As Integer = resourceQtyPerUse * value
         If trueQty > resourceQtyRemaining Then
             If autoloadResource = True Then loadResource()
-            alert.Add("Use Failure", name & " is out of " & resourceSlot.ToString & "!", 5)
+            ship.player.addAlert("Use Failure", name & " is out of " & resourceSlot.ToString & "!", 5)
             Return False
         End If
 

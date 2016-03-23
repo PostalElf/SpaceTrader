@@ -35,7 +35,7 @@
         resourceProductionTimer += 1
         If resourceProductionTimer >= resourceProductionTimerMax Then
             resourceProductionTimer = 0
-            alert.Add("Production", name & " has produced a pod of " & resourceProduction.ToString & ".", 7)
+            ship.player.AddAlert("Production", name & " has produced a pod of " & resourceProduction.ToString & ".", 7)
             ship.addResource(resourceProduction, 1)
         End If
     End Sub

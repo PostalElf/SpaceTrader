@@ -37,7 +37,7 @@
             Console.WriteLine(vbSpace(1) & "Alarms:")
             ship.consoleReportAlarms(2)
             Console.WriteLine()
-            alert.allConsoleReport(0, 5)
+            player.alertsConsoleReport(0, 5)
 
             Console.Write("> ")
             handleInput(Console.ReadLine())
@@ -422,7 +422,7 @@
             Console.WriteLine(vbSpace(1) & "Alarms:")
             ship.consoleReportAlarms(2)
             Console.WriteLine()
-            alert.allConsoleReport(0, 5)
+            player.alertsConsoleReport(0, 5)
 
             Console.Write("> ")
             If handleInputBattlefield(Console.ReadLine(), battlefield) = True Then Exit While

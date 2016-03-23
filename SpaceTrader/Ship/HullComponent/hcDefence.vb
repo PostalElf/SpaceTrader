@@ -66,7 +66,7 @@
         If useResource() = False Then Exit Sub
 
         ship.addEnergy(-pdEnergyCost)
-        alert.Add("Point Defence", name & " destroys a " & target.name & ".", 2)
+        ship.player.addAlert("Point Defence", name & " destroys a " & target.name & ".", 2)
         target.destroy()
     End Sub
 

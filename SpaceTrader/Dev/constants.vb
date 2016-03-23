@@ -49,6 +49,7 @@
                 .Add(GetType(hcEngine))
                 .Add(GetType(hcJumpDrive))
                 .Add(GetType(hcProducer))
+                .Add(GetType(hcRepairer))
                 .Add(GetType(hcWeapon))
             End With
             Return total

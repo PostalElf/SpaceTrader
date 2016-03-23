@@ -79,7 +79,7 @@
             Dim weapon As hcWeapon = Nothing
             If dodge > 0 Then weapon = getWeaponBest(getWeapons(dodge), target)
             If weapon Is Nothing Then weapon = getWeaponBest(getWeapons(0), target)
-            weapon.attack(target)
+            If weapon Is Nothing Then Exit While Else weapon.Use(target)
         End While
 
         'spend leftover energy on defence
@@ -154,6 +154,9 @@
         Return best
     End Function
     Private Function getWeaponValue(ByVal hcw As hcWeapon, ByVal target As ship) As Double
+        If hcw.useResourceCheck() = False Then hcw.loadResource()
+        If hcw.useResourceCheck = False Then Return -1
+
         Dim total As Double
         With hcw.damage
             total += (.damageFull + .damageGlancing) / 2

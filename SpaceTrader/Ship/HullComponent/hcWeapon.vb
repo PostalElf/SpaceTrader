@@ -40,7 +40,7 @@
             Return _damage
         End Get
     End Property
-    Friend Sub attack(ByRef target As ship)
+    Friend Sub Use(ByRef target As ship)
         If crewable.isManned = False Then
             Console.WriteLine(name & " is not crewed!")
             Console.ReadKey()
@@ -51,7 +51,11 @@
             Console.ReadKey()
             Exit Sub
         End If
-        If useResource() = False Then Exit Sub
+        If useResource() = False Then
+            Console.WriteLine("Insufficient resources!")
+            Console.ReadKey()
+            Exit Sub
+        End If
 
         ship.addEnergy(-energyCost)
         If isCarrier = True Then

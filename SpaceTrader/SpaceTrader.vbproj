@@ -108,6 +108,7 @@
     <Compile Include="Ship\HullComponent\hcEngine.vb" />
     <Compile Include="Ship\HullComponent\hcJumpDrive.vb" />
     <Compile Include="Ship\HullComponent\hcProducer.vb" />
+    <Compile Include="Ship\HullComponent\hcRepairer.vb" />
     <Compile Include="Ship\HullComponent\hcWeapon.vb" />
     <Compile Include="Ship\HullComponent\hullComponent.vb" />
     <Compile Include="Ship\HullComponent\ihcCrewable.vb" />

@@ -22,6 +22,7 @@
         ship.addComponent(hullComponent.build("Metal Containers"))
         ship.addComponent(hullComponent.build("NQ-14 Drone Bay"))
         ship.addComponent(hullComponent.build("Chaingun"))
+        ship.addComponent(New hcRepairer("Shield Charger", 5, eDefenceType.Shields, 5, 10, eResource.Chemicals, 25))
         ship.addComponent(New hcWeapon("Hellfire Missiles", 5, 5, False, eDamageType.Missile, 100, 20, 20, Nothing))
         For n = 1 To 3
             ship.addCrew(crew.build(eRace.Human))
@@ -435,12 +436,25 @@
                 cmdAttack(battlefield)
             Case "scan"
                 cmdScan(battlefield)
+            Case "use"
+                cmdUse(battlefield)
             Case "exit"
                 battlefield.Close()
                 Return True
         End Select
         Return False
     End Function
+    Private Sub cmdUse(ByRef battlefield As battlefield)
+        Dim hcList As New List(Of hullComponent)
+        hcList.AddRange(ship.getComponents(GetType(hcRepairer)))
+        Dim choice As hullComponent = menu.getListChoice(hcList, 1, vbCrLf & "Select a module:")
+        If choice Is Nothing Then Exit Sub
+
+        If TypeOf choice Is hcRepairer Then
+            Dim hcr As hcRepairer = CType(choice, hcRepairer)
+            hcr.Use()
+        End If
+    End Sub
     Private Sub cmdScan(ByRef battlefield As battlefield)
         Console.WriteLine(vbCrLf)
         For Each kvp In battlefield.ships
@@ -459,6 +473,7 @@
             If hc.defType = eDefenceType.PointDefence Then hcList.Add(hc)
         Next
         Dim choice As hullComponent = menu.getListChoice(hcList, 1, vbCrLf & "Select an attack:")
+        If choice Is Nothing Then Exit Sub
 
         If TypeOf choice Is hcWeapon Then
             Dim enemies As New List(Of ship)
@@ -472,7 +487,7 @@
             End If
             Dim target As ship = menu.getListChoice(enemies, 1, vbCrLf & "Select a target:")
             If target Is Nothing Then Exit Sub
-            CType(choice, hcWeapon).attack(target)
+            CType(choice, hcWeapon).Use(target)
         ElseIf TypeOf choice Is hcDefence Then
             Dim enemies As List(Of interceptor) = ship.enemyInterceptors
             If enemies.Count = 0 Then

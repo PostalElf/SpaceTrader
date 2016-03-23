@@ -85,6 +85,7 @@
             Case "engine" : hc = New hcEngine(targetName, size, speed, dodge, resourceSlot, resourceQtyPerUse)
             Case "jumpdrive" : hc = New hcJumpDrive(targetName, size, speed, resourceSlot, resourceQtyPerUse)
             Case "producer" : hc = New hcProducer(targetName, size, resource, resourceProductionTimer, resourceSlot, resourceQtyPerUse)
+            Case "repairer" : hc = New hcRepairer(targetName, size, defenceType, value, energyCost, resourceSlot, resourceQtyPerUse)
             Case "weapon"
                 hc = New hcWeapon(targetName, size, energyCost, isCarrier, damageType, accuracy, damageFull, damageGlancing, digitalPayload, resourceSlot, resourceQtyPerUse)
                 CType(hc, hcWeapon).interceptorName = interceptorName
@@ -175,15 +176,23 @@
         Return True
     End Function
     Protected Function useResource(Optional ByVal value As Integer = 1) As Boolean
+        Dim trueQty As Integer = resourceQtyPerUse * value
+        If useResourceCheck(value) = False Then
+            If autoloadResource = True Then loadResource()
+            If useResourceCheck(value) = False Then Return False
+        End If
+
+        resourceQtyRemaining -= trueQty
+        Return True
+    End Function
+    Friend Function useResourceCheck(Optional ByVal value As Integer = 1) As Boolean
         If resourceSlot = Nothing Then Return True
         Dim trueQty As Integer = resourceQtyPerUse * value
-        If trueQty > resourceQtyRemaining AndAlso autoloadResource = True Then loadResource()
         If trueQty > resourceQtyRemaining Then
             ship.player.addAlert("Use Failure", name & " is out of " & resourceSlot.ToString & "!", 5)
             Return False
         End If
 
-        resourceQtyRemaining -= trueQty
         Return True
     End Function
 End Class

@@ -3,8 +3,7 @@
     Friend Shared Shadows Function build(ByRef aPlayer As aiPlayer, ByVal aType As eShipType) As aiShip
         Dim aiShip As aiShip = ship.buildAiShip(aPlayer, aType)
         aiShip.role = buildRole()
-        'aiShip.isAggressive = coinFlip()
-        aiShip.isAggressive = True
+        aiShip.isAggressive = coinFlip()
         aiShip.outfitShip()
         aiShip.fullRepair()
         Return aiShip
@@ -22,26 +21,30 @@
                         outfitShipResources(3, eResource.Ammunition)
                         outfitShipResources(1, eResource.Chemicals)
                         outfitShipResources(1, eResource.Machines)
-                        addComponent(New hcWeapon("Mass Driver", 5, 5, False, eDamageType.Ballistic, 20, 3, 1, Nothing, eResource.Ammunition, 10))
-                        Dim d As New hcWeapon("Remote BlackHat Drone Bay", 5, 3, True, eDamageType.Digital, 10, 2, 2, eDigitalAttack.SynapticVirus, eResource.Machines, 50)
-                        d.interceptorName = "BlackHat Drone"
-                        addComponent(d)
-                        addComponent(New hcWeapon("Laser Gatling", 5, 5, False, eDamageType.Energy, 15, 2, 1, Nothing, eResource.Chemicals, 10))
+                        addComponent(New hcWeapon("Mass Driver", 5, 5, "", eDamageType.Ballistic, 20, 3, 1, Nothing, eResource.Ammunition, 10))
+                        addComponent(New hcWeapon("Remote BlackHat Drone Bay", 5, 3, "BlackHat Drone", eDamageType.Digital, 10, 2, 2, eDigitalAttack.SynapticVirus, eResource.Machines, 50))
+                        addComponent(New hcWeapon("Laser Gatling", 5, 5, "", eDamageType.Energy, 15, 2, 1, Nothing, eResource.Chemicals, 10))
                         addComponent(New hcDefence("Quantum Shields", 5, eDefenceType.Shields, 10))
 
                     Case eAiShipRole.Tank
                         outfitShipResources(3, eResource.Ammunition)
                         outfitShipResources(1, eResource.Chemicals)
-                        addComponent(New hcWeapon("Micrometeorite Launcher", 5, 7, False, eDamageType.Ballistic, 5, 3, 1, Nothing, eResource.Ammunition, 10))
+                        addComponent(New hcWeapon("Micrometeorite Launcher", 5, 7, "", eDamageType.Ballistic, 5, 3, 1, Nothing, eResource.Ammunition, 10))
                         addComponent(New hcDefence("Quantum Shields", 5, eDefenceType.Shields, 10))
                         addComponent(New hcDefence("Steelfoam Hull", 5, eDefenceType.Armour, 15))
                         addComponent(New hcRepairer("Shield Battery", 5, eDefenceType.Shields, 5, 5, eResource.Chemicals, 25))
 
                     Case eAiShipRole.Artillery
-                        addComponent(New hcWeapon("Mass Driver", 5, 5, False, eDamageType.Ballistic, 20, 3, 1, Nothing, eResource.Ammunition, 10))
-                        addComponent(New hcWeapon("Spiral-X Missiles", 10, 5, False, eDamageType.Missile, 5, 3, 3, Nothing, eResource.Missiles, 25))
+                        outfitShipResources(5, eResource.Missiles)
+                        addComponent(New hcWeapon("Mass Driver", 5, 5, "", eDamageType.Ballistic, 20, 3, 1, Nothing, eResource.Ammunition, 10))
+                        addComponent(New hcWeapon("Spiral-X Missiles", 10, 5, "", eDamageType.Missile, 5, 3, 3, Nothing, eResource.Missiles, 25))
+                        addComponent(New hcDefence("Quantum Shields", 5, eDefenceType.Shields, 10))
 
                     Case eAiShipRole.Beehive
+
+                    Case eAiShipRole.Hacker
+
+
                     Case Else
                         MsgBox("aiShip.outfitShip: role out of bounds.")
                         Exit Sub
@@ -82,10 +85,7 @@
         Dim mcat As eDamageType = getMostCommonAttackType()
 
         'use special components
-        For Each hcr As hcRepairer In hullComponents(GetType(hcRepairer))
-            hcr.Use()
-        Next
-
+        useSpecialComponents()
 
         'spend energy on attacks
         If enemyInterceptors.Count > 0 Then attackInterceptors()
@@ -111,7 +111,42 @@
         End Select
     End Sub
     Private Sub tickCombatDefensive()
+        Dim highestEnergyCost As Integer = getHighestEnergyCost()
+        Dim mcat As eDamageType = getMostCommonAttackType()
 
+        'use special components
+        useSpecialComponents()
+
+        'attack interceptors
+        If enemyInterceptors.Count > 0 Then attackInterceptors()
+
+        'defend with half energy or highest accuracy, whichever is lower
+        Dim budget As Integer = Math.Min(combatEnergy / 2, getMostCommonAttackAccuracy())
+        Select Case mcat
+            Case eDamageType.Digital : addBoost(eDefenceType.Firewall, combatEnergy)
+            Case eDamageType.Missile : addBoost(eDefenceType.PointDefence, combatEnergy)
+            Case Else : addBoost(eDefenceType.Dodge, combatEnergy)
+        End Select
+
+        'spend leftover energy on attacks
+        While combatEnergy >= highestEnergyCost
+            Dim target As ship = battlefield.getEnemyShipRandom(player)
+            If target Is Nothing Then Exit Sub
+            Dim dodge As Integer = target.getDefences(eDefenceType.Dodge)(0)
+            Dim weapon As hcWeapon = Nothing
+
+            'try to get best weapon with accuracy greater than dodge
+            'if not possible, try to get best weapon
+            'if not possible
+            If dodge > 0 Then weapon = getWeaponBest(getWeapons(dodge), target)
+            If weapon Is Nothing Then weapon = getWeaponBest(getWeapons(0), target)
+            If weapon Is Nothing Then Exit While Else weapon.Use(target)
+        End While
+    End Sub
+    Private Sub useSpecialComponents()
+        For Each hcr As hcRepairer In hullComponents(GetType(hcRepairer))
+            hcr.Use()
+        Next
     End Sub
     Private Sub attackInterceptors()
         Dim pd As hcDefence = getPointDefenceCheapest()
@@ -206,6 +241,15 @@
         Next
 
         Return damageTypes.Max.Key
+    End Function
+    Private Function getMostCommonAttackAccuracy() As Integer
+        If enemyAttacksMadeLastTurn.Count = 0 Then Return 0
+
+        Dim total As Integer = 0
+        For Each d In enemyAttacksMadeLastTurn
+            If d.accuracy > total Then total = d.accuracy
+        Next
+        Return total
     End Function
     Friend Overrides Sub addDamage(ByRef attacker As iCombatant, ByVal damage As damage)
         enemyAttacksMadeLastTurn.Add(damage)

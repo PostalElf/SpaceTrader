@@ -21,7 +21,7 @@
         ship.addComponent(hullComponent.build("Uplifted Maintenance Bay"))
         ship.addComponent(hullComponent.build("Metal Containers"))
         ship.addComponent(hullComponent.build("NQ-14 Drone Bay"))
-        ship.addComponent(New hcWeapon("Hellfire Missiles", 5, 5, False, eDamageType.Missile, 100, 20, 20, Nothing))
+        ship.addComponent(New hcWeapon("Hellfire Missiles", 5, 5, "", eDamageType.Missile, 100, 20, 20, Nothing))
         For n = 1 To 3
             ship.addCrew(crew.build(eRace.Human))
         Next

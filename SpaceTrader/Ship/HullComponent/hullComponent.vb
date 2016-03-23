@@ -23,7 +23,6 @@
         Dim crewMax As Integer
         Dim energyCost As Integer
         Dim accuracy As Integer
-        Dim isCarrier As Boolean = False
         Dim interceptorName As String = "Interceptor"
         Dim damageFull As Integer
         Dim damageGlancing As Integer
@@ -57,7 +56,6 @@
                 Case "crewmax" : crewMax = CInt(ln(1))
                 Case "energycost" : energyCost = CInt(ln(1))
                 Case "accuracy" : accuracy = CInt(ln(1))
-                Case "iscarrier" : isCarrier = True
                 Case "interceptorname" : interceptorName = ln(1)
                 Case "damagefull" : damageFull = CInt(ln(1))
                 Case "damageglancing" : damageGlancing = CInt(ln(1))
@@ -86,9 +84,7 @@
             Case "jumpdrive" : hc = New hcJumpDrive(targetName, size, speed, resourceSlot, resourceQtyPerUse)
             Case "producer" : hc = New hcProducer(targetName, size, resource, resourceProductionTimer, resourceSlot, resourceQtyPerUse)
             Case "repairer" : hc = New hcRepairer(targetName, size, defenceType, value, energyCost, resourceSlot, resourceQtyPerUse)
-            Case "weapon"
-                hc = New hcWeapon(targetName, size, energyCost, isCarrier, damageType, accuracy, damageFull, damageGlancing, digitalPayload, resourceSlot, resourceQtyPerUse)
-                CType(hc, hcWeapon).interceptorName = interceptorName
+            Case "weapon" : hc = New hcWeapon(targetName, size, energyCost, interceptorName, damageType, accuracy, damageFull, damageGlancing, digitalPayload, resourceSlot, resourceQtyPerUse)
         End Select
         If hc Is Nothing = False Then hc.blueprint = blueprint
         buildCrewable(hc, crewableMin, crewableMax)

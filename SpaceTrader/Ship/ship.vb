@@ -339,6 +339,8 @@
     End Function
     Friend enemyInterceptors As New List(Of interceptor)
     Friend Sub addInterceptor(ByRef attacker As iCombatant, ByVal interceptor As interceptor)
+        attacker.addAlert("Attack", attacker.name & " launches an interceptor at " & name & ".", 2)
+        player.addAlert("Attack", attacker.name & " launches an interceptor at " & name & ".", 2)
         enemyInterceptors.Add(interceptor)
     End Sub
     Friend Sub removeInterceptor(ByRef interceptor As interceptor)

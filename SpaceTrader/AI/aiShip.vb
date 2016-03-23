@@ -6,6 +6,7 @@
         'aiShip.isAggressive = coinFlip()
         aiShip.isAggressive = True
         aiShip.outfitShip()
+        aiShip.fullRepair()
         Return aiShip
     End Function
     Private Shared Function buildRole() As eAiShipRole
@@ -19,17 +20,27 @@
                 Select Case role
                     Case eAiShipRole.Striker
                         outfitShipResources(3, eResource.Ammunition)
-                        outfitShipResources(1, eResource.Missiles)
+                        outfitShipResources(1, eResource.Chemicals)
+                        outfitShipResources(1, eResource.Machines)
                         addComponent(New hcWeapon("Mass Driver", 5, 5, False, eDamageType.Ballistic, 20, 3, 1, Nothing, eResource.Ammunition, 10))
-                        addComponent(New hcWeapon("Spiral-X Missiles", 10, 5, False, eDamageType.Missile, 5, 3, 3, Nothing, eResource.Missiles, 25))
-                        addComponent(New hcDefence("Quantum Shield Battery", 5, eDefenceType.Shields, 10))
+                        Dim d As New hcWeapon("Remote BlackHat Drone Bay", 5, 3, True, eDamageType.Digital, 10, 2, 2, eDigitalAttack.SynapticVirus, eResource.Machines, 50)
+                        d.interceptorName = "BlackHat Drone"
+                        addComponent(d)
+                        addComponent(New hcWeapon("Laser Gatling", 5, 5, False, eDamageType.Energy, 15, 2, 1, Nothing, eResource.Chemicals, 10))
+                        addComponent(New hcDefence("Quantum Shields", 5, eDefenceType.Shields, 10))
 
                     Case eAiShipRole.Tank
+                        outfitShipResources(3, eResource.Ammunition)
+                        outfitShipResources(1, eResource.Chemicals)
                         addComponent(New hcWeapon("Micrometeorite Launcher", 5, 7, False, eDamageType.Ballistic, 5, 3, 1, Nothing, eResource.Ammunition, 10))
-                        addComponent(New hcDefence("Quantum Shield Battery", 5, eDefenceType.Shields, 10))
+                        addComponent(New hcDefence("Quantum Shields", 5, eDefenceType.Shields, 10))
                         addComponent(New hcDefence("Steelfoam Hull", 5, eDefenceType.Armour, 15))
+                        addComponent(New hcRepairer("Shield Battery", 5, eDefenceType.Shields, 5, 5, eResource.Chemicals, 25))
 
                     Case eAiShipRole.Artillery
+                        addComponent(New hcWeapon("Mass Driver", 5, 5, False, eDamageType.Ballistic, 20, 3, 1, Nothing, eResource.Ammunition, 10))
+                        addComponent(New hcWeapon("Spiral-X Missiles", 10, 5, False, eDamageType.Missile, 5, 3, 3, Nothing, eResource.Missiles, 25))
+
                     Case eAiShipRole.Beehive
                     Case Else
                         MsgBox("aiShip.outfitShip: role out of bounds.")
@@ -70,6 +81,12 @@
         Dim highestEnergyCost As Integer = getHighestEnergyCost()
         Dim mcat As eDamageType = getMostCommonAttackType()
 
+        'use special components
+        For Each hcr As hcRepairer In hullComponents(GetType(hcRepairer))
+            hcr.Use()
+        Next
+
+
         'spend energy on attacks
         If enemyInterceptors.Count > 0 Then attackInterceptors()
         While combatEnergy >= highestEnergyCost
@@ -77,6 +94,10 @@
             If target Is Nothing Then Exit Sub
             Dim dodge As Integer = target.getDefences(eDefenceType.Dodge)(0)
             Dim weapon As hcWeapon = Nothing
+
+            'try to get best weapon with accuracy greater than dodge
+            'if not possible, try to get best weapon
+            'if not possible
             If dodge > 0 Then weapon = getWeaponBest(getWeapons(dodge), target)
             If weapon Is Nothing Then weapon = getWeaponBest(getWeapons(0), target)
             If weapon Is Nothing Then Exit While Else weapon.Use(target)
@@ -94,6 +115,7 @@
     End Sub
     Private Sub attackInterceptors()
         Dim pd As hcDefence = getPointDefenceCheapest()
+        If pd Is Nothing Then Exit Sub
         Dim chance As Integer
         If isAggressive = False Then chance = 75 Else chance = 50
 
@@ -153,15 +175,22 @@
         Next
         Return best
     End Function
-    Private Function getWeaponValue(ByVal hcw As hcWeapon, ByVal target As ship) As Double
+    Private Function getWeaponValue(ByRef hcw As hcWeapon, ByVal target As ship) As Double
         If hcw.useResourceCheck() = False Then hcw.loadResource()
-        If hcw.useResourceCheck = False Then Return -1
+        If hcw.useResourceCheck() = False Then Return -1
 
         Dim total As Double
+        If hcw.isCarrier = True Then
+            total += 0.5
+            If role = eAiShipRole.Beehive Then total += 0.5
+        End If
         With hcw.damage
             total += (.damageFull + .damageGlancing) / 2
             If .type = eDamageType.Energy AndAlso target.getDefences(eDefenceType.Shields)(0) > 0 Then total *= 1.5
-            If .digitalPayload <> Nothing Then total += 1.5
+            If .digitalPayload <> Nothing Then
+                total += 0.5
+                If role = eAiShipRole.Hacker Then total += 0.5
+            End If
         End With
         Return total
     End Function

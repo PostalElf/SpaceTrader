@@ -3,4 +3,5 @@
     Tank
     Artillery
     Beehive
+    Hacker
 End Enum

@@ -7,7 +7,7 @@
         MyBase.New(aName, aSize, aResourceSlot, aResourceQtyPerUse)
 
         _energyCost = aEnergyCost
-        isCarrier = aIsCarrier
+        _isCarrier = aIsCarrier
         _damage = New damage(aDamageType, aAccuracy, aDamageFull, aDamageGlancing, digitalPayload)
     End Sub
     Friend Overrides Function consoleDescription() As String
@@ -32,7 +32,12 @@
             Return _energyCost
         End Get
     End Property
-    Private isCarrier As Boolean
+    Private _isCarrier As Boolean
+    Friend ReadOnly Property isCarrier As Boolean
+        Get
+            Return _isCarrier
+        End Get
+    End Property
     Friend interceptorName As String
     Private _damage As damage
     Friend ReadOnly Property damage As damage
@@ -58,8 +63,7 @@
         End If
 
         ship.addEnergy(-energyCost)
-        If isCarrier = True Then
-            ship.player.addAlert("Attack", ship.name & " launches an interceptor at " & target.name & ".", 2)
+        If _isCarrier = True Then
             target.addInterceptor(ship, New interceptor(interceptorName, ship, target, _damage))
         Else
             target.addDamage(ship, _damage)

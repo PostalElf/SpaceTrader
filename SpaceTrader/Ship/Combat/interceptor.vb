@@ -1,7 +1,7 @@
 ﻿Public Class interceptor
     Implements iCombatant
     Friend Sub New(ByVal aName As String, ByRef aParent As ship, ByRef aTarget As ship, ByVal aDamage As damage)
-        _name = aName
+        If aName = "" Then _name = "Interceptor" Else _name = aName
         parent = aParent
         target = aTarget
         damage = aDamage

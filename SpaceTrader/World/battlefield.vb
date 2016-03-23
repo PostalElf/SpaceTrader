@@ -25,6 +25,20 @@
         End Get
     End Property
     Friend ships As New Dictionary(Of player, List(Of ship))
+    Friend Function getEnemyShips(ByRef player As player) As List(Of ship)
+        Dim total As New List(Of ship)
+        For Each kvp In ships
+            If kvp.Key.Equals(player) = False Then total.AddRange(kvp.Value)
+        Next
+        Return total
+    End Function
+    Friend Function getEnemyShipRandom(ByRef player As player) As ship
+        Dim enemies As List(Of ship) = getEnemyShips(player)
+        If enemies.Count = 0 Then Return Nothing
+
+        Dim roll As Integer = rng.Next(enemies.Count)
+        Return enemies(roll)
+    End Function
     Friend Sub tickCombat()
         For Each kvp In ships
             For n = kvp.Value.Count - 1 To 0 Step -1

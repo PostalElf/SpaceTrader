@@ -9,15 +9,15 @@
         _energyCost = aEnergyCost
         If aDamageType = eDamageType.Interceptors Then
             isCarrier = True
-            damage = New damage(eDamageType.Ballistic, aAccuracy, aDamageFull, aDamageGlancing, digitalPayload)
+            _damage = New damage(eDamageType.Ballistic, aAccuracy, aDamageFull, aDamageGlancing, digitalPayload)
         Else
             isCarrier = False
-            damage = New damage(aDamageType, aAccuracy, aDamageFull, aDamageGlancing, digitalPayload)
+            _damage = New damage(aDamageType, aAccuracy, aDamageFull, aDamageGlancing, digitalPayload)
         End If
     End Sub
     Friend Overrides Function consoleDescription() As String
         Dim total As String = ""
-        With damage
+        With _damage
             If .damageGlancing = .damageFull Then total &= .damageGlancing Else total &= .damageGlancing & "-" & .damageFull
             total &= " " & .type.ToString & " damage @ " & .accuracy & " accuracy"
         End With
@@ -39,7 +39,12 @@
     End Property
     Private isCarrier As Boolean
     Friend interceptorName As String
-    Private damage As damage
+    Private _damage As damage
+    Friend ReadOnly Property damage As damage
+        Get
+            Return _damage
+        End Get
+    End Property
     Friend Sub attack(ByRef target As ship)
         If crewable.isManned = False Then
             Console.WriteLine(name & " is not crewed!")
@@ -55,9 +60,10 @@
 
         ship.addEnergy(-energyCost)
         If isCarrier = True Then
-            target.addInterceptor(ship, New interceptor(interceptorName, ship, target, damage))
+            ship.player.addAlert("Attack", ship.name & " launches an interceptor at " & target.name & ".", 2)
+            target.addInterceptor(ship, New interceptor(interceptorName, ship, target, _damage))
         Else
-            target.addDamage(ship, damage)
+            target.addDamage(ship, _damage)
         End If
     End Sub
 

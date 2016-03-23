@@ -1,5 +1,39 @@
 ﻿Public Class aiShip
     Inherits ship
+    Friend Shared Shadows Function build(ByRef aPlayer As aiPlayer, ByVal aType As eShipType) As aiShip
+        Dim aiShip As aiShip = ship.buildAiShip(aPlayer, aType)
+        aiShip.role = buildRole()
+        'aiShip.isAggressive = coinFlip()
+        aiShip.isAggressive = True
+        aiShip.outfitShip()
+        Return aiShip
+    End Function
+    Private Shared Function buildRole() As eAiShipRole
+        'Return rng.Next(1, System.Enum.GetValues(GetType(eAiShipRole)).Length - 1)
+        Return eAiShipRole.Striker
+    End Function
+    Private Sub outfitShip()
+        Select Case type
+            Case eShipType.Corvette
+                Select Case role
+                    Case eAiShipRole.Striker
+                        addComponent(New hcWeapon("Mass Driver", 5, 3, eDamageType.Ballistic, 20, 3, 1, Nothing))
+                        addComponent(New hcWeapon("Spiral-X Missiles", 5, 5, eDamageType.Missile, 10, 3, 3, Nothing))
+                        addComponent(New hcDefence("Quantum Shield Battery", 5, eDefenceType.Shields, 10))
+                        addComponent(New hcDefence("Point-Defence Turret", 5, eDefenceType.PointDefence, 5))
+                    Case eAiShipRole.Tank
+                    Case eAiShipRole.Artillery
+                    Case eAiShipRole.Beehive
+                    Case Else
+                        MsgBox("aiShip.outfitShip: role out of bounds.")
+                        Exit Sub
+                End Select
+
+            Case Else
+                MsgBox("aiShip.outfitShip: type out of bounds.")
+                Exit Sub
+        End Select
+    End Sub
 
     Private role As eAiShipRole
     Private isAggressive As Boolean
@@ -8,14 +42,21 @@
 
         MyBase.tickCombat()
         enemyAttacksMadeLastTurn.Clear()
+        player.alertsClear()
     End Sub
     Private Sub tickCombatAggressive()
         Dim highestEnergyCost As Integer = getHighestEnergyCost()
         Dim mcat As eDamageType = getMostCommonAttackType()
 
         'spend energy on attacks
+        If enemyInterceptors.Count > 0 Then attackInterceptors()
         While combatEnergy >= highestEnergyCost
-            If enemyInterceptors.Count > 0 Then attackInterceptors()
+            Dim target As ship = battlefield.getEnemyShipRandom(player)
+            Dim dodge As Integer = target.getDefences(eDefenceType.Dodge)(0)
+            Dim weapon As hcWeapon = Nothing
+            If dodge > 0 Then weapon = getWeaponBest(getWeapons(dodge), target)
+            If weapon Is Nothing Then weapon = getWeaponBest(getWeapons(0), target)
+            weapon.attack(target)
         End While
 
         'spend leftover energy on defence
@@ -67,6 +108,36 @@
             End If
         Next
         Return min
+    End Function
+    Private Function getWeapons(ByVal minAccuracy As Integer) As List(Of hcWeapon)
+        Dim total As New List(Of hcWeapon)
+        For Each hcw As hcWeapon In hullComponents(GetType(hcWeapon))
+            If hcw.damage.accuracy >= minAccuracy Then total.Add(hcw)
+        Next
+        Return total
+    End Function
+    Private Function getWeaponBest(ByVal weaponList As List(Of hcWeapon), ByVal target As ship) As hcWeapon
+        If weaponList.Count = 0 Then Return Nothing
+
+        Dim best As hcWeapon = Nothing
+        Dim bestValue As Double = 0
+        For Each hcw In weaponList
+            Dim aiValue As Double = getWeaponValue(hcw, target)
+            If aiValue > bestValue Then
+                best = hcw
+                bestValue = aiValue
+            End If
+        Next
+        Return best
+    End Function
+    Private Function getWeaponValue(ByVal hcw As hcWeapon, ByVal target As ship) As Double
+        Dim total As Double
+        With hcw.damage
+            total += (.damageFull + .damageGlancing) / 2
+            If .type = eDamageType.Energy AndAlso target.getDefences(eDefenceType.Shields)(0) > 0 Then total *= 1.5
+            If .digitalPayload <> Nothing Then total += 1.5
+        End With
+        Return total
     End Function
 
     Private enemyAttacksMadeLastTurn As New List(Of damage)

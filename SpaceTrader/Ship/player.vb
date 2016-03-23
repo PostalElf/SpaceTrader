@@ -1,4 +1,5 @@
 ﻿Public Class player
+    Friend name As String
     Private _credits As Integer
     Friend ReadOnly Property credits As Integer
         Get
@@ -18,6 +19,9 @@
         Dim alert As New alert(title, text, priority)
         If alerts.ContainsKey(priority) = False Then alerts.Add(priority, New List(Of alert))
         alerts(priority).Add(alert)
+    End Sub
+    Friend Sub alertsClear()
+        alerts.Clear()
     End Sub
     Friend Sub alertsConsoleReport(ByVal indent As Integer, Optional ByVal maxPriority As Integer = 999)
         If alerts.Count > 0 Then

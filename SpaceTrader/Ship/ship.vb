@@ -14,17 +14,22 @@
             defenceCombatDebuffs.Add(d, 0)
         Next
     End Sub
-    Friend Shared Function build(ByRef player As player, ByVal type As eShipType) As ship
+    Private Sub initialise(ByRef aPlayer As player, ByVal aType As eShipType)
+        _name = getRandomAndRemove(shipNames, "data/shipnames.txt")
+        _player = aPlayer
+        type = aType
+        buildDefaultShip()
+        fullRepair()
+        aPlayer.ships.Add(Me)
+    End Sub
+    Friend Shared Function build(ByRef aPlayer As player, ByVal aType As eShipType) As ship
         Dim ship As New ship
-        With ship
-            ._name = getRandomAndRemove(shipNames, "data/shipnames.txt")
-            ._player = player
-            .type = type
-            .buildDefaultShip()
-            .fullRepair()
-        End With
-
-        player.ships.Add(ship)
+        ship.initialise(aPlayer, aType)
+        Return ship
+    End Function
+    Friend Shared Function buildAiShip(ByRef aPlayer As player, ByVal aType As eShipType) As aiShip
+        Dim ship As New aiShip
+        ship.initialise(aPlayer, aType)
         Return ship
     End Function
     Private Sub buildDefaultShip()
@@ -169,7 +174,10 @@
             Return _player
         End Get
     End Property
-    Private type As eShipType
+    Friend Sub addAlert(ByVal title As String, ByVal text As String, ByVal priority As Integer) Implements iCombatant.addAlert
+        player.addAlert(title, text, priority)
+    End Sub
+    Protected type As eShipType
     Private Function getTypePrefix() As String
         Select Case type
             Case eShipType.Corvette : Return "Cv."
@@ -390,17 +398,21 @@
             If .type = eDamageType.Digital Then
                 'digital attack
                 player.addAlert("Attack", attacker.name & " successfully hacks into " & name & "'s systems.", 2)
+                attacker.addAlert("Attack", attacker.name & " successfully hacks into " & name & "'s systems.", 2)
                 If .accuracy >= defences(eDefenceType.Firewall) Then
                     Select Case .digitalPayload
                         Case eDigitalAttack.Trojan
                             defenceCombatDebuffs(eDefenceType.Firewall) += .damageFull
                             player.addAlert("Trojan", name & " has been infected with a Trojan, reducing its Firewall to " & defences(eDefenceType.Firewall) & ".", 2)
+                            attacker.addAlert("Trojan", name & " has been infected with a Trojan, reducing its Firewall to " & defences(eDefenceType.Firewall) & ".", 2)
                         Case eDigitalAttack.SynapticVirus
                             defenceCombatDebuffs(eDefenceType.Dodge) += .damageFull
                             player.addAlert("Synaptic Virus", name & "'s engines have been infected with a Virus, reducing its Dodge to " & defences(eDefenceType.Dodge) & ".", 2)
+                            attacker.addAlert("Synaptic Virus", name & "'s engines have been infected with a Virus, reducing its Dodge to " & defences(eDefenceType.Dodge) & ".", 2)
                         Case eDigitalAttack.NetworkWorm
                             defenceCombatDebuffs(eDefenceType.PointDefence) += .damageFull
                             player.addAlert("Network Worm", name & "'s network has been infected with a Worm, reducing its Point Defence to " & defences(eDefenceType.PointDefence) & ".", 2)
+                            attacker.addAlert("Network Worm", name & "'s network has been infected with a Worm, reducing its Point Defence to " & defences(eDefenceType.PointDefence) & ".", 2)
                         Case Else
                             MsgBox("addDamage: unexpected digitalPayload")
                             Exit Sub
@@ -415,13 +427,14 @@
                 If defences(eDefenceType.Shields) > 0 Then
                     If .type = eDamageType.Energy Then dmgValue *= 1.5
                     defences(eDefenceType.Shields) -= dmgValue
-                    player.addAlert("Attack", attacker.name & " hits " & name & " for " & dmgValue & " " & .type.ToString & " damage.", 2)
+                    player.addAlert("Attack", attacker.name & " hits " & name & "'s shields for " & dmgValue & " " & .type.ToString & " damage.", 2)
+                    attacker.addAlert("Attack", attacker.name & " hits " & name & "'s shields for " & dmgValue & " " & .type.ToString & " damage.", 2)
                     If defences(eDefenceType.Shields) < 0 Then
                         If .type = eDamageType.Energy Then dmgValue = 0 Else dmgValue = defences(eDefenceType.Shields) * -1
                         defences(eDefenceType.Shields) = 0
                         player.addAlert("Shields Down", name & "'s shields are down.", 2)
+                        attacker.addAlert("Shields Down", name & "'s shields are down.", 2)
                     Else
-                        player.addAlert("Shields", name & " has " & defences(eDefenceType.Shields) & " shields remaining.", 2)
                         dmgValue = 0
                     End If
                 End If
@@ -429,7 +442,12 @@
                 If dmgValue <= 0 Then Exit Sub
 
                 defences(eDefenceType.Armour) -= dmgValue
-                If defences(eDefenceType.Armour) <= 0 Then destroy() Else player.addAlert("Armour", name & " has " & defences(eDefenceType.Armour) & " armour remaining.", 2)
+                player.addAlert("Attack", attacker.name & " hits " & name & "'s armour for " & dmgValue & " " & .type.ToString & " damage.", 2)
+                attacker.addAlert("Attack", attacker.name & " hits " & name & "'s armour for " & dmgValue & " " & .type.ToString & " damage.", 2)
+                If defences(eDefenceType.Armour) <= 0 Then
+                    destroy()
+                    attacker.addAlert("Ship Destruction", name & " was destroyed!", 0)
+                End If
             End If
         End With
     End Sub

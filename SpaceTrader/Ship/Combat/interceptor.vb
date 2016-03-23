@@ -26,4 +26,7 @@
         target = Nothing
         damage = Nothing
     End Sub
+    Friend Sub addAlert(ByVal title As String, ByVal text As String, ByVal priority As Integer) Implements iCombatant.addAlert
+        parent.player.addAlert(title, text, priority)
+    End Sub
 End Class

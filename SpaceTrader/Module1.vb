@@ -410,9 +410,7 @@
     End Sub
 
     Private Sub cmdBattlefield()
-        Dim enemy As New player
-        Dim enemyShip As ship = ship.build(enemy, eShipType.Crusier)
-
+        Dim enemy As aiPlayer = aiPlayer.build(1)
         Dim battlefield As New battlefield(New List(Of player) From {enemy, player})
 
         Console.Clear()
@@ -435,12 +433,25 @@
                 battlefield.tickCombat()
             Case "attack"
                 cmdAttack(battlefield)
+            Case "scan"
+                cmdScan(battlefield)
             Case "exit"
                 battlefield.Close()
                 Return True
         End Select
         Return False
     End Function
+    Private Sub cmdScan(ByRef battlefield As battlefield)
+        Console.WriteLine(vbCrLf)
+        For Each kvp In battlefield.ships
+            If kvp.Key.Equals(player) = False Then
+                For Each s In kvp.Value
+                    s.consoleReportCombat(0)
+                Next
+            End If
+        Next
+        Console.ReadKey()
+    End Sub
     Private Sub cmdAttack(ByRef battlefield As battlefield)
         Dim hcList As New List(Of hullComponent)
         hcList.AddRange(ship.getComponents(GetType(hcWeapon)))

@@ -5,6 +5,7 @@
         aiShip.role = buildRole()
         aiShip.isAggressive = False
         aiShip.outfitShip()
+        aiShip.allLoadResource()
         aiShip.fullRepair()
         Return aiShip
     End Function
@@ -35,7 +36,7 @@
 
                     Case eAiShipRole.Artillery
                         outfitShipResources(3, eResource.Missiles)
-                        outfitShipResources(1, eResource.Chemicals)
+                        outfitShipResources(2, eResource.Chemicals)
                         addComponent(hullComponent.build("Weavespun Bubble"))
                         addComponent(hullComponent.build("Sentinel Laser Grid"))
                         addComponent(hullComponent.build("Hellfire Missiles"))
@@ -103,8 +104,10 @@
     End Sub
     Private Sub useAttacks()
         Dim highestEnergyCost As Integer = 0
+        Dim target As ship = battlefield.getEnemyShipRandom(player)
+
         While combatEnergy >= highestEnergyCost
-            Dim target As ship = battlefield.getEnemyShipRandom(player)
+            If target Is Nothing Then target = battlefield.getEnemyShipRandom(player)
             If target Is Nothing Then Exit Sub
             Dim dodge As Integer = target.getDefences(eDefenceType.Dodge)(0)
             Dim weapon As hcWeapon = Nothing

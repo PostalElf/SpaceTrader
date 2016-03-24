@@ -398,6 +398,7 @@
         combatEnergy -= value
         Select Case defenceType
             Case eDefenceType.Firewall : defenceRoundBoosts(eDefenceType.Firewall) += value
+            Case eDefenceType.PointDefence : defenceRoundBoosts(eDefenceType.PointDefence) += value
             Case eDefenceType.Dodge : defenceRoundBoosts(eDefenceType.Dodge) += value
         End Select
     End Sub
@@ -442,7 +443,13 @@
                 'conventional attack
                 Dim dmgValue As Integer
                 If .type = eDamageType.Missile Then .accuracy -= defences(eDefenceType.PointDefence)
-                If .accuracy >= defences(eDefenceType.Dodge) Then dmgValue = .damageFull Else dmgValue = .damageGlancing
+                If .accuracy > defences(eDefenceType.Dodge) Then dmgValue = .damageFull Else dmgValue = .damageGlancing
+
+                If dmgValue <= 0 Then
+                    player.addAlert("Attack", attacker.name & "'s " & .type.ToString & " attack misses " & name & ".", 2)
+                    attacker.addAlert("Attack", attacker.name & "'s " & .type.ToString & " attack misses " & name & ".", 2)
+                    Exit Sub
+                End If
 
                 If defences(eDefenceType.Shields) > 0 Then
                     If .type = eDamageType.Energy Then dmgValue *= 1.5

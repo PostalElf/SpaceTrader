@@ -159,29 +159,31 @@
         End Get
     End Property
     Friend Overridable Function UseCombat(ByRef target As iCombatant) As Boolean
-        If ship.addEnergy(-_energyCost) = False Then Return False
-        If useResource() = False Then Return False
-
-        isExhausted = True
-        Return True
-    End Function
-    Friend Overridable Function UseCombatCheck(ByRef target As iCombatant) As Boolean
         If isExhausted = True Then
             ship.addAlert("Use Failure", name & " may not be used again in this round.", 2)
             Return False
         End If
         If crewable.isManned = False Then
-            ship.addAlert("Use Failure", name & " is unmanned.", 2)
+            ship.addAlert("Use Failure", name & " is not manned.", 2)
             Return False
         End If
-        If ship.addEnergyCheck(-_energyCost) = False Then
-            ship.addAlert("Use Failure", "Insufficient energy.", 2)
-            Return False
-        End If
-        If useResourceCheck() = False Then
+        If useResource() = False Then
             ship.addAlert("Use Failure", name & " needs more resources.", 2)
             Return False
         End If
+        If ship.addEnergy(-_energyCost) = False Then
+            ship.addAlert("Use Failure", ship.name & " does not have enough energy to use " & name & ".", 2)
+            Return False
+        End If
+
+        isExhausted = True
+        Return True
+    End Function
+    Friend Overridable Function UseCombatCheck(ByRef target As iCombatant) As Boolean
+        If isExhausted = True Then Return False
+        If crewable.isManned = False Then Return False
+        If ship.addEnergyCheck(-_energyCost) = False Then Return False
+        If useResourceCheck() = False Then Return False
 
         Return True
     End Function

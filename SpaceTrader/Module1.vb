@@ -21,6 +21,7 @@
         ship.addComponent(hullComponent.build("Uplifted Maintenance Bay"))
         ship.addComponent(hullComponent.build("Metal Containers"))
         ship.addComponent(hullComponent.build("Hellfire Missiles"))
+        ship.addComponent(hullComponent.build("Laser Array"))
         For n = 1 To 3
             ship.addCrew(crew.build(eRace.Human))
         Next
@@ -429,7 +430,7 @@
         Select Case cmd(0)
             Case ""
                 battlefield.tickCombat()
-            Case "attack"
+            Case "attack", "att", "a"
                 cmdAttack(battlefield)
             Case "scan"
                 cmdScan(battlefield)

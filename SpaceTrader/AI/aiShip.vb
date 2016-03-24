@@ -3,7 +3,7 @@
     Friend Shared Shadows Function build(ByRef aPlayer As aiPlayer, ByVal aType As eShipType) As aiShip
         Dim aiShip As aiShip = ship.buildAiShip(aPlayer, aType)
         aiShip.role = buildRole()
-        aiShip.isAggressive = coinFlip()
+        aiShip.isAggressive = False
         aiShip.outfitShip()
         aiShip.fullRepair()
         Return aiShip
@@ -35,6 +35,7 @@
 
                     Case eAiShipRole.Artillery
                         outfitShipResources(3, eResource.Missiles)
+                        outfitShipResources(1, eResource.Chemicals)
                         addComponent(hullComponent.build("Weavespun Bubble"))
                         addComponent(hullComponent.build("Sentinel Laser Grid"))
                         addComponent(hullComponent.build("Hellfire Missiles"))
@@ -42,6 +43,10 @@
 
                     Case eAiShipRole.Beehive
                         outfitShipResources(3, eResource.Machines)
+                        outfitShipResources(1, eResource.Chemicals)
+                        addComponent(hullComponent.build("Weavespun Bubble"))
+                        addComponent(hullComponent.build("Sentinel Laser Grid"))
+                        addComponent(hullComponent.build("'Falcon' Bay"))
 
                     Case eAiShipRole.Hacker
 
@@ -82,55 +87,19 @@
         player.alertsClear()
     End Sub
     Private Sub tickCombatAggressive()
-        Dim highestEnergyCost As Integer = 0
-        Dim mcat As eDamageType = getMostCommonAttackType()
-
-        'use special components
         useSpecialComponents()
-
-        'spend energy on attacks
-        If enemyInterceptors.Count > 0 Then attackInterceptors()
-        While combatEnergy >= highestEnergyCost
-            Dim target As ship = battlefield.getEnemyShipRandom(player)
-            If target Is Nothing Then Exit Sub
-            Dim dodge As Integer = target.getDefences(eDefenceType.Dodge)(0)
-            Dim weapon As hcWeapon = Nothing
-
-            'try to get best weapon with accuracy greater than dodge
-            'if not possible, try to get best weapon
-            'if not possible
-            If dodge > 0 Then weapon = getWeaponBest(getWeapons(dodge), target)
-            If weapon Is Nothing Then weapon = getWeaponBest(getWeapons(0), target)
-            If weapon Is Nothing Then Exit While Else weapon.UseCombat(target)
-            highestEnergyCost = getHighestEnergyCost()
-        End While
-
-        'spend leftover energy on defence
-        Select Case mcat
-            Case eDamageType.Digital : addBoost(eDefenceType.Firewall, combatEnergy)
-            Case eDamageType.Missile : addBoost(eDefenceType.PointDefence, combatEnergy)
-            Case Else : addBoost(eDefenceType.Dodge, combatEnergy)
-        End Select
+        useAttacks()
+        attackInterceptors()
+        useDefences(combatEnergy)
     End Sub
     Private Sub tickCombatDefensive()
-        Dim highestEnergyCost As Integer = 0
-        Dim mcat As eDamageType = getMostCommonAttackType()
-
-        'use special components
         useSpecialComponents()
-
-        'attack interceptors
-        If enemyInterceptors.Count > 0 Then attackInterceptors()
-
-        'defend with half energy or highest accuracy, whichever is lower
-        Dim budget As Integer = Math.Min(combatEnergy / 2, getMostCommonAttackAccuracy())
-        Select Case mcat
-            Case eDamageType.Digital : addBoost(eDefenceType.Firewall, budget)
-            Case eDamageType.Missile : addBoost(eDefenceType.PointDefence, budget)
-            Case Else : addBoost(eDefenceType.Dodge, budget)
-        End Select
-
-        'spend leftover energy on attacks
+        attackInterceptors()
+        useDefences(Math.Min(combatEnergy / 2, getMostCommonAttackAccuracy()))
+        useAttacks()
+    End Sub
+    Private Sub useAttacks()
+        Dim highestEnergyCost As Integer = 0
         While combatEnergy >= highestEnergyCost
             Dim target As ship = battlefield.getEnemyShipRandom(player)
             If target Is Nothing Then Exit Sub
@@ -145,6 +114,13 @@
             If weapon Is Nothing Then Exit While Else weapon.UseCombat(target)
             highestEnergyCost = getHighestEnergyCost()
         End While
+    End Sub
+    Private Sub useDefences(ByVal value As Integer)
+        Select Case getMostCommonAttackType()
+            Case eDamageType.Digital : addBoost(eDefenceType.Firewall, value)
+            Case eDamageType.Missile : addBoost(eDefenceType.PointDefence, value)
+            Case Else : addBoost(eDefenceType.Dodge, value)
+        End Select
     End Sub
     Private Sub useSpecialComponents()
         For Each hcr As hcRepairer In hullComponents(GetType(hcRepairer))
@@ -152,6 +128,8 @@
         Next
     End Sub
     Private Sub attackInterceptors()
+        If enemyInterceptors.Count = 0 Then Exit Sub
+
         Dim pd As hcDefence = getPointDefenceCheapest()
         If pd Is Nothing Then Exit Sub
         Dim chance As Integer
@@ -195,7 +173,7 @@
     Private Function getWeapons(ByVal minAccuracy As Integer) As List(Of hcWeapon)
         Dim total As New List(Of hcWeapon)
         For Each hcw As hcWeapon In hullComponents(GetType(hcWeapon))
-            If hcw.damage.accuracy >= minAccuracy Then total.Add(hcw)
+            If hcw.damage.accuracy > minAccuracy Then total.Add(hcw)
         Next
         Return total
     End Function
@@ -241,10 +219,18 @@
         Dim damageTypes As New Dictionary(Of eDamageType, Integer)
         For Each ea In enemyAttacksMadeLastTurn
             If damageTypes.ContainsKey(ea.type) = False Then damageTypes.Add(ea.type, 0)
-            damageTypes(ea.type) += 1
+            damageTypes(ea.type) += (ea.damageFull + ea.damageGlancing) / 2
         Next
 
-        Return damageTypes.Max.Key
+        Dim max As eDamageType = eDamageType.Ballistic
+        Dim maxValue As Integer = 0
+        For Each kvp In damageTypes
+            If kvp.Value > maxValue Then
+                max = kvp.Key
+                maxValue = kvp.Value
+            End If
+        Next
+        Return max
     End Function
     Private Function getMostCommonAttackAccuracy() As Integer
         If enemyAttacksMadeLastTurn.Count = 0 Then Return 0

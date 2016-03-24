@@ -5,40 +5,36 @@
         MyBase.New(aName, aSize, aResourceSlot, aResourceQtyPerUse)
         defType = aDefenceType
         value = aValue
-        energyCost = aEnergyCost
+        _energyCost = aEnergyCost
     End Sub
     Friend Overrides Function consoleDescription() As String
         Return "Recharges " & value & " Shields"
     End Function
 
-    Private energyCost As Integer
     Private defType As eDefenceType
     Private value As Integer
-    Friend Sub Use()
-        If crewable.isManned = False Then
-            Console.WriteLine(name & " is not crewed!")
-            Console.ReadKey()
-            Exit Sub
-        End If
-        If ship.addEnergyCheck(-energyCost) = False Then
-            Console.WriteLine("Insufficient energy!")
-            Console.ReadKey()
-            Exit Sub
-        End If
-        If useResource() = False Then
-            Console.WriteLine("Insufficient resources!")
-            Console.ReadKey()
-            Exit Sub
-        End If
 
-        ship.addEnergy(-energyCost)
+    Friend Overrides Function UseCombat(ByRef target As iCombatant) As Boolean
+        If MyBase.UseCombat(target) = False Then Return False
+
         ship.repair(eDefenceType.Shields, value)
-    End Sub
+        Return True
+    End Function
+    Friend Overrides Function UseCombatCheck(ByRef target As iCombatant) As Boolean
+        If defType <> eDefenceType.Shields AndAlso defType <> eDefenceType.Armour Then Return False
+        If TypeOf target Is ship = False Then Return False
+        Return MyBase.UseCombatCheck(target)
+    End Function
 
-    Friend crewable As New shcCrewable(Me)
     Friend Overrides ReadOnly Property typeString As String
         Get
-            Return "Tactical Shield Charger"
+            Select Case defType
+                Case eDefenceType.Armour : Return "Armour Repairer"
+                Case eDefenceType.Shields : Return "Shields Recharger"
+                Case Else
+                    MsgBox("hcRepairer.typestring: invalid defType")
+                    Return Nothing
+            End Select
         End Get
     End Property
 End Class

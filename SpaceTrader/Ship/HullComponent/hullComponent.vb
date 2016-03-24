@@ -79,7 +79,7 @@
             Case "crewquarters" : hc = New hcCrewQuarters(targetName, size, crewMax, crewRace, resourceSlot, resourceQtyPerUse)
             Case "defence"
                 hc = New hcDefence(targetName, size, defenceType, value, resourceSlot, resourceQtyPerUse)
-                CType(hc, hcDefence).pdEnergyCost = energyCost
+                CType(hc, hcDefence)._energyCost = energyCost
             Case "engine" : hc = New hcEngine(targetName, size, speed, dodge, resourceSlot, resourceQtyPerUse)
             Case "jumpdrive" : hc = New hcJumpDrive(targetName, size, speed, resourceSlot, resourceQtyPerUse)
             Case "producer" : hc = New hcProducer(targetName, size, resource, resourceProductionTimer, resourceSlot, resourceQtyPerUse)
@@ -92,11 +92,9 @@
     End Function
     Private Shared Sub buildCrewable(ByRef hc As hullComponent, ByVal crewableMin As Integer, ByVal crewableMax As Integer)
         If hc Is Nothing Then Exit Sub
-        If TypeOf hc Is ihcCrewable = False Then Exit Sub
         If crewableMin = 0 AndAlso crewableMax = 0 Then Exit Sub
 
-        Dim i As ihcCrewable = CType(hc, ihcCrewable)
-        i.crewable.SetProperties(crewableMin, crewableMax)
+        hc.crewable.SetProperties(crewableMin, crewableMax)
     End Sub
     Private Shared Function buildBlueprint(ByVal rawstr As String) As List(Of String)
         'sample format
@@ -149,6 +147,44 @@
     Friend Overridable Sub tickIdle()
         'handle in subclass if necessary
     End Sub
+    Friend Overridable Sub tickCombat()
+        isExhausted = False
+    End Sub
+
+    Private isExhausted As Boolean = False
+    Protected _energyCost As Integer
+    Friend ReadOnly Property energyCost As Integer
+        Get
+            Return _energyCost
+        End Get
+    End Property
+    Friend Overridable Function UseCombat(ByRef target As iCombatant) As Boolean
+        If ship.addEnergy(-_energyCost) = False Then Return False
+        If useResource() = False Then Return False
+
+        isExhausted = True
+        Return True
+    End Function
+    Friend Overridable Function UseCombatCheck(ByRef target As iCombatant) As Boolean
+        If isExhausted = True Then
+            ship.addAlert("Use Failure", name & " may not be used again in this round.", 2)
+            Return False
+        End If
+        If crewable.isManned = False Then
+            ship.addAlert("Use Failure", name & " is unmanned.", 2)
+            Return False
+        End If
+        If ship.addEnergyCheck(-_energyCost) = False Then
+            ship.addAlert("Use Failure", "Insufficient energy.", 2)
+            Return False
+        End If
+        If useResourceCheck() = False Then
+            ship.addAlert("Use Failure", name & " needs more resources.", 2)
+            Return False
+        End If
+
+        Return True
+    End Function
 
     Private resourceSlot As eResource
     Private resourceQtyRemaining As Integer
@@ -173,22 +209,23 @@
     End Function
     Protected Function useResource(Optional ByVal value As Integer = 1) As Boolean
         Dim trueQty As Integer = resourceQtyPerUse * value
-        If useResourceCheck(value) = False Then
-            If autoloadResource = True Then loadResource()
-            If useResourceCheck(value) = False Then Return False
-        End If
-
         resourceQtyRemaining -= trueQty
         Return True
     End Function
     Friend Function useResourceCheck(Optional ByVal value As Integer = 1) As Boolean
         If resourceSlot = Nothing Then Return True
+
         Dim trueQty As Integer = resourceQtyPerUse * value
         If trueQty > resourceQtyRemaining Then
-            ship.player.addAlert("Use Failure", name & " is out of " & resourceSlot.ToString & "!", 5)
-            Return False
+            If autoloadResource = True Then loadResource()
+            If trueQty > resourceQtyRemaining Then
+                ship.player.addAlert("Use Failure", name & " is out of " & resourceSlot.ToString & "!", 5)
+                Return False
+            End If
         End If
 
         Return True
     End Function
+
+    Friend crewable As New shcCrewable(Me)
 End Class

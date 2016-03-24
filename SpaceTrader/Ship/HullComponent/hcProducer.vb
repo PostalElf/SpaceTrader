@@ -1,6 +1,5 @@
 ﻿Public Class hcProducer
     Inherits hullComponent
-    Implements ihcCrewable
     Friend Sub New(ByVal aName As String, ByVal aSize As Integer, ByVal aResourceProduction As eResource, ByVal aResourceProductionTimerMax As Integer, _
                    Optional ByVal aResourceSlot As eResource = Nothing, Optional ByVal aResourceQtyPerUse As Integer = 0)
         MyBase.New(aName, aSize, aResourceSlot, aResourceQtyPerUse)
@@ -40,7 +39,6 @@
         End If
     End Sub
 
-    Friend Property crewable As New shcCrewable(Me) Implements ihcCrewable.crewable
     Friend Overrides ReadOnly Property typeString As String
         Get
             Return "Producer"

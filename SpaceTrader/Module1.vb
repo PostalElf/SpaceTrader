@@ -449,7 +449,7 @@
 
         If TypeOf choice Is hcRepairer Then
             Dim hcr As hcRepairer = CType(choice, hcRepairer)
-            hcr.Use()
+            hcr.UseCombat(hcr)
         End If
     End Sub
     Private Sub cmdScan(ByRef battlefield As battlefield)
@@ -465,9 +465,11 @@
     End Sub
     Private Sub cmdAttack(ByRef battlefield As battlefield)
         Dim hcList As New List(Of hullComponent)
-        hcList.AddRange(ship.getComponents(GetType(hcWeapon)))
-        For Each hc As hcDefence In ship.getComponents(GetType(hcDefence))
-            If hc.defType = eDefenceType.PointDefence Then hcList.Add(hc)
+        For Each hcw As hcWeapon In ship.getComponents(GetType(hcWeapon))
+            If hcw.UseCombatCheck(Nothing) = True Then hcList.Add(hcw)
+        Next
+        For Each hcd As hcDefence In ship.getComponents(GetType(hcDefence))
+            If hcd.defType = eDefenceType.PointDefence AndAlso hcd.UseCombatCheck(Nothing) = True Then hcList.Add(hcd)
         Next
         Dim choice As hullComponent = menu.getListChoice(hcList, 1, vbCrLf & "Select an attack:")
         If choice Is Nothing Then Exit Sub
@@ -484,7 +486,7 @@
             End If
             Dim target As ship = menu.getListChoice(enemies, 1, vbCrLf & "Select a target:")
             If target Is Nothing Then Exit Sub
-            CType(choice, hcWeapon).Use(target)
+            CType(choice, hcWeapon).UseCombat(target)
         ElseIf TypeOf choice Is hcDefence Then
             Dim enemies As List(Of interceptor) = ship.enemyInterceptors
             If enemies.Count = 0 Then
@@ -494,7 +496,7 @@
             End If
             Dim target As interceptor = menu.getListChoice(enemies, 1, vbCrLf & "Select a target:")
             If target Is Nothing Then Exit Sub
-            CType(choice, hcDefence).pdAttack(target)
+            CType(choice, hcDefence).UseCombat(target)
         End If
     End Sub
 

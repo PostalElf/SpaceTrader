@@ -111,7 +111,6 @@
     <Compile Include="Ship\HullComponent\hcRepairer.vb" />
     <Compile Include="Ship\HullComponent\hcWeapon.vb" />
     <Compile Include="Ship\HullComponent\hullComponent.vb" />
-    <Compile Include="Ship\HullComponent\ihcCrewable.vb" />
     <Compile Include="World\battlefield.vb" />
     <Compile Include="World\Saleable\saleable.vb" />
     <Compile Include="Ship\HullComponent\shcCrewable.vb" />

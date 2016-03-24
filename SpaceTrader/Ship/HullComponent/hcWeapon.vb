@@ -1,6 +1,5 @@
 ﻿Public Class hcWeapon
     Inherits hullComponent
-    Implements ihcCrewable
     Friend Sub New(ByVal aName As String, ByVal aSize As Integer, ByVal aEnergyCost As Integer, ByVal aInterceptorName As String, _
                    ByVal aDamageType As eDamageType, ByVal aAccuracy As Integer, ByVal aDamageFull As Integer, ByVal aDamageGlancing As Integer, ByVal digitalPayload As eDigitalAttack, _
                    Optional ByVal aResourceSlot As eResource = Nothing, Optional ByVal aResourceQtyPerUse As Integer = 0)
@@ -30,12 +29,6 @@
         End Get
     End Property
 
-    Private _energyCost As Integer
-    Friend ReadOnly Property energyCost As Integer
-        Get
-            Return _energyCost
-        End Get
-    End Property
     Private _isCarrier As Boolean
     Friend ReadOnly Property isCarrier As Boolean
         Get
@@ -49,32 +42,20 @@
             Return _damage
         End Get
     End Property
-    Friend Sub Use(ByRef target As ship)
-        If crewable.isManned = False Then
-            Console.WriteLine(name & " is not crewed!")
-            Console.ReadKey()
-            Exit Sub
-        End If
-        If ship.addEnergyCheck(-energyCost) = False Then
-            Console.WriteLine("Insufficient energy!")
-            Console.ReadKey()
-            Exit Sub
-        End If
-        If useResource() = False Then
-            Console.WriteLine("Insufficient resources!")
-            Console.ReadKey()
-            Exit Sub
-        End If
 
-        ship.addEnergy(-energyCost)
+    Friend Overrides Function UseCombat(ByRef target As icombatant) As Boolean
+        If TypeOf target Is ship = False Then Return False
+        If MyBase.UseCombat(ship) = False Then Return False
+
+        Dim targetShip As ship = CType(target, ship)
         If _isCarrier = True Then
-            target.addInterceptor(ship, New interceptor(interceptorName, ship, target, _damage))
+            targetShip.addInterceptor(ship, New interceptor(interceptorName, ship, target, _damage))
         Else
-            target.addDamage(ship, _damage)
+            targetShip.addDamage(ship, _damage)
         End If
-    End Sub
+        Return True
+    End Function
 
-    Friend Property crewable As New shcCrewable(Me) Implements ihcCrewable.crewable
     Friend Overrides ReadOnly Property typeString As String
         Get
             Return "Weapon"

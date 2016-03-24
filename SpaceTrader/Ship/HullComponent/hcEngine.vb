@@ -1,6 +1,5 @@
 ﻿Public Class hcEngine
     Inherits hullComponent
-    Implements ihcCrewable
     Friend Sub New(ByVal aName As String, ByVal aSize As Integer, ByVal aSpeed As Integer, ByVal aDodge As Integer, _
                    Optional ByVal aResourceSlot As eResource = Nothing, Optional ByVal aResourceQtyPerUse As Integer = 0)
         MyBase.New(aName, aSize, aResourceSlot, aResourceQtyPerUse)
@@ -46,7 +45,6 @@
         Return result
     End Function
 
-    Friend Property crewable As New shcCrewable(Me) Implements ihcCrewable.crewable
     Friend Overrides ReadOnly Property typeString As String
         Get
             Return "JumpDrive"

@@ -10,7 +10,7 @@
     End Function
     Private Shared Function buildRole() As eAiShipRole
         'Return rng.Next(1, System.Enum.GetValues(GetType(eAiShipRole)).Length - 1)
-        Return eAiShipRole.Striker
+        Return eAiShipRole.Artillery
     End Function
 
     Private Sub outfitShip()
@@ -20,27 +20,28 @@
                     Case eAiShipRole.Striker
                         outfitShipResources(3, eResource.Ammunition)
                         outfitShipResources(1, eResource.Chemicals)
-                        outfitShipResources(1, eResource.Machines)
-                        addComponent(New hcWeapon("Mass Driver", 5, 5, "", eDamageType.Ballistic, 20, 3, 1, Nothing, eResource.Ammunition, 10))
-                        addComponent(New hcWeapon("Remote BlackHat Drone Bay", 5, 3, "BlackHat Drone", eDamageType.Digital, 10, 2, 2, eDigitalAttack.SynapticVirus, eResource.Machines, 50))
-                        addComponent(New hcWeapon("Laser Gatling", 5, 5, "", eDamageType.Energy, 15, 2, 1, Nothing, eResource.Chemicals, 10))
-                        addComponent(New hcDefence("Quantum Shields", 5, eDefenceType.Shields, 10))
+                        addComponent(hullComponent.build("Laser Array"))
+                        addComponent(hullComponent.build("Laser Array"))
+                        addComponent(hullComponent.build("Mass Driver"))
+                        addComponent(hullComponent.build("'Galapagos' Viral Broadcaster"))
 
                     Case eAiShipRole.Tank
                         outfitShipResources(3, eResource.Ammunition)
                         outfitShipResources(1, eResource.Chemicals)
-                        addComponent(New hcWeapon("Micrometeorite Launcher", 5, 7, "", eDamageType.Ballistic, 5, 3, 1, Nothing, eResource.Ammunition, 10))
-                        addComponent(New hcDefence("Quantum Shields", 5, eDefenceType.Shields, 10))
-                        addComponent(New hcDefence("Steelfoam Hull", 5, eDefenceType.Armour, 15))
-                        addComponent(New hcRepairer("Shield Battery", 5, eDefenceType.Shields, 5, 5, eResource.Chemicals, 25))
+                        addComponent(hullComponent.build("Weavespun Bubble"))
+                        addComponent(hullComponent.build("Steelfoam Plating"))
+                        addComponent(hullComponent.build("Sentinel Laser Grid"))
+                        addComponent(hullComponent.build("Mass Driver"))
 
                     Case eAiShipRole.Artillery
-                        outfitShipResources(5, eResource.Missiles)
-                        addComponent(New hcWeapon("Mass Driver", 5, 5, "", eDamageType.Ballistic, 20, 3, 1, Nothing, eResource.Ammunition, 10))
-                        addComponent(New hcWeapon("Spiral-X Missiles", 10, 5, "", eDamageType.Missile, 5, 3, 3, Nothing, eResource.Missiles, 25))
-                        addComponent(New hcDefence("Quantum Shields", 5, eDefenceType.Shields, 10))
+                        outfitShipResources(3, eResource.Missiles)
+                        addComponent(hullComponent.build("Weavespun Bubble"))
+                        addComponent(hullComponent.build("Sentinel Laser Grid"))
+                        addComponent(hullComponent.build("Hellfire Missiles"))
+                        addComponent(hullComponent.build("Hellfire Missiles"))
 
                     Case eAiShipRole.Beehive
+                        outfitShipResources(3, eResource.Machines)
 
                     Case eAiShipRole.Hacker
 
@@ -74,14 +75,14 @@
     Private role As eAiShipRole
     Private isAggressive As Boolean
     Friend Overrides Sub tickCombat()
+        MyBase.tickCombat()
         If isAggressive = True Then tickCombatAggressive() Else tickCombatDefensive()
 
-        MyBase.tickCombat()
         enemyAttacksMadeLastTurn.Clear()
         player.alertsClear()
     End Sub
     Private Sub tickCombatAggressive()
-        Dim highestEnergyCost As Integer = getHighestEnergyCost()
+        Dim highestEnergyCost As Integer = 0
         Dim mcat As eDamageType = getMostCommonAttackType()
 
         'use special components
@@ -100,7 +101,8 @@
             'if not possible
             If dodge > 0 Then weapon = getWeaponBest(getWeapons(dodge), target)
             If weapon Is Nothing Then weapon = getWeaponBest(getWeapons(0), target)
-            If weapon Is Nothing Then Exit While Else weapon.Use(target)
+            If weapon Is Nothing Then Exit While Else weapon.UseCombat(target)
+            highestEnergyCost = getHighestEnergyCost()
         End While
 
         'spend leftover energy on defence
@@ -111,7 +113,7 @@
         End Select
     End Sub
     Private Sub tickCombatDefensive()
-        Dim highestEnergyCost As Integer = getHighestEnergyCost()
+        Dim highestEnergyCost As Integer = 0
         Dim mcat As eDamageType = getMostCommonAttackType()
 
         'use special components
@@ -123,9 +125,9 @@
         'defend with half energy or highest accuracy, whichever is lower
         Dim budget As Integer = Math.Min(combatEnergy / 2, getMostCommonAttackAccuracy())
         Select Case mcat
-            Case eDamageType.Digital : addBoost(eDefenceType.Firewall, combatEnergy)
-            Case eDamageType.Missile : addBoost(eDefenceType.PointDefence, combatEnergy)
-            Case Else : addBoost(eDefenceType.Dodge, combatEnergy)
+            Case eDamageType.Digital : addBoost(eDefenceType.Firewall, budget)
+            Case eDamageType.Missile : addBoost(eDefenceType.PointDefence, budget)
+            Case Else : addBoost(eDefenceType.Dodge, budget)
         End Select
 
         'spend leftover energy on attacks
@@ -140,12 +142,13 @@
             'if not possible
             If dodge > 0 Then weapon = getWeaponBest(getWeapons(dodge), target)
             If weapon Is Nothing Then weapon = getWeaponBest(getWeapons(0), target)
-            If weapon Is Nothing Then Exit While Else weapon.Use(target)
+            If weapon Is Nothing Then Exit While Else weapon.UseCombat(target)
+            highestEnergyCost = getHighestEnergyCost()
         End While
     End Sub
     Private Sub useSpecialComponents()
         For Each hcr As hcRepairer In hullComponents(GetType(hcRepairer))
-            hcr.Use()
+            hcr.UseCombat(Me)
         Next
     End Sub
     Private Sub attackInterceptors()
@@ -157,17 +160,17 @@
         For n = enemyInterceptors.Count - 1 To 0 Step -1
             If percentRoll(chance) = True Then
                 Dim interceptor As interceptor = enemyInterceptors(n)
-                pd.pdAttack(interceptor)
+                pd.UseCombat(interceptor)
             End If
         Next
     End Sub
     Private Function getHighestEnergyCost() As Integer
         Dim total As Integer = 0
         For Each hc As hcWeapon In hullComponents(GetType(hcWeapon))
-            If hc.energyCost > total Then total = hc.energyCost
+            If hc.UseCombatCheck(Nothing) = True AndAlso hc.energyCost > total Then total = hc.energyCost
         Next
         For Each hc As hcDefence In getPointDefences()
-            If hc.pdEnergyCost > total Then total = hc.pdEnergyCost
+            If hc.UseCombatCheck(Nothing) = True AndAlso hc.energyCost > total Then total = hc.energyCost
         Next
         Return total
     End Function
@@ -182,9 +185,9 @@
         Dim min As hcDefence = Nothing
         Dim minCost As Integer = Int32.MaxValue
         For Each hcd As hcDefence In getPointDefences()
-            If hcd.pdEnergyCost < minCost Then
+            If hcd.energyCost < minCost Then
                 min = hcd
-                minCost = hcd.pdEnergyCost
+                minCost = hcd.energyCost
             End If
         Next
         Return min
@@ -213,6 +216,7 @@
     Private Function getWeaponValue(ByRef hcw As hcWeapon, ByVal target As ship) As Double
         If hcw.useResourceCheck() = False Then hcw.loadResource()
         If hcw.useResourceCheck() = False Then Return -1
+        If hcw.UseCombatCheck(target) = False Then Return -1
 
         Dim total As Double
         If hcw.isCarrier = True Then

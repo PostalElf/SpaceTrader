@@ -1,12 +1,11 @@
 ﻿Public Class hcDefence
     Inherits hullComponent
-    Implements ihcCrewable
     Friend Sub New(ByVal aName As String, ByVal aSize As Integer, ByVal aType As eDefenceType, ByVal aValue As Integer, _
                    Optional ByVal aResourceSlot As eResource = Nothing, Optional ByVal aResourceQtyPerUse As Integer = 0, Optional ByVal aPdEnergyCost As Integer = 0)
         MyBase.New(aName, aSize, aResourceSlot, aResourceQtyPerUse)
         _defType = aType
         _value = aValue
-        pdEnergyCost = aPdEnergyCost
+        _energyCost = aPdEnergyCost
     End Sub
     Friend Overrides Function consoleDescription() As String
         Dim def As String
@@ -53,28 +52,22 @@
         End If
     End Sub
 
-    Friend pdEnergyCost As Integer
-    Friend Sub pdAttack(ByVal target As interceptor)
-        If defType <> eDefenceType.PointDefence Then Exit Sub
-        If crewable.isManned = False Then
-            Console.WriteLine(name & " is not crewed!")
-            Console.ReadKey()
-            Exit Sub
-        End If
-        If ship.addEnergyCheck(-pdEnergyCost) = False Then
-            Console.WriteLine("Insufficient energy!")
-            Console.ReadKey()
-            Exit Sub
-        End If
-        If useResource() = False Then Exit Sub
+    Friend Overrides Function UseCombat(ByRef target As iCombatant) As Boolean
+        If MyBase.UseCombat(target) = False Then Return False
+        If TypeOf target Is interceptor = False Then Return False
 
-        ship.addEnergy(-pdEnergyCost)
         ship.player.addAlert("Point Defence", ship.name & "'s " & name & " destroys a " & target.name & ".", 2)
         target.addAlert("Point Defence", ship.name & "'s " & name & " destroys a " & target.name & ".", 2)
         target.destroy()
-    End Sub
+        Return True
+    End Function
+    Friend Overrides Function UseCombatCheck(ByRef target As iCombatant) As Boolean
+        If MyBase.UseCombatCheck(target) = False Then Return False
+        If TypeOf target Is interceptor = False Then Return False
 
-    Friend Property crewable As New shcCrewable(Me) Implements ihcCrewable.crewable
+        Return True
+    End Function
+
     Friend Overrides ReadOnly Property typeString As String
         Get
             Return "Defence"

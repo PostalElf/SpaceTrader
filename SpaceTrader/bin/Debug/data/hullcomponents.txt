@@ -1203,7 +1203,7 @@ CrewableMax: 1
 
 
 
-[Buckyweave Plating]
+[Steelfoam Plating]
 Type: Defence
 DefenceType: Armour
 Size: 5

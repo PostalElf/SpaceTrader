@@ -308,10 +308,12 @@
     End Sub
     Friend Overridable Sub tickCombat()
         combatEnergy = combatEnergyMax
+        For Each hc In hullComponentsList
+            hc.tickCombat()
+        Next
         For Each d In constants.defenceTypeArray
             defenceRoundBoosts(d) = 0
         Next
-
         For Each interceptor In enemyInterceptors
             interceptor.tickCombat()
         Next
@@ -327,10 +329,13 @@
     End Sub
     Private Const combatEnergyMax As Integer = 20
     Protected combatEnergy As Integer
-    Friend Sub addEnergy(ByVal value As Integer)
+    Friend Function addEnergy(ByVal value As Integer) As Boolean
+        If addEnergyCheck(value) = False Then Return False
+
         combatEnergy += value
         combatEnergy = constrain(combatEnergy, 0, combatEnergyMax)
-    End Sub
+        Return True
+    End Function
     Friend Function addEnergyCheck(ByVal value As Integer) As Boolean
         If value < 0 Then
             If combatEnergy - value < 0 Then Return False
@@ -633,14 +638,7 @@
     End Function
     Friend Sub allAssignCrewBest()
         For Each hc In hullComponentsList
-            If TypeOf hc Is ihcCrewable Then
-                Dim c As ihcCrewable = CType(hc, ihcCrewable)
-                With c.crewable
-                    If .isManned = False Then
-                        .assignCrewBest()
-                    End If
-                End With
-            End If
+            If hc.crewable.isManned = False Then hc.crewable.assignCrewBest()
         Next
     End Sub
 End Class

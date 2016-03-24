@@ -83,6 +83,8 @@
         MyBase.tickCombat()
         If isAggressive = True Then tickCombatAggressive() Else tickCombatDefensive()
 
+        enemyAttacksMade.Enqueue(New List(Of damage)(enemyAttacksMadeLastTurn))
+        If enemyAttacksMade.Count > 3 Then enemyAttacksMade.Dequeue()
         enemyAttacksMadeLastTurn.Clear()
         player.alertsClear()
     End Sub
@@ -97,6 +99,7 @@
         attackInterceptors()
         useDefences(Math.Min(combatEnergy / 2, getMostCommonAttackAccuracy()))
         useAttacks()
+        useDefences(combatEnergy)
     End Sub
     Private Sub useAttacks()
         Dim highestEnergyCost As Integer = 0
@@ -118,7 +121,6 @@
     Private Sub useDefences(ByVal value As Integer)
         Select Case getMostCommonAttackType()
             Case eDamageType.Digital : addBoost(eDefenceType.Firewall, value)
-            Case eDamageType.Missile : addBoost(eDefenceType.PointDefence, value)
             Case Else : addBoost(eDefenceType.Dodge, value)
         End Select
     End Sub
@@ -213,13 +215,16 @@
     End Function
 
     Private enemyAttacksMadeLastTurn As New List(Of damage)
+    Private enemyAttacksMade As New Queue(Of List(Of damage))
     Private Function getMostCommonAttackType() As eDamageType
         If enemyAttacksMadeLastTurn.Count = 0 Then Return eDamageType.Ballistic
 
         Dim damageTypes As New Dictionary(Of eDamageType, Integer)
-        For Each ea In enemyAttacksMadeLastTurn
-            If damageTypes.ContainsKey(ea.type) = False Then damageTypes.Add(ea.type, 0)
-            damageTypes(ea.type) += (ea.damageFull + ea.damageGlancing) / 2
+        For Each q In enemyAttacksMade
+            For Each ea In q
+                If damageTypes.ContainsKey(ea.type) = False Then damageTypes.Add(ea.type, 0)
+                damageTypes(ea.type) += (ea.damageFull + ea.damageGlancing) / 2
+            Next
         Next
 
         Dim max As eDamageType = eDamageType.Ballistic
@@ -236,8 +241,10 @@
         If enemyAttacksMadeLastTurn.Count = 0 Then Return 0
 
         Dim total As Integer = 0
-        For Each d In enemyAttacksMadeLastTurn
-            If d.accuracy > total Then total = d.accuracy
+        For Each q In enemyAttacksMade
+            For Each d In q
+                If d.accuracy > total Then total = d.accuracy
+            Next
         Next
         Return total
     End Function

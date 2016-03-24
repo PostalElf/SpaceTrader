@@ -398,7 +398,6 @@
         combatEnergy -= value
         Select Case defenceType
             Case eDefenceType.Firewall : defenceRoundBoosts(eDefenceType.Firewall) += value
-            Case eDefenceType.PointDefence : defenceRoundBoosts(eDefenceType.PointDefence) += value
             Case eDefenceType.Dodge : defenceRoundBoosts(eDefenceType.Dodge) += value
         End Select
     End Sub

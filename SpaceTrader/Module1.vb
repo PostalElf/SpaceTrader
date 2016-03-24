@@ -432,6 +432,8 @@
                 battlefield.tickCombat()
             Case "attack", "att", "a"
                 cmdAttack(battlefield)
+            Case "boost", "b"
+                cmdBoost(battlefield)
             Case "scan"
                 cmdScan(battlefield)
             Case "use"
@@ -499,6 +501,20 @@
             If target Is Nothing Then Exit Sub
             CType(choice, hcDefence).UseCombat(target)
         End If
+    End Sub
+    Private Sub cmdBoost(ByRef battlefield As battlefield)
+        Dim choices As New Dictionary(Of Char, String)
+        choices.Add("f", "Firewall")
+        choices.Add("d", "Dodge")
+        Dim choice As Char = menu.getListChoice(choices, 0, vbCrLf & "Boost which defence?")
+        If choice = Nothing Then Exit Sub
+
+        Dim def As eDefenceType
+        If choice = "f" Then def = eDefenceType.Firewall Else def = eDefenceType.Dodge
+        Dim defValue As Integer = menu.getNumInput(0, 0, 20, vbCrLf & "Boost " & def.ToString & " by how much? ")
+        If defValue <= 0 OrElse ship.addBoostCheck(def, defValue) = False Then Exit Sub
+
+        ship.addBoost(def, defValue)
     End Sub
 
 

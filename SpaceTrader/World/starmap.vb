@@ -1,6 +1,9 @@
 ﻿Public Class starmap
     Const numFactions As Integer = 5
-    Friend Shared Function build(ByVal numStars As Integer, ByVal numPlanets As Integer, ByVal aSeed As Integer) As starmap
+    Const numStars As Integer = 5
+    Const numPlanetsMin As Integer = 7
+    Const numPlanetsMax As Integer = 10
+    Friend Shared Function build(ByVal aSeed As Integer) As starmap
         Dim r As New Random(aSeed)
 
         Dim starmap As New starmap
@@ -13,7 +16,7 @@
             Next
 
             For n = 1 To numStars
-                Dim star As star = star.build(starmap, numPlanets, r)
+                Dim star As star = star.build(starmap, numPlanetsMin, numPlanetsMax, r)
                 ._stars.Add(star)
             Next
 

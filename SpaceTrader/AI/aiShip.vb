@@ -82,25 +82,23 @@
     Private isAggressive As Boolean
     Friend Overrides Sub tickCombat()
         MyBase.tickCombat()
-        If isAggressive = True Then tickCombatAggressive() Else tickCombatDefensive()
+        If isAggressive = True Then
+            useSpecialComponents()
+            useAttacks()
+            attackInterceptors()
+            useDefences(combatEnergy)
+        Else
+            useSpecialComponents()
+            attackInterceptors()
+            useDefences(Math.Min(combatEnergy / 2, getMostCommonAttackAccuracy()))
+            useAttacks()
+            useDefences(combatEnergy)
+        End If
 
         enemyAttacksMade.Enqueue(New List(Of damage)(enemyAttacksMadeLastTurn))
         If enemyAttacksMade.Count > 3 Then enemyAttacksMade.Dequeue()
         enemyAttacksMadeLastTurn.Clear()
         player.alertsClear()
-    End Sub
-    Private Sub tickCombatAggressive()
-        useSpecialComponents()
-        useAttacks()
-        attackInterceptors()
-        useDefences(combatEnergy)
-    End Sub
-    Private Sub tickCombatDefensive()
-        useSpecialComponents()
-        attackInterceptors()
-        useDefences(Math.Min(combatEnergy / 2, getMostCommonAttackAccuracy()))
-        useAttacks()
-        useDefences(combatEnergy)
     End Sub
     Private Sub useAttacks()
         Dim highestEnergyCost As Integer = 0

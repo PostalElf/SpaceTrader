@@ -49,7 +49,10 @@
             .adjustSaleHullComponents(r)
             .adjustSaleCraftComponents(r)
 
-            If coinFlip(r) = True Then .setFaction(factionPair(0)) Else .setFaction(factionPair(1))
+            If factionPair(0).planets.Count < factionPair(1).planets.Count Then : .setFaction(factionPair(0))
+            ElseIf factionPair(1).planets.Count < factionPair(0).planets.Count Then : .setFaction(factionPair(1))
+            Else : If coinFlip(r) = True Then .setFaction(factionPair(0)) Else .setFaction(factionPair(1))
+            End If
             .faction.addMilitary(1)
             .faction.addProsperity(1)
         End With

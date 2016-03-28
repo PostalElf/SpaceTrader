@@ -40,7 +40,7 @@
         End Get
     End Property
     Friend Sub addProsperity(ByVal value As Integer)
-        _prosperityBase = constrain(_prosperityBase + value)
+        _prosperityBase = constrain(_prosperityBase + value, 1, 200)
     End Sub
     Private _militaryBase As Integer
     Friend ReadOnly Property militaryBase As Integer
@@ -49,6 +49,6 @@
         End Get
     End Property
     Friend Sub addMilitary(ByVal value As Integer)
-        _militaryBase = constrain(_militaryBase + value)
+        _militaryBase = constrain(_militaryBase + value, 1, 200)
     End Sub
 End Class

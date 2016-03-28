@@ -7,7 +7,7 @@
             saleHullComponents.Add(s, Nothing)
         Next
     End Sub
-    Friend Shared Function build(ByRef star As star, ByVal planetNumber As Integer, ByRef r As Random) As planet
+    Friend Shared Function build(ByRef star As star, ByVal planetNumber As Integer, ByRef factionPair As faction(), ByRef r As Random) As planet
         Dim planet As New planet(r)
         With planet
             ._star = star
@@ -48,6 +48,10 @@
             Next
             .adjustSaleHullComponents(r)
             .adjustSaleCraftComponents(r)
+
+            If coinFlip(r) = True Then .setFaction(factionPair(0)) Else .setFaction(factionPair(1))
+            .faction.addMilitary(1)
+            .faction.addProsperity(1)
         End With
         Return planet
     End Function

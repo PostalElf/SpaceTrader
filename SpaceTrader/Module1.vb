@@ -56,6 +56,10 @@
                 Console.Clear()
                 starmap.consoleReport(0)
                 Console.ReadKey()
+            Case "factionmap", "fm"
+                Console.Clear()
+                starmap.consoleReportFactions(0)
+                Console.ReadKey()
             Case "travel", "t"
                 cmdTravel(cmd)
             Case "battlefield", "battle"

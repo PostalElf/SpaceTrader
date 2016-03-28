@@ -53,8 +53,8 @@
             ElseIf factionPair(1).planets.Count < factionPair(0).planets.Count Then : .setFaction(factionPair(1))
             Else : If coinFlip(r) = True Then .setFaction(factionPair(0)) Else .setFaction(factionPair(1))
             End If
-            .faction.addMilitary(1)
-            .faction.addProsperity(1)
+            .faction.addMilitary(2)
+            .faction.addProsperity(2)
         End With
         Return planet
     End Function
@@ -376,6 +376,7 @@
             If faction Is Nothing Then Return _military Else Return (faction.militaryBase + _military) / 2
         End Get
     End Property
+    Private _instability As Integer
 
     Private productsPrices As Dictionary(Of eResource, Integer)
     Friend Function getProductPriceSell(ByVal product As eResource) As Integer
@@ -437,6 +438,41 @@
         Dim total As Integer = getCraftComponentPriceSell(c) * 0.75
         Return total
     End Function
+
+
+    Private buildings As New List(Of building)
+    Private buildingPriceModifier As Integer = 100
+    Friend Function getBuildingPrice(ByVal buildingName As String) As Integer
+        Return building.getBuildingPriceDefault(buildingName) * buildingPriceModifier / 100
+    End Function
+    Friend Sub addBuilding(ByRef building As building, ByRef player As player)
+        player.addCredits(-getBuildingPrice(building.name))
+        buildings.Add(building)
+        building.planet = Me
+        building.owner = player
+
+        _prosperity += building.prosperity
+        _military += building.military
+        _instability += building.instability
+    End Sub
+    Friend Function addBuildingCheck(ByRef building As building, ByRef player As player) As Boolean
+        If buildings.Contains(building) Then Return False
+        If getBuildingPrice(building.name) = -1 Then Return False
+        If player.addCreditsCheck(-getBuildingPrice(building.name)) = False Then Return False
+
+        Return True
+    End Function
+    Friend Sub removeBuilding(ByRef building As building)
+        If buildings.Contains(building) = False Then Exit Sub
+
+        _prosperity -= building.prosperity
+        _military -= building.military
+        _instability -= building.instability
+
+        buildings.Remove(building)
+        building.planet = Nothing
+        building.owner = Nothing
+    End Sub
 
 
     Private Const priceMin As Double = 0.5
@@ -507,9 +543,12 @@
         repairCost = constrain(repairCost, repairCostRange)
 
         Const craftComponentVarianceMax As Integer = 10
-        Dim craftComponentVarianceRange As New range(50, 150)
         craftComponentsPriceModifier += getPriceVariance(craftComponentVarianceMax, r)
-        craftComponentsPriceModifier = constrain(craftComponentsPriceModifier, craftComponentVarianceRange)
+        craftComponentsPriceModifier = constrain(craftComponentsPriceModifier, 50, 150)
+
+        Const buildingVarianceMax As Integer = 10
+        buildingPriceModifier += getPriceVariance(buildingVarianceMax, r)
+        buildingPriceModifier = constrain(buildingPriceModifier, 50, 150)
     End Sub
     Private Function getPriceVariance(ByVal maxVariance As Integer, Optional ByRef r As Random = Nothing) As Integer
         If r Is Nothing Then r = rng

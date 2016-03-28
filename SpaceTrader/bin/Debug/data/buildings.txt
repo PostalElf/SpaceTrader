@@ -1,0 +1,4 @@
+[Black Market]
+Cost: 10000
+Prosperity: 10
+Instability: 10

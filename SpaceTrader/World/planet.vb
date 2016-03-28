@@ -37,7 +37,7 @@
             End Select
             .role = buildRole(export)
             .type = buildType(r)
-            ._distanceToGate = buildDistanceToGate(.type, r)
+            ._distanceToGate = buildDistanceToGate(.type, .star, r)
             .habitation = buildHabitation(.type, r)
 
             ._prosperity = 100 + lumpyRng(-10, 11, r)
@@ -172,16 +172,26 @@
                 Return Nothing
         End Select
     End Function
-    Private Shared Function buildDistanceToGate(ByVal planetType As ePlanetType, ByRef r As Random) As Integer
-        Select Case planetType
-            Case ePlanetType.Desert, ePlanetType.Volcanic, ePlanetType.Wasteland : Return r.Next(100, 300)
-            Case ePlanetType.Eden, ePlanetType.Sprawl : Return r.Next(300, 400)
-            Case ePlanetType.Gaseous, ePlanetType.Oceanic : Return r.Next(300, 600)
-            Case ePlanetType.Barren : Return r.Next(600, 700)
-            Case Else
-                MsgBox("buildDistanceToGate() error: unrecognised planetType")
-                Return Nothing
-        End Select
+    Private Shared Function buildDistanceToGate(ByVal planetType As ePlanetType, ByRef star As star, ByRef r As Random) As Integer
+        Dim total As Integer
+        While True
+            Select Case planetType
+                Case ePlanetType.Desert, ePlanetType.Volcanic, ePlanetType.Wasteland : total = r.Next(100, 300)
+                Case ePlanetType.Eden, ePlanetType.Sprawl : total = r.Next(300, 400)
+                Case ePlanetType.Gaseous, ePlanetType.Oceanic : total = r.Next(300, 600)
+                Case ePlanetType.Barren : total = r.Next(600, 700)
+                Case Else
+                    MsgBox("buildDistanceToGate() error: unrecognised planetType")
+                    Return Nothing
+            End Select
+
+            Dim distanceRepeated As Boolean = False
+            For Each planet In star.planets
+                If planet.distanceToGate = total Then distanceRepeated = True
+            Next
+            If distanceRepeated = False Then Exit While
+        End While
+        Return total
     End Function
     Private Shared Function buildServiceAvailability(ByVal role As ePlanetRole, ByVal type As ePlanetType) As Dictionary(Of eHcCategory, Integer)
         Dim total As New Dictionary(Of eHcCategory, Integer)

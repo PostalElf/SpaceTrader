@@ -21,6 +21,10 @@
             Next
 
             .factionPairs.Clear()
+            For n = .factions.Count - 1 To 0 Step -1
+                Dim faction As faction = .factions(n)
+                If faction.planets.Count = 0 Then .factions.Remove(faction)
+            Next
         End With
         Return starmap
     End Function

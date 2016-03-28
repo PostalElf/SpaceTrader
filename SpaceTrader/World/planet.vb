@@ -443,7 +443,17 @@
     Private buildings As New List(Of building)
     Private buildingPriceModifier As Integer = 100
     Friend Function getBuildingPrice(ByVal buildingName As String) As Integer
-        Return building.getBuildingPriceDefault(buildingName) * buildingPriceModifier / 100
+        Dim total As Integer = building.getBuildingPriceDefault(buildingName) * buildingPriceModifier / 100
+        Select Case habitation
+            Case "Hivecities" : total *= 0.75
+            Case "Cubecities" : total *= 0.75
+            Case "Sealed Arcologies" : total *= 1.25
+            Case "Underground Complex" : total *= 1.25
+            Case "Orbital Ring" : total *= 1.5
+            Case "Undersea Domes" : total *= 1.5
+            Case "Floating Platforms" : total *= 1.25
+        End Select
+        Return total
     End Function
     Friend Sub addBuilding(ByRef building As building, ByRef player As player)
         player.addCredits(-getBuildingPrice(building.name))

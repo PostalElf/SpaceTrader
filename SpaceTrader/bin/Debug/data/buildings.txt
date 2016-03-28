@@ -2,3 +2,14 @@
 Cost: 10000
 Prosperity: 10
 Instability: 10
+
+[Scrapyard]
+Cost: 10000
+Prosperity: 10
+Military: 5
+
+[Orbital Shipyard]
+Cost: 10000
+Prosperity: 5
+Military: 10
+

@@ -1,22 +1,58 @@
 ﻿Public Class starmap
-    Friend Shared Function build(ByVal numStars As Integer, ByVal numPlanets As Integer, ByVal aSeed As Integer) As starmap
+    Const numFactions As Integer = 5
+    Const numStars As Integer = 5
+    Const numPlanetsMin As Integer = 7
+    Const numPlanetsMax As Integer = 10
+    Friend Shared Function build(ByVal aSeed As Integer) As starmap
         Dim r As New Random(aSeed)
+
         Dim starmap As New starmap
         With starmap
             .seed = aSeed
+
+            For n = 1 To numFactions
+                Dim faction As faction = faction.build(r)
+                .factions.Add(faction)
+            Next
+
             For n = 1 To numStars
-                Dim star As star = star.build(starmap, numPlanets, r)
+                Dim star As star = star.build(starmap, numPlanetsMin, numPlanetsMax, r)
                 ._stars.Add(star)
             Next
+
+            .factionPairs.Clear()
         End With
         Return starmap
     End Function
+    Private factionPairs As New List(Of faction())
+    Private Sub buildFactionPairs()
+        For n = 0 To factions.Count - 1
+            For p = 0 To factions.Count - 1
+                If n.Equals(p) = False Then factionPairs.Add({factions(n), factions(p)})
+            Next
+        Next
+    End Sub
+    Friend Function getFactionPairRandom(ByRef r As Random) As faction()
+        If factionPairs.Count = 0 Then buildFactionPairs()
+
+        Dim roll As Integer = r.Next(factionPairs.Count)
+        getFactionPairRandom = factionPairs(roll)
+        factionPairs.RemoveAt(roll)
+    End Function
+
 
     Friend Sub consoleReport(ByVal indent As Integer)
         Console.WriteLine(vbSpace(indent) & "Starmap Seed: " & seed & vbCrLf)
 
         For Each star In _stars
             star.consoleReport(indent)
+            Console.WriteLine()
+        Next
+    End Sub
+    Friend Sub consoleReportFactions(ByVal indent As Integer)
+        Console.WriteLine(vbSpace(indent) & "Factions" & vbCrLf)
+        For Each faction In factions
+            faction.consoleReport(indent)
             Console.WriteLine()
         Next
     End Sub
@@ -46,6 +82,8 @@
         Dim star As star = getStarRandom()
         Return star.getPlanetRandom
     End Function
+
+    Private factions As New List(Of faction)
 
     Friend Sub tick()
         For Each star In _stars

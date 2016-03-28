@@ -5,7 +5,7 @@
 
 
     Sub Main()
-        starmap = starmap.build(7, 3, 513058105)
+        starmap = starmap.build(513058105)
         ship = ship.build(player, eShipType.Crusier)
 
         Console.SetWindowSize(120, 50)
@@ -55,6 +55,10 @@
             Case "starmap", "sm"
                 Console.Clear()
                 starmap.consoleReport(0)
+                Console.ReadKey()
+            Case "factionmap", "fm"
+                Console.Clear()
+                starmap.consoleReportFactions(0)
                 Console.ReadKey()
             Case "travel", "t"
                 cmdTravel(cmd)

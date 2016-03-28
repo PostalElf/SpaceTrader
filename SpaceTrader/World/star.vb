@@ -1,14 +1,14 @@
 ﻿Public Class star
-    Friend Shared Function build(ByRef starmap As starmap, ByVal numPlanets As Integer, ByRef r As Random) As star
+    Friend Shared Function build(ByRef starmap As starmap, ByVal numPlanetsMin As Integer, ByVal numPlanetsMax As Integer, ByRef r As Random) As star
         Dim star As New star
         With star
             ._starmap = starmap
             ._name = getRandomAndRemove(star.starNames, "data/starnames.txt", r)
             .xy = New xy(r.Next(1, maxX), r.Next(1, maxY))
 
-            numPlanets += r.Next(4)
-            For n = 1 To numPlanets
-                Dim planet As planet = planet.build(star, n, r)
+            Dim factionPair As faction() = starmap.getFactionPairRandom(r)
+            For n = 1 To r.Next(numPlanetsMin, numPlanetsMax + 1)
+                Dim planet As planet = planet.build(star, n, factionPair, r)
                 ._planets.Add(planet)
             Next
         End With

@@ -40,6 +40,8 @@
             ._distanceToGate = buildDistanceToGate(.type, r)
             .habitation = buildHabitation(.type, r)
 
+            ._prosperity = 100 + lumpyRng(-10, 11, r)
+            ._military = 100 + lumpyRng(-10, 11, r)
             .saleHullComponentAvailability = buildServiceAvailability(.role, .type)
             For n = 1 To 5
                 .adjustPrices(r)
@@ -344,6 +346,20 @@
     Private type As ePlanetType
     Private habitation As String
 
+    Friend faction As faction
+    Private _prosperity As Integer
+    Friend ReadOnly Property prosperity As Integer
+        Get
+            If faction Is Nothing Then Return _prosperity Else Return (faction.prosperityBase + _prosperity) / 2
+        End Get
+    End Property
+    Private _military As Integer
+    Friend ReadOnly Property military As Integer
+        Get
+            If faction Is Nothing Then Return _military Else Return (faction.militaryBase + _military) / 2
+        End Get
+    End Property
+
     Private productsPrices As Dictionary(Of eResource, Integer)
     Friend Function getProductPriceSell(ByVal product As eResource) As Integer
         Dim total As Integer = productsPrices(product)
@@ -455,15 +471,13 @@
         If r Is Nothing Then r = rng
         For Each res In constants.resourceArray
             Dim maxVariance As Integer = productsPrices(res) * 0.1
-            Dim variance As Integer = lumpyRng(-maxVariance, maxVariance, r)
-            productsPrices(res) += variance
+            productsPrices(res) += getPriceVariance(maxVariance, r)
             productsPrices(res) = constrain(productsPrices(res), productPricesRange(res))
         Next
 
         For Each s In constants.saleHullComponentArray
             Dim maxVariance As Integer = saleHullComponentPrices(s) * 0.1
-            Dim variance As Integer = lumpyRng(-maxVariance, maxVariance, r)
-            saleHullComponentPrices(s) += variance
+            saleHullComponentPrices(s) += getPriceVariance(maxVariance, r)
             saleHullComponentPrices(s) = constrain(saleHullComponentPrices(s), saleHullComponentPricesRange(s))
         Next
 
@@ -475,12 +489,18 @@
         repairCost += repairVariance
         repairCost = constrain(repairCost, repairCostRange)
 
-        Dim craftComponentVarianceMax As Integer = craftComponentsPriceModifier * 0.1
-        Dim craftComponentVariance As Integer = lumpyRng(-craftComponentVarianceMax, craftComponentVarianceMax, r)
+        Const craftComponentVarianceMax As Integer = 10
         Dim craftComponentVarianceRange As New range(50, 150)
-        craftComponentsPriceModifier += craftComponentVariance
+        craftComponentsPriceModifier += getPriceVariance(craftComponentVarianceMax, r)
         craftComponentsPriceModifier = constrain(craftComponentsPriceModifier, craftComponentVarianceRange)
     End Sub
+    Private Function getPriceVariance(ByVal maxVariance As Integer, Optional ByRef r As Random = Nothing) As Integer
+        If r Is Nothing Then r = rng
+
+        Dim odds As Integer = (prosperity - 100) / 4 + 50
+        Dim value As Integer = r.Next(0, maxVariance + 1)
+        If percentRoll(odds, r) = True Then Return value Else Return -value
+    End Function
     Private Sub adjustSaleHullComponents(Optional ByRef r As Random = Nothing)
         If r Is Nothing Then r = rng
 
@@ -504,7 +524,7 @@
                         Case 10 : tier = 4
                     End Select
 
-                    Dim shc As saleHullcomponent = saleHullcomponent.buildRandom(tier, s, r)
+                    Dim shc As saleHullComponent = saleHullComponent.buildRandom(tier, s, r)
                     If shc Is Nothing = False Then
                         shc.parentServices = saleHullComponents
                         saleHullComponents(s) = shc

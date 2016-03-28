@@ -346,7 +346,17 @@
     Private type As ePlanetType
     Private habitation As String
 
-    Friend faction As faction
+    Private _faction As faction
+    Friend ReadOnly Property faction As faction
+        Get
+            Return _faction
+        End Get
+    End Property
+    Friend Sub setFaction(ByRef targetFaction As faction)
+        If _faction Is Nothing = False Then _faction.planets.Remove(Me)
+        _faction = targetFaction
+        If _faction Is Nothing = False Then _faction.planets.Add(Me)
+    End Sub
     Private _prosperity As Integer
     Friend ReadOnly Property prosperity As Integer
         Get

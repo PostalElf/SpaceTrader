@@ -16,7 +16,6 @@
 
         'initialise variables
         Dim type As String = ""
-        Dim blueprint As List(Of String) = Nothing
         Dim size As Integer
         Dim value As Integer
         Dim crewRace As eRace
@@ -49,7 +48,6 @@
 
             Select Case ln(0).ToLower
                 Case "type" : type = ln(1)
-                Case "blueprint" : blueprint = buildBlueprint(ln(1))
                 Case "size" : size = CInt(ln(1))
                 Case "value" : value = CInt(ln(1))
                 Case "crewrace" : crewRace = constants.getEnumFromString(ln(1), constants.raceArray)
@@ -86,7 +84,6 @@
             Case "repairer" : hc = New hcRepairer(targetName, size, defenceType, value, energyCost, resourceSlot, resourceQtyPerUse)
             Case "weapon" : hc = New hcWeapon(targetName, size, energyCost, interceptorName, damageType, accuracy, damageFull, damageGlancing, digitalPayload, resourceSlot, resourceQtyPerUse)
         End Select
-        If hc Is Nothing = False Then hc.blueprint = blueprint
         buildCrewable(hc, crewableMin, crewableMax)
         Return hc
     End Function
@@ -96,18 +93,6 @@
 
         hc.crewable.SetProperties(crewableMin, crewableMax)
     End Sub
-    Private Shared Function buildBlueprint(ByVal rawstr As String) As List(Of String)
-        'sample format
-        '1 container, 5 struts
-
-        Dim total As New List(Of String)
-        Dim ln As String() = rawstr.Split(",")
-        For Each l In ln
-            l = l.Trim
-            total.Add(l)
-        Next
-        Return total
-    End Function
 
     Public Overrides Function ToString() As String
         Return name
@@ -138,7 +123,6 @@
             Return _size
         End Get
     End Property
-    Private Property blueprint As New List(Of String)
     Friend MustOverride ReadOnly Property typeString As String
 
     Friend Overridable Sub tickTravel()

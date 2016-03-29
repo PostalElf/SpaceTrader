@@ -1,7 +1,6 @@
 --Cargo--
 [Metal Containers]
 Type: Cargo
-Blueprint: 1 Container, 5 Strut
 Size: 5
 Tier: 1
 Cost: 1000
@@ -10,7 +9,6 @@ Value: 10
 
 [Large Metal Containers]
 Type: Cargo
-Blueprint: 3 Container, 15 Strut
 Size: 10
 Tier: 2
 Cost: 4000
@@ -19,7 +17,6 @@ Value: 30
 
 [Chemical Containers]
 Type: Cargo
-Blueprint: 1 Container, 5 Struts
 Size: 5
 Tier: 1
 Cost: 1000

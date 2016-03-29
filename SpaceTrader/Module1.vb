@@ -86,7 +86,6 @@
                 Console.Clear()
                 ship.planet.consoleReport(0)
                 ship.planet.consoleReportShop(1)
-                ship.planet.consoleReportCraft(1)
                 Console.ReadKey()
             Case "buy"
                 cmdBuySell(cmd, True)
@@ -94,12 +93,6 @@
                 cmdBuySell(cmd, False)
             Case "examine", "ex"
                 cmdExamine(cmd)
-            Case "craftbuy", "crbuy"
-                cmdBuyCraft(cmd)
-            Case "craftsell", "crsell"
-                cmdSellCraft(cmd)
-            Case "craftexamine", "crex"
-                cmdExamineCraft(cmd)
             Case "shipyardbuy", "sybuy"
                 cmdBuyShipyard(cmd)
             Case "shipyardsell", "sysell", "disassemble", "dis"
@@ -224,52 +217,6 @@
         Dim hc As hullComponent = menu.getListChoice(ship.hullComponentsList, 0, "Disassemble which hull component?")
         If hc Is Nothing Then Exit Sub
     End Sub
-    Private Sub cmdBuyCraft(ByRef cmd As String())
-        If ship.planet Is Nothing Then Exit Sub
-
-        Console.WriteLine()
-        Dim scc As saleCraftComponent = menu.getListChoice(ship.planet.craftComponents, 1, "Buy which component?")
-        If scc Is Nothing Then Exit Sub
-
-        Dim cost As Integer = ship.planet.getCraftComponentPriceSell(scc.name)
-        If menu.confirmChoice(0, "Buy " & scc.name & " for ¥" & cost.ToString("N0") & "? ") = False Then Exit Sub
-        If player.addCreditsCheck(-cost) = False Then
-            Console.WriteLine(vbCrLf & "Insufficient credits!")
-            Console.ReadKey()
-            Exit Sub
-        End If
-        If ship.addCraftComponentCheck(scc.name, 1) = False Then
-            Console.WriteLine(vbCrLf & "Insufficient space!")
-            Console.ReadKey()
-            Exit Sub
-        End If
-
-        player.addCredits(-cost)
-        ship.addCraftComponent(scc.name, 1)
-        scc.expire()
-    End Sub
-    Private Sub cmdSellCraft(ByRef cmd As String())
-        If ship.planet Is Nothing Then Exit Sub
-
-        Console.WriteLine()
-        Dim objList As New List(Of String)
-        For Each kvp In ship.craftComponents
-            objList.Add(kvp.Key)
-        Next
-        If objList.Count = 0 Then Exit Sub
-
-        Dim choice As String = menu.getListChoice(objList, 1, "Sell which component?")
-        Dim cost As Integer = ship.planet.getCraftComponentPriceBuy(choice)
-        If menu.confirmChoice(0, "Sell " & choice & " for ¥" & cost.ToString("N0") & "? ") = False Then Exit Sub
-        If ship.addCraftComponentCheck(choice, -1) = False Then
-            Console.WriteLine(vbCrLf & "Insufficient " & choice & ".")
-            Console.ReadKey()
-            Exit Sub
-        End If
-
-        ship.addCraftComponent(choice, -1)
-        player.addCredits(cost)
-    End Sub
     Private Sub cmdRepair()
         If ship.planet Is Nothing Then Exit Sub
 
@@ -336,37 +283,6 @@
         Console.WriteLine(ind & fakeTab("Tier:", ftlen) & s.saleTier)
         Console.WriteLine(ind & fakeTab("Cost:", ftlen) & "¥" & cost.ToString("N0"))
         Console.WriteLine(ind & fakeTab("Effect:", ftlen) & s.consoleDescription)
-        Console.ReadKey()
-    End Sub
-    Private Sub cmdExamineCraft(ByRef cmd As String())
-        If ship.planet Is Nothing Then Exit Sub
-
-        Dim cr As saleCraftComponent = Nothing
-        If cmd.Length = 1 Then
-            Dim cList As New List(Of String)
-            For Each c In ship.planet.craftComponents
-                cList.Add(c.name)
-            Next
-            Dim choice As String = menu.getListChoice(cList, 0, vbCrLf & "Examine which component?")
-            Dim i As Integer = cList.IndexOf(choice)
-            cr = ship.planet.craftComponents(i)
-        Else
-            If IsNumeric(cmd(1)) = False Then Exit Sub
-            Dim i As Integer = CInt(cmd(1))
-            If 1 <= 0 OrElse i > ship.planet.craftComponents.Count Then Exit Sub
-            cr = ship.planet.craftComponents(i)
-        End If
-        If cr Is Nothing Then Exit Sub
-
-        Dim ind As String = vbSpace(1)
-        Const ftlen As Integer = 7
-        Console.WriteLine()
-        Console.WriteLine(cr.name)
-        Console.WriteLine(ind & fakeTab("TTL:", ftlen) & cr.saleTimer & " ticks")
-        Console.WriteLine(ind & fakeTab("Tier:", ftlen) & cr.saleTier)
-        Console.WriteLine(ind & fakeTab("Buy:", ftlen) & "¥" & ship.planet.getCraftComponentPriceBuy(cr.name).ToString("N0"))
-        Console.WriteLine(ind & fakeTab("Sell:", ftlen) & "¥" & ship.planet.getCraftComponentPriceSell(cr.name).ToString("N0"))
-        Console.WriteLine()
         Console.ReadKey()
     End Sub
     Private Sub cmdTravel(ByRef cmd As String())

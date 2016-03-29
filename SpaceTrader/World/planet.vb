@@ -47,7 +47,6 @@
                 .adjustPrices(r)
             Next
             .adjustSaleHullComponents(r)
-            .adjustSaleCraftComponents(r)
 
             If factionPair(0).planets.Count < factionPair(1).planets.Count Then : .setFaction(factionPair(0))
             ElseIf factionPair(1).planets.Count < factionPair(0).planets.Count Then : .setFaction(factionPair(1))
@@ -317,21 +316,6 @@
             End With
         Next
     End Sub
-    Friend Sub consoleReportCraft(ByVal indent As Integer)
-        Dim ind As String = vbSpace(indent)
-        Dim indd As String = vbSpace(indent + 1)
-
-        Dim ftlen As Integer = 0
-        For Each c In craftComponents
-            If c.name.Length > ftlen Then ftlen = c.name.Length
-        Next
-        ftlen += 3
-
-        Console.WriteLine(ind & "Craft Components:")
-        For Each c In craftComponents
-            Console.WriteLine(indd & fakeTab(c.name & ":", ftlen) & "[" & c.saleTimer.ToString("00") & "] " & "¥" & getCraftComponentPriceSell(c.name).ToString("N0"))
-        Next
-    End Sub
 
     Private _star As star
     Friend ReadOnly Property star As star
@@ -438,16 +422,6 @@
         Next
         Return total
     End Function
-    Friend craftComponents As New List(Of saleCraftComponent)
-    Private craftComponentsPriceModifier As Integer = 100
-    Friend Function getCraftComponentPriceSell(ByVal c As String) As Integer
-        Dim total As Integer = saleCraftComponent.getDefaultPrice(c) * craftComponentsPriceModifier / 100
-        Return total
-    End Function
-    Friend Function getCraftComponentPriceBuy(ByVal c As String) As Integer
-        Dim total As Integer = getCraftComponentPriceSell(c) * 0.75
-        Return total
-    End Function
 
 
     Private buildings As New List(Of building)
@@ -540,7 +514,6 @@
     Friend Sub tick()
         adjustPrices()
         adjustSaleHullComponents()
-        adjustSaleCraftComponents()
     End Sub
     Private Sub adjustPrices(Optional ByRef r As Random = Nothing)
         If r Is Nothing Then r = rng
@@ -563,10 +536,6 @@
         End If
         repairCost += repairVariance
         repairCost = constrain(repairCost, repairCostRange)
-
-        Const craftComponentVarianceMax As Integer = 10
-        craftComponentsPriceModifier += getPriceVariance(craftComponentVarianceMax, r)
-        craftComponentsPriceModifier = constrain(craftComponentsPriceModifier, 50, 150)
 
         Const buildingVarianceMax As Integer = 10
         buildingPriceModifier += getPriceVariance(buildingVarianceMax, r)
@@ -610,27 +579,5 @@
                 End If
             End If
         Next
-    End Sub
-    Private Sub adjustSaleCraftComponents(Optional ByRef r As Random = Nothing)
-        If r Is Nothing Then r = rng
-
-        For n = craftComponents.Count - 1 To 0 Step -1
-            Dim c As saleCraftComponent = craftComponents(n)
-            c.tickSale()
-        Next
-
-        While craftComponents.Count < 5
-            Dim tier As Integer
-            Select Case r.Next(1, 11)
-                Case 1 To 4 : tier = 1
-                Case 5 To 7 : tier = 2
-                Case 8 To 9 : tier = 3
-                Case 10 : tier = 4
-            End Select
-
-            Dim c As saleCraftComponent = saleCraftComponent.buildRandom(tier, r)
-            c.parentSaleList = craftComponents
-            craftComponents.Add(c)
-        End While
     End Sub
 End Class

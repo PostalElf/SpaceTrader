@@ -28,13 +28,7 @@
 
     Friend Overrides ReadOnly Property typeString As String
         Get
-            Select Case defType
-                Case eDefenceType.Armour : Return "Armour Repairer"
-                Case eDefenceType.Shields : Return "Shields Recharger"
-                Case Else
-                    MsgBox("hcRepairer.typestring: invalid defType")
-                    Return Nothing
-            End Select
+            Return "Repairer"
         End Get
     End Property
 End Class

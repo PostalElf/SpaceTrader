@@ -412,7 +412,7 @@
         Return saleHullComponentPrices(service)
     End Function
     Friend Function getSaleHullComponentPrice(ByRef s As saleHullcomponent) As Integer
-        Dim cost As Integer = s.saleCost / getSaleHullComponentPriceModifier(s.service) * 100
+        Dim cost As Integer = s.saleCost / getSaleHullComponentPriceModifier(s.category) * 100
         Return cost
     End Function
     Friend Function saleHullComponentList() As List(Of saleable)

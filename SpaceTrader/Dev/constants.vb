@@ -66,7 +66,7 @@
         Next
         Return Nothing
     End Function
-    Friend Shared Function getServiceFromTypeString(ByVal str As String) As eHcCategory
+    Friend Shared Function getCategoryFromTypeString(ByVal str As String) As eHcCategory
         If str = Nothing Then
             MsgBox("getServiceFromTypeString exception")
             Return Nothing
@@ -74,7 +74,7 @@
 
         Select Case str.ToLower
             Case "cargo", "crewquarters" : Return eHcCategory.Storage
-            Case "defence", "weapon" : Return eHcCategory.War
+            Case "defence", "weapon", "repairer" : Return eHcCategory.War
             Case "engine", "jumpdrive" : Return eHcCategory.Travel
             Case "producer" : Return eHcCategory.Production
             Case Else

@@ -566,12 +566,28 @@
         Return True
     End Function
     Friend Sub removeComponent(ByRef hc As hullComponent)
-        If hullComponents.ContainsKey(hc.GetType) = False Then Exit Sub
-        If hullComponents(hc.GetType).Contains(hc) = False Then Exit Sub
+        If removeComponentCheck(hc) = False Then Exit Sub
 
+        hc.crewable.unassignCrewAll()
         hc.ship = Nothing
         hullComponents(hc.GetType).Remove(hc)
+
+        If TypeOf hc Is hcCargo Then
+            Dim c As hcCargo = CType(hc, hcCargo)
+            Dim r As eResource = c.resource
+            If resources(r) > resourcesMax(r) Then resources(r) = resourcesMax(r)
+        End If
     End Sub
+    Friend Function removeComponentCheck(ByRef hc As hullComponent) As Boolean
+        If hullComponents.ContainsKey(hc.GetType) = False Then Return False
+        If hullComponents(hc.GetType).Contains(hc) = False Then Return False
+        If TypeOf hc Is hcCrewQuarters Then
+            Dim cq As hcCrewQuarters = CType(hc, hcCrewQuarters)
+            If cq.crewList.Count > 0 Then Return False
+        End If
+
+        Return True
+    End Function
     Friend Function getComponents(ByVal hcType As Type) As List(Of hullComponent)
         If hullComponents.ContainsKey(hcType) Then Return hullComponents(hcType)
         Return Nothing

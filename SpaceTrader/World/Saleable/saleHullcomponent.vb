@@ -39,7 +39,7 @@
             End While
 
             Dim s As New saleHullcomponent(name, tier, cost, type, q)
-            Dim es As eHcCategory = s.service
+            Dim es As eHcCategory = s.category
             total(tier)(es).Add(s)
         Next
 
@@ -54,6 +54,19 @@
         Dim template As saleable = data(roll)
         Return New saleHullcomponent(template)
     End Function
+    Friend Shared Function getPrice(ByVal hc As hullComponent, ByVal planet As planet) As Integer
+        Dim category As eHcCategory = constants.getCategoryFromTypeString(hc.typeString)
+
+        For Each tier In allSaleHullcomponents
+            For Each item In tier.Value(category)
+                If item.name = hc.name Then
+                    Return planet.getSaleHullComponentPrice(item)
+                End If
+            Next
+        Next
+
+        Return -1
+    End Function
 
     Public Overrides Function ToString() As String
         Return name
@@ -67,9 +80,9 @@
     End Property
 
     Private type As String
-    Friend ReadOnly Property service As eHcCategory
+    Friend ReadOnly Property category As eHcCategory
         Get
-            Return constants.getServiceFromTypeString(type)
+            Return constants.getCategoryFromTypeString(type)
         End Get
     End Property
     Friend parentServices As Dictionary(Of eHcCategory, saleHullcomponent)
@@ -79,7 +92,7 @@
     End Function
     Friend Overrides Sub expire()
         If parentServices Is Nothing = False Then
-            parentServices(service) = Nothing
+            parentServices(category) = Nothing
             parentServices = Nothing
         End If
 

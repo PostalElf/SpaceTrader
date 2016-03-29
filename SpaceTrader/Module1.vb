@@ -216,6 +216,28 @@
         Console.WriteLine()
         Dim hc As hullComponent = menu.getListChoice(ship.hullComponentsList, 0, "Disassemble which hull component?")
         If hc Is Nothing Then Exit Sub
+
+        Dim cost As Integer = saleHullComponent.getPrice(hc, ship.planet) * 0.75
+        If cost = -1 Then
+            Console.WriteLine()
+            Console.WriteLine("Error: " & hc.name & " is an integral part of the ship and cannot be removed.")
+            Console.ReadKey()
+            Exit Sub
+        End If
+        If menu.confirmChoice(0, vbCrLf & "Sell " & hc.name & " for ¥" & cost.ToString("N0") & "? ") = False Then Exit Sub
+
+        If player.addCreditsCheck(cost) = False Then Exit Sub
+        If ship.removeComponentCheck(hc) = False Then
+            Console.WriteLine()
+            Console.WriteLine("Error: " & hc.name & " could not be removed.")
+            Console.WriteLine("Check to ensure that all crew have been unassigned.")
+            Console.ReadKey()
+            Exit Sub
+        End If
+        player.addCredits(cost)
+        ship.removeComponent(hc)
+        Console.WriteLine(vbCrLf & "Sale successful.")
+        Console.ReadKey()
     End Sub
     Private Sub cmdRepair()
         If ship.planet Is Nothing Then Exit Sub

@@ -59,4 +59,9 @@
         crew.crewAssignment = Nothing
         _crewList.Remove(crew)
     End Sub
+    Friend Sub unassignCrewAll()
+        For n = _crewList.Count - 1 To 0 Step -1
+            unassignCrew(_crewList(n))
+        Next
+    End Sub
 End Class

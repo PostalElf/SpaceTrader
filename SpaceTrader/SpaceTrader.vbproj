@@ -122,7 +122,6 @@
     <Compile Include="World\ePlanetType.vb" />
     <Compile Include="Dev\menu.vb" />
     <Compile Include="World\planet.vb" />
-    <Compile Include="World\Saleable\saleCraftComponent.vb" />
     <Compile Include="World\Saleable\saleHullComponent.vb" />
     <Compile Include="World\star.vb" />
     <Compile Include="World\starmap.vb" />

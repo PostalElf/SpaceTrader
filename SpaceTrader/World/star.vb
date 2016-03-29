@@ -56,6 +56,15 @@
     Friend Function getPlanetRandom() As planet
         Return _planets(rng.Next(_planets.Count))
     End Function
+    Friend ReadOnly Property factions As List(Of faction)
+        Get
+            Dim total As New List(Of faction)
+            For Each planet In planets
+                If total.Contains(planet.faction) = False Then total.Add(planet.faction)
+            Next
+            Return total
+        End Get
+    End Property
 
     Friend xy As xy
     Friend Function getDistanceTo(ByRef destination As star) As Integer

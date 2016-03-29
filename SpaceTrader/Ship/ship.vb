@@ -201,6 +201,15 @@
         End Get
     End Property
     Private travelDescription As String
+    Private ReadOnly Property travelPhase As String
+        Get
+            If travelDistancePlanet1 > 0 Then : Return "Interplanetary"
+            ElseIf travelDistanceStar > 0 Then : Return "Warp"
+            ElseIf travelDistancePlanet2 > 0 Then : Return "Interplanetary"
+            Else : Return "Rest"
+            End If
+        End Get
+    End Property
     Private travelJumpSpeedBase As Integer
     Private travelSublightSpeedBase As Integer
     Friend ReadOnly Property travelSpeed(ByVal jump As Boolean) As Integer
@@ -249,6 +258,7 @@
     Friend Sub teleportTo(ByRef destination As planet)
         _planet = destination
         travelDestination = Nothing
+        travelDescription = ""
         travelProgress = 0
         travelDistanceStar = 0
         travelDistancePlanet1 = 0

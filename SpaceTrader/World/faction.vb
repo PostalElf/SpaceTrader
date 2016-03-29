@@ -2,12 +2,13 @@
     Friend Shared Function build(ByRef r As Random) As faction
         Dim faction As New faction
         With faction
-            ._name = "Faction #" & r.Next(1000, 10000)
+            ._name = "House " & getRandomAndRemove(factionNames, "data/factionNames.txt", r)
             ._prosperityBase = 100
             ._militaryBase = 100
         End With
         Return faction
     End Function
+    Private Shared factionNames As New List(Of String)
 
     Friend Sub consoleReport(ByVal indent As Integer)
         Dim ind As String = vbSpace(indent)

@@ -201,7 +201,7 @@
         End Get
     End Property
     Private travelDescription As String
-    Private ReadOnly Property travelPhase As String
+    Friend ReadOnly Property travelPhase As String
         Get
             If travelDistancePlanet1 > 0 Then : Return "Interplanetary"
             ElseIf travelDistanceStar > 0 Then : Return "Warp"
@@ -422,6 +422,13 @@
     End Sub
     Friend Sub repair(ByVal defenceType As eDefenceType, ByVal value As Integer)
         defences(defenceType) = constrain(defences(defenceType) + value, 0, defencesMax(defenceType))
+    End Sub
+    Friend Sub addDamageArmour(ByVal value As Integer)
+        defences(eDefenceType.Armour) -= value
+        If defences(eDefenceType.Armour) <= 0 Then destroy()
+    End Sub
+    Friend Sub addDamageShields(ByVal value As Integer)
+        defences(eDefenceType.Shields) -= value
     End Sub
     Friend Overridable Sub addDamage(ByRef attacker As iCombatant, ByVal damage As damage)
         With damage

@@ -1,0 +1,27 @@
+[Something in the Walls]
+Text: Some of the crew have started complaining about hearing a faint scratching noise in their quarters when they're trying to rest; almost as if there were rats in the walls or ceilings. However, the ship's scanners show no lifesigns - digital or organic - in the affected rooms.
+RemoveAfterUse: False
+Variables: Scratching 0-0
+Choice:
+	Text: Tear apart the affected quarters.
+	Effect: damageArmour 1, Scratching +1
+	Result: Under the watchful eyes of the provosts, the engineers tear through the hull searching for the source of the scratching...  to no avail. There's nothing more you can do, and so you order your men to return to their duties.
+Choice:
+	Text: Ignore their complaints. They're probably imagining it.
+	Effect: Scratching =10
+Choice:
+	Text: Consult with the ship's psychologist. Is this some sort of mass-hallucination, a symptom of space sickness, or something worse?
+	Effect: Scratching =100
+
+[Nothing in the Walls]
+Text: After days of fruitless searching, you finally give up on trying to identify the source of the scratching. It has been a frustrating search, but your men now know that you care more about their wellbeing than your ship, and they are gratified.
+RemoveAfterUse: True
+TravelPhase: Warping
+Variables: Scratching 5-5
+Choice:
+	Text: Put the matter out of your mind.
+	Effect: Scratching =999
+	Result: Let's hope the infernal scratching does not return.
+	
+[Something in the Walls]
+Text: The scratching's gotten louder, and your men can no longer sleep.

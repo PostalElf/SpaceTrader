@@ -39,4 +39,21 @@
     End Sub
 
     Friend ships As New List(Of ship)
+
+    Private questVariables As New Dictionary(Of String, Integer)
+    Friend Sub addQuestVariable(ByVal var As String, ByVal value As Integer)
+        If questVariables.ContainsKey(var) = False Then questVariables.Add(var, 0)
+        questVariables(var) += value
+    End Sub
+    Friend Sub setQuestVariable(ByVal var As String, ByVal value As Integer)
+        If questVariables.ContainsKey(var) = False Then questVariables.Add(var, 0)
+        questVariables(var) = value
+    End Sub
+    Friend Function checkQuestVariable(ByVal var As String, ByVal range As range) As Boolean
+        If questVariables.ContainsKey(var) = False Then
+            If range.min = 0 Then Return True Else Return False
+        End If
+
+        Return range.isWithin(questVariables(var))
+    End Function
 End Class

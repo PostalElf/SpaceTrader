@@ -74,6 +74,8 @@
     <Compile Include="AI\eAiShipRole.vb" />
     <Compile Include="alert.vb" />
     <Compile Include="Dev\constants.vb" />
+    <Compile Include="Player\questChoice.vb" />
+    <Compile Include="Player\quest.vb" />
     <Compile Include="Resources\eResource.vb" />
     <Compile Include="Module1.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -116,7 +118,7 @@
     <Compile Include="World\faction.vb" />
     <Compile Include="World\Saleable\saleable.vb" />
     <Compile Include="Ship\HullComponent\shcCrewable.vb" />
-    <Compile Include="Ship\player.vb" />
+    <Compile Include="Player\player.vb" />
     <Compile Include="Ship\ship.vb" />
     <Compile Include="World\ePlanetRole.vb" />
     <Compile Include="World\ePlanetType.vb" />

@@ -250,7 +250,11 @@ Imports Microsoft.VisualBasic.FileIO
                 Dim current As New Queue(Of String)
                 While sr.Peek <> -1
                     line = sr.ReadLine
+
+                    'ignore blank lines and lines that start with -
+                    If line = "" Then Continue While
                     If line.StartsWith("-") Then Continue While
+
                     If line.StartsWith("[") Then
                         'remove brackets
                         line = line.Remove(0, 1)

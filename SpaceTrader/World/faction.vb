@@ -23,6 +23,9 @@
             Console.WriteLine(inddd & planet.name)
         Next
     End Sub
+    Public Overrides Function ToString() As String
+        Return name
+    End Function
 
     Private _name As String
     Friend ReadOnly Property name As String

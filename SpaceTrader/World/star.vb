@@ -6,7 +6,7 @@
             ._name = getRandomAndRemove(star.starNames, "data/starnames.txt", r)
             .xy = New xy(r.Next(1, maxX), r.Next(1, maxY))
 
-            Dim factionPair As faction() = starmap.getFactionPairRandom(r)
+            Dim factionPair As faction() = starmap.getFactionPair(r)
             For n = 1 To r.Next(numPlanetsMin, numPlanetsMax + 1)
                 Dim planet As planet = planet.build(star, n, factionPair, r)
                 ._planets.Add(planet)

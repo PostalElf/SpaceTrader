@@ -20,28 +20,12 @@
                 ._stars.Add(star)
             Next
 
-            .factionPairs.Clear()
             For n = .factions.Count - 1 To 0 Step -1
                 Dim faction As faction = .factions(n)
                 If faction.planets.Count = 0 Then .factions.Remove(faction)
             Next
         End With
         Return starmap
-    End Function
-    Private factionPairs As New List(Of faction())
-    Private Sub buildFactionPairs()
-        For n = 0 To factions.Count - 1
-            For p = 0 To factions.Count - 1
-                If n.Equals(p) = False Then factionPairs.Add({factions(n), factions(p)})
-            Next
-        Next
-    End Sub
-    Friend Function getFactionPairRandom(ByRef r As Random) As faction()
-        If factionPairs.Count = 0 Then buildFactionPairs()
-
-        Dim roll As Integer = r.Next(factionPairs.Count)
-        getFactionPairRandom = factionPairs(roll)
-        factionPairs.RemoveAt(roll)
     End Function
 
 
@@ -88,6 +72,29 @@
     End Function
 
     Private factions As New List(Of faction)
+    Friend Function getFactionPair(ByRef r As Random) As faction()
+        Dim total() As faction = {factions(0), factions(1)}
+        Dim totalMax() As Integer = {factions(0).planets.Count, factions(1).planets.Count}
+
+        '0 is second lowest, 1 is lowest
+        For Each faction In factions
+            If faction.planets.Count < totalMax(0) Then
+                If faction.planets.Count < totalMax(1) Then
+                    'is lowest; move lowest (1) to second lowest (0) and replace (1) with faction
+                    total(1) = total(0)
+                    totalMax(1) = totalMax(0)
+                    total(1) = faction
+                    totalMax(1) = faction.planets.Count
+                Else
+                    'is second lowest; replace second lowest (0) with faction
+                    total(0) = faction
+                    totalMax(0) = faction.planets.Count
+                End If
+            End If
+        Next
+
+        Return total
+    End Function
 
     Friend Sub tick()
         For Each star In _stars

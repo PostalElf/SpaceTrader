@@ -476,7 +476,9 @@
         _instability += building.instability
     End Sub
     Friend Function addBuildingCheck(ByRef building As building, ByRef player As player) As Boolean
-        If buildings.Contains(building) Then Return False
+        For Each b In buildings
+            If b.name = building.name Then Return False
+        Next
         If getBuildingPrice(building.name) = -1 Then Return False
         If player.addCreditsCheck(-getBuildingPrice(building.name)) = False Then Return False
 

@@ -637,6 +637,74 @@ ResourceQtyPerUse: 10
 
 
 
+--Repairer--
+[Shield Battery]
+Type: Repairer
+DefenceType: Shields
+Size: 10
+Tier: 2
+Cost: 10000
+EnergyCost: 5
+Value: 2
+ResourceSlot: Chemicals
+ResourceQtyPerUse: 10
+CrewableMin: 1
+CrewableMax: 1
+
+[Backup Shield Generator]
+Type: Repairer
+DefenceType: Shields
+Size: 10
+Tier: 3
+Cost: 25000
+EnergyCost: 10
+Value: 5
+ResourceSlot: Chemicals
+ResourceQtyPerUse: 10
+CrewableMin: 2
+CrewableMax: 2
+
+[Steelfoam Spray]
+Type: Repairer
+DefenceType: Armour
+Size: 10
+Tier: 3
+Cost: 25000
+EnergyCost: 10
+Value: 2
+ResourceSlot: Metals
+ResourceQtyPerUse: 10
+CrewableMin: 2
+CrewableMax: 2
+
+[Shield Generator]
+Type: Repairer
+DefenceType: Shields
+Size: 15
+Tier: 4
+Cost: 40000
+EnergyCost: 10
+Value: 10
+ResourceSlot: Chemicals
+ResourceQtyPerUse: 20
+CrewableMin: 3
+CrewableMax: 3
+
+[Hull Reconstructor]
+Type: Repairer
+DefenceType: Armour
+Size: 15
+Tier: 4
+Cost: 40000
+EnergyCost: 10
+Value: 5
+ResourceSlot: Metals
+ResourceQtyPerUse: 20
+CrewableMin: 3
+CrewableMax: 3
+
+
+
 --Weapon--
 [Mass Driver]
 Type: Weapon

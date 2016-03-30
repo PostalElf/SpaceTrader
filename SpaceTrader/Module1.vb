@@ -18,7 +18,7 @@
         Next
         ship.addComponent(hullComponent.build("Food Megastorage"))
         ship.addComponent(hullComponent.build("Crew Cabin"))
-        ship.addComponent(hullComponent.build("Crew Cabin"))
+        ship.addComponent(hullComponent.build("Backup Shield Generator"))
         ship.addComponent(hullComponent.build("Uplifted Maintenance Bay"))
         ship.addComponent(hullComponent.build("Metal Containers"))
         ship.addComponent(hullComponent.build("Hellfire Missiles"))

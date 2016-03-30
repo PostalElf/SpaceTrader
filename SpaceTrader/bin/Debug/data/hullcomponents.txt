@@ -650,6 +650,8 @@ DamageFull: 20
 DamageType: Ballistic
 ResourceSlot: Ammunition
 ResourceQtyPerUse: 5
+CrewableMin: 1
+CrewableMax: 1
 
 [Nuclear Railgun]
 Type: Weapon
@@ -663,6 +665,8 @@ DamageFull: 25
 DamageType: Ballistic
 ResourceSlot: Ammunition
 ResourceQtyPerUse: 10
+CrewableMin: 1
+CrewableMax: 1
 
 [Micrometeorite Launcher]
 Type: Weapon
@@ -676,6 +680,8 @@ DamageFull: 40
 DamageType: Ballistic
 ResourceSlot: Ammunition
 ResourceQtyPerUse: 15
+CrewableMin: 1
+CrewableMax: 1
 
 [Quantum Railgun]
 Type: Weapon
@@ -689,6 +695,8 @@ DamageFull: 35
 DamageType: Ballistic
 ResourceSlot: Ammunition
 ResourceQtyPerUse: 10
+CrewableMin: 1
+CrewableMax: 1
 
 [Meteorite Launcher]
 Type: Weapon
@@ -702,6 +710,8 @@ DamageFull: 60
 DamageType: Ballistic
 ResourceSlot: Ammunition
 ResourceQtyPerUse: 20
+CrewableMin: 1
+CrewableMax: 1
 
 [Quantum Railgun]
 Type: Weapon
@@ -715,6 +725,8 @@ DamageFull: 45
 DamageType: Ballistic
 ResourceSlot: Ammunition
 ResourceQtyPerUse: 10
+CrewableMin: 1
+CrewableMax: 1
 
 [Meteorite Launcher]
 Type: Weapon
@@ -728,6 +740,8 @@ DamageFull: 75
 DamageType: Ballistic
 ResourceSlot: Ammunition
 ResourceQtyPerUse: 50
+CrewableMin: 1
+CrewableMax: 1
 
 
 
@@ -743,8 +757,8 @@ DamageFull: 20
 DamageType: Energy
 ResourceSlot: Chemicals
 ResourceQtyPerUse: 5
-CrewableMin: 1
-CrewableMax: 1
+CrewableMin: 2
+CrewableMax: 2
 
 [Scythian Beamcutter]
 Type: Weapon
@@ -758,8 +772,8 @@ DamageFull: 25
 DamageType: Energy
 ResourceSlot: Chemicals
 ResourceQtyPerUse: 5
-CrewableMin: 1
-CrewableMax: 1
+CrewableMin: 2
+CrewableMax: 2
 
 [Plasma Cannon]
 Type: Weapon
@@ -773,8 +787,8 @@ DamageFull: 25
 DamageType: Energy
 ResourceSlot: Chemicals
 ResourceQtyPerUse: 5
-CrewableMin: 1
-CrewableMax: 1
+CrewableMin: 2
+CrewableMax: 2
 
 [Fulsom Gatling Laser]
 Type: Weapon
@@ -788,8 +802,8 @@ DamageFull: 30
 DamageType: Energy
 ResourceSlot: Azoth
 ResourceQtyPerUse: 5
-CrewableMin: 1
-CrewableMax: 1
+CrewableMin: 2
+CrewableMax: 2
 
 [Torchbearer Pulse Cannon]
 Type: Weapon
@@ -803,8 +817,8 @@ DamageFull: 30
 DamageType: Energy
 ResourceSlot: Azoth
 ResourceQtyPerUse: 5
-CrewableMin: 1
-CrewableMax: 1
+CrewableMin: 2
+CrewableMax: 2
 
 [Supernova Beamthrower]
 Type: Weapon
@@ -818,8 +832,8 @@ DamageFull: 35
 DamageType: Energy
 ResourceSlot: Azoth
 ResourceQtyPerUse: 5
-CrewableMin: 2
-CrewableMax: 2
+CrewableMin: 3
+CrewableMax: 3
 
 [Disintegrator Cannon]
 Type: Weapon
@@ -833,8 +847,8 @@ DamageFull: 35
 DamageType: Energy
 ResourceSlot: Azoth
 ResourceQtyPerUse: 5
-CrewableMin: 2
-CrewableMax: 2
+CrewableMin: 3
+CrewableMax: 3
 
 
 
@@ -849,6 +863,8 @@ Digital: SynapticVirus
 Accuracy: 5
 DamageGlancing: 2
 DamageFull: 2
+CrewableMin: 1
+CrewableMax: 1
 
 ['Sheldon' Viral Narrowcaster]
 Type: Weapon
@@ -861,6 +877,8 @@ Digital: SynapticVirus
 Accuracy: 5
 DamageGlancing: 5
 DamageFull: 5
+CrewableMin: 1
+CrewableMax: 1
 
 ['Grue' Viral Needlecaster]
 Type: Weapon
@@ -873,6 +891,8 @@ Digital: SynapticVirus
 Accuracy: 5
 DamageGlancing: 10
 DamageFull: 10
+CrewableMin: 1
+CrewableMax: 1
 
 ['Odysseus' Trojan Broadcaster]
 Type: Weapon
@@ -885,6 +905,8 @@ Digital: Trojan
 Accuracy: 15
 DamageGlancing: 2
 DamageFull: 2
+CrewableMin: 1
+CrewableMax: 1
 
 ['Agamemnon' Trojan Narrowcaster]
 Type: Weapon
@@ -897,6 +919,8 @@ Digital: Trojan
 Accuracy: 20
 DamageGlancing: 5
 DamageFull: 5
+CrewableMin: 1
+CrewableMax: 1
 
 ['Medea' Trojan Needlecaster]
 Type: Weapon
@@ -909,6 +933,8 @@ Digital: Trojan
 Accuracy: 30
 DamageGlancing: 5
 DamageFull: 5
+CrewableMin: 1
+CrewableMax: 1
 
 ['Infiltrator' Worm Broadcaster]
 Type: Weapon
@@ -921,6 +947,8 @@ Digital: NetworkWorm
 Accuracy: 5
 DamageGlancing: 2
 DamageFull: 2
+CrewableMin: 1
+CrewableMax: 1
 
 ['Golem' Worm Narrowcaster]
 Type: Weapon
@@ -933,6 +961,8 @@ Digital: NetworkWorm
 Accuracy: 5
 DamageGlancing: 5
 DamageFull: 5
+CrewableMin: 1
+CrewableMax: 1
 
 ['Kether' Worm Needlecaster]
 Type: Weapon
@@ -945,6 +975,8 @@ Digital: NetworkWorm
 Accuracy: 5
 DamageGlancing: 10
 DamageFull: 10
+CrewableMin: 1
+CrewableMax: 1
 
 
 
@@ -960,6 +992,8 @@ DamageGlancing: 0
 DamageFull: 15
 ResourceSlot: Missiles
 ResourceQtyPerUse: 5
+CrewableMin: 1
+CrewableMax: 1
 
 [Dumbfire Torpedoes]
 Type: Weapon
@@ -973,6 +1007,8 @@ DamageGlancing: 0
 DamageFull: 35
 ResourceSlot: Missiles
 ResourceQtyPerUse: 5
+CrewableMin: 1
+CrewableMax: 1
 
 ['Tybalt' Micromissiles]
 Type: Weapon
@@ -986,6 +1022,8 @@ DamageGlancing: 0
 DamageFull: 25
 ResourceSlot: Missiles
 ResourceQtyPerUse: 5
+CrewableMin: 1
+CrewableMax: 1
 
 [Photon Torpedoes]
 Type: Weapon
@@ -999,6 +1037,8 @@ DamageGlancing: 0
 DamageFull: 40
 ResourceSlot: Missiles
 ResourceQtyPerUse: 10
+CrewableMin: 1
+CrewableMax: 1
 
 ['Ophelia' Missile Swarm]
 Type: Weapon
@@ -1012,6 +1052,8 @@ DamageGlancing: 0
 DamageFull: 30
 ResourceSlot: Missiles
 ResourceQtyPerUse: 10
+CrewableMin: 1
+CrewableMax: 1
 
 [Phase Torpedoes]
 Type: Weapon
@@ -1025,6 +1067,8 @@ DamageGlancing: 0
 DamageFull: 55
 ResourceSlot: Missiles
 ResourceQtyPerUse: 15
+CrewableMin: 1
+CrewableMax: 1
 
 ['Falstaff' Missile Storm]
 Type: Weapon
@@ -1038,6 +1082,8 @@ DamageGlancing: 0
 DamageFull: 40
 ResourceSlot: Missiles
 ResourceQtyPerUse: 20
+CrewableMin: 1
+CrewableMax: 1
 
 
 
@@ -1054,8 +1100,8 @@ DamageGlancing: 10
 DamageFull: 30
 ResourceSlot: Machines
 ResourceQtyPerUse: 20
-CrewableMin: 1
-CrewableMax: 1
+CrewableMin: 2
+CrewableMax: 2
 
 ['Kingfisher' Bay]
 Type: Weapon
@@ -1070,8 +1116,8 @@ DamageGlancing: 0
 DamageFull: 45
 ResourceSlot: Machines
 ResourceQtyPerUse: 25
-CrewableMin: 1
-CrewableMax: 1
+CrewableMin: 2
+CrewableMax: 2
 
 ['Stinger' Bay]
 Type: Weapon
@@ -1086,8 +1132,8 @@ DamageGlancing: 20
 DamageFull: 40
 ResourceSlot: Machines
 ResourceQtyPerUse: 25
-CrewableMin: 1
-CrewableMax: 1
+CrewableMin: 2
+CrewableMax: 2
 
 ['Pelican' Bay]
 Type: Weapon
@@ -1102,8 +1148,8 @@ DamageGlancing: 0
 DamageFull: 40
 ResourceSlot: Machines
 ResourceQtyPerUse: 25
-CrewableMin: 1
-CrewableMax: 1
+CrewableMin: 2
+CrewableMax: 2
 
 ['Stiletto' Bay]
 Type: Weapon
@@ -1118,8 +1164,8 @@ DamageGlancing: 20
 DamageFull: 50
 ResourceSlot: Machines
 ResourceQtyPerUse: 25
-CrewableMin: 1
-CrewableMax: 1
+CrewableMin: 2
+CrewableMax: 2
 
 ['Goshawk' Bay]
 Type: Weapon
@@ -1134,8 +1180,8 @@ DamageGlancing: 0
 DamageFull: 55
 ResourceSlot: Machines
 ResourceQtyPerUse: 25
-CrewableMin: 1
-CrewableMax: 1
+CrewableMin: 2
+CrewableMax: 2
 
 ['Cutlass' Bay]
 Type: Weapon
@@ -1150,8 +1196,8 @@ DamageGlancing: 30
 DamageFull: 60
 ResourceSlot: Machines
 ResourceQtyPerUse: 25
-CrewableMin: 1
-CrewableMax: 1
+CrewableMin: 2
+CrewableMax: 2
 
 
 

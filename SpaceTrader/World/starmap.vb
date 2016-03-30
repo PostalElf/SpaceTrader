@@ -4,19 +4,19 @@
     Const numPlanetsMin As Integer = 7
     Const numPlanetsMax As Integer = 10
     Friend Shared Function build(ByVal aSeed As Integer) As starmap
-        Dim r As New Random(aSeed)
 
         Dim starmap As New starmap
         With starmap
             .seed = aSeed
+            .random = New Random(aSeed)
 
             For n = 1 To numFactions
-                Dim faction As faction = faction.build(r)
+                Dim faction As faction = faction.build(.random)
                 .factions.Add(faction)
             Next
 
             For n = 1 To numStars
-                Dim star As star = star.build(starmap, numPlanetsMin, numPlanetsMax, r)
+                Dim star As star = star.build(starmap, numPlanetsMin, numPlanetsMax, .random)
                 ._stars.Add(star)
             Next
 
@@ -46,6 +46,7 @@
     End Sub
 
     Private seed As Integer
+    Friend random As Random
     Private _stars As New List(Of star)
     Friend ReadOnly Property stars As List(Of star)
         Get

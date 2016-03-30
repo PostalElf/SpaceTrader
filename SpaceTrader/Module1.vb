@@ -18,14 +18,15 @@
         Next
         ship.addComponent(hullComponent.build("Food Megastorage"))
         ship.addComponent(hullComponent.build("Crew Cabin"))
+        ship.addComponent(hullComponent.build("Crew Cabin"))
         ship.addComponent(hullComponent.build("Uplifted Maintenance Bay"))
         ship.addComponent(hullComponent.build("Metal Containers"))
         ship.addComponent(hullComponent.build("Hellfire Missiles"))
         ship.addComponent(hullComponent.build("Laser Array"))
         For n = 1 To 3
-            ship.addCrew(crew.build(eRace.Human))
+            ship.addCrew(crew.build(eRace.Human, starmap.random))
         Next
-        ship.addCrew(crew.build(eRace.Uplifted))
+        ship.addCrew(crew.build(eRace.Uplifted, starmap.random))
         ship.allLoadResource()
         ship.allAssignCrewBest()
         ship.teleportTo(starmap.stars(0).planets(0))
@@ -60,6 +61,8 @@
                 Console.Clear()
                 starmap.consoleReportFactions(0)
                 Console.ReadKey()
+            Case "crew"
+                cmdCrew()
             Case "travel", "t"
                 cmdTravel(cmd)
             Case "battlefield", "battle"
@@ -131,6 +134,69 @@
         Console.WriteLine(ind & fakeTab("11/bd:", ftlen) & "bandwidth")
         Console.WriteLine(ind & fakeTab("12/md:", ftlen) & "media")
         Console.ReadKey()
+    End Sub
+    Private Sub cmdCrew()
+        Dim crew As crew = menu.getListChoice(ship.getCrews, 1, "Manage which crew member?")
+        If crew Is Nothing Then Exit Sub
+
+        Dim choices As New Dictionary(Of Integer, String)
+        choices.Add(1, "Move Quarters")
+        choices.Add(2, "Reassign Duties")
+        choices.Add(3, "Relieve From Duty")
+        choices.Add(4, "Maroon Crew Member")
+        Select Case menu.getListChoice(choices, 1, vbCrLf)
+            Case 1
+                Dim rawList As List(Of hullComponent) = ship.getComponents(GetType(hcCrewQuarters))
+                Dim total As New List(Of hcCrewQuarters)
+                For Each hc In rawList
+                    Dim cq As hcCrewQuarters = CType(hc, hcCrewQuarters)
+                    If cq.addCrewCheck(crew) = True Then total.Add(cq)
+                Next
+                If total.Count = 0 Then
+                    Console.WriteLine("No valid quarters.")
+                    Console.ReadKey()
+                    Exit Sub
+                End If
+
+                Dim choice As hcCrewQuarters = menu.getListChoice(total, 1, "Select new quarters:")
+                If choice Is Nothing Then Exit Sub
+                If choice.Equals(crew.crewQuarters) Then Exit Sub
+                crew.crewQuarters.removeCrew(crew)
+                choice.addCrew(crew)
+                Console.WriteLine("Done.")
+                Console.ReadKey()
+
+            Case 2
+                Dim rawList As List(Of hullComponent) = ship.getComponents(Nothing)
+                Dim total As New List(Of hullComponent)
+                For Each hc In rawList
+                    If hc.crewable.assignCrewCheck(crew) = True Then total.Add(hc)
+                Next
+                If total.Count = 0 Then
+                    Console.WriteLine("No valid assignments.")
+                    Console.ReadKey()
+                    Exit Sub
+                End If
+
+                Dim choice As hullComponent = menu.getListChoice(total, 1, "Select new assignment:")
+                If choice Is Nothing Then Exit Sub
+                If choice.Equals(crew.crewAssignment) Then Exit Sub
+                choice.crewable.assignCrew(crew)
+                Console.WriteLine("Done.")
+                Console.ReadKey()
+
+            Case 3
+                If crew.crewAssignment Is Nothing Then Exit Sub
+                crew.crewAssignment.unassignCrew(crew)
+                Console.WriteLine("Done.")
+                Console.ReadKey()
+
+            Case 4
+                If menu.confirmChoice(0) = False Then Exit Sub
+                crew.destroy()
+                Console.WriteLine("Done.")
+                Console.ReadKey()
+        End Select
     End Sub
     Private Sub cmdBuySell(ByRef cmd As String(), ByVal isBuying As Boolean)
         If ship.planet Is Nothing Then Exit Sub
@@ -214,7 +280,7 @@
         If ship.planet Is Nothing Then Exit Sub
 
         Console.WriteLine()
-        Dim hc As hullComponent = menu.getListChoice(ship.hullComponentsList, 0, "Disassemble which hull component?")
+        Dim hc As hullComponent = menu.getListChoice(ship.getComponents(Nothing), 0, "Disassemble which hull component?")
         If hc Is Nothing Then Exit Sub
 
         Dim cost As Integer = saleHullComponent.getPrice(hc, ship.planet) * 0.75
@@ -308,6 +374,8 @@
         Console.ReadKey()
     End Sub
     Private Sub cmdTravel(ByRef cmd As String())
+        If ship.planet Is Nothing Then Exit Sub
+
         Console.WriteLine()
         If cmd.Length > 1 AndAlso (cmd(1) = "c" OrElse cmd(1) = "cancel") Then
             ship.setTravelDestination(Nothing)
@@ -342,7 +410,7 @@
         End If
 
         Console.WriteLine()
-        Dim choice As hullComponent = menu.getListChoice(ship.hullComponentsList, 1, "Select a hull component:")
+        Dim choice As hullComponent = menu.getListChoice(ship.getComponents(Nothing), 1, "Select a hull component:")
         If choice Is Nothing Then Exit Sub
         If choice.loadResource() = False Then
             Console.WriteLine("Load failure.")

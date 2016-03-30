@@ -112,12 +112,12 @@
         Dim ind As String = vbSpace(indent) & prefix
 
         Dim ftlen As Integer = 0
-        For Each hc In hullComponentsList
+        For Each hc In getComponents(Nothing)
             If hc.name.Length > ftlen Then ftlen = hc.name.Length
         Next
         ftlen += 3
 
-        For Each hc In hullComponentsList
+        For Each hc In getComponents(Nothing)
             Console.WriteLine(ind & fakeTab(hc.name & ":", ftlen) & hc.consoleDescription & " " & hc.consoleResourceDescription)
         Next
     End Sub
@@ -153,7 +153,7 @@
     Friend Sub consoleReportAlarms(ByVal indent As Integer)
         Dim ind As String = vbSpace(indent)
 
-        For Each hc In hullComponentsList
+        For Each hc In getComponents(Nothing)
             For Each alarm In hc.alarms
                 Console.WriteLine(ind & hc.name & ": " & alarm)
             Next
@@ -272,7 +272,7 @@
         If travelDestination Is Nothing Then Exit Sub
 
         _planet = Nothing
-        For Each hc In hullComponentsList
+        For Each hc In getComponents(Nothing)
             hc.tickTravel()
         Next
 
@@ -301,7 +301,7 @@
         End If
     End Sub
     Private Sub tickIdle()
-        For Each hc In hullComponentsList
+        For Each hc In getComponents(Nothing)
             hc.tickIdle()
         Next
     End Sub
@@ -318,7 +318,7 @@
     End Sub
     Friend Overridable Sub tickCombat()
         combatEnergy = combatEnergyMax
-        For Each hc In hullComponentsList
+        For Each hc In getComponents(Nothing)
             hc.tickCombat()
         Next
         For Each d In constants.defenceTypeArray
@@ -519,17 +519,6 @@
     End Sub
 
     Protected hullComponents As New Dictionary(Of Type, List(Of hullComponent))
-    Friend ReadOnly Property hullComponentsList As List(Of hullComponent)
-        Get
-            Dim total As New List(Of hullComponent)
-            For Each kvp In hullComponents
-                For Each hc In kvp.Value
-                    total.Add(hc)
-                Next
-            Next
-            Return total
-        End Get
-    End Property
     Private hullSpaceMaxBase As Integer
     Private ReadOnly Property hullSpaceMax As Integer
         Get
@@ -543,7 +532,7 @@
     Private ReadOnly Property hullSpaceOccupied As Integer
         Get
             Dim total As Integer = 0
-            For Each hc In hullComponentsList
+            For Each hc In getComponents(Nothing)
                 total += hc.size
             Next
             Return total
@@ -589,7 +578,18 @@
         Return True
     End Function
     Friend Function getComponents(ByVal hcType As Type) As List(Of hullComponent)
-        If hullComponents.ContainsKey(hcType) Then Return hullComponents(hcType)
+        If hcType = Nothing Then
+            Dim total As New List(Of hullComponent)
+            For Each kvp In hullComponents
+                For Each hc In kvp.Value
+                    total.Add(hc)
+                Next
+            Next
+            Return total
+        Else
+            If hullComponents.ContainsKey(hcType) Then Return hullComponents(hcType)
+        End If
+
         Return Nothing
     End Function
 
@@ -632,7 +632,7 @@
         Return total
     End Function
     Friend Sub allLoadResource()
-        For Each hc In hullComponentsList
+        For Each hc In getComponents(Nothing)
             hc.loadResource()
         Next
     End Sub
@@ -676,7 +676,7 @@
         Return False
     End Function
     Friend Sub allAssignCrewBest()
-        For Each hc In hullComponentsList
+        For Each hc In getComponents(Nothing)
             If hc.crewable.isManned = False Then hc.crewable.assignCrewBest()
         Next
     End Sub

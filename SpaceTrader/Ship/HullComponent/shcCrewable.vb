@@ -38,10 +38,12 @@
     End Property
 
     Friend Sub assignCrewBest()
-        Dim idlers As List(Of crew) = _hullComponent.ship.getCrews(True)
-        If idlers.Count = 0 Then Exit Sub
-        Dim p As crew = idlers(rng.Next(idlers.Count))
-        assignCrew(p)
+        While isManned = False
+            Dim idlers As List(Of crew) = _hullComponent.ship.getCrews(True)
+            If idlers.Count = 0 Then Exit Sub
+            Dim p As crew = idlers(rng.Next(idlers.Count))
+            assignCrew(p)
+        End While
     End Sub
     Friend Sub assignCrew(ByRef crew As crew)
         _crewList.Add(crew)
@@ -49,7 +51,6 @@
     End Sub
     Friend Function assignCrewCheck(ByRef crew As crew) As Boolean
         If crewEmpty < 1 Then Return False
-        If crew.crewAssignment Is Nothing = False Then Return False
         If _crewList.Contains(crew) Then Return False
 
         Return True

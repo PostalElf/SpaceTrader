@@ -16,14 +16,18 @@
 
     Friend Overrides Function UseCombat(ByRef target As iCombatant) As Boolean
         If MyBase.UseCombat(target) = False Then Return False
-
-        ship.repair(eDefenceType.Shields, value)
+        Use()
         Return True
     End Function
     Friend Overrides Function UseCombatCheck(ByRef target As iCombatant) As Boolean
+        If UseCheck() = False Then Return False Else Return MyBase.UseCombatCheck(target)
+    End Function
+    Private Sub Use()
+        ship.repair(defType, value)
+    End Sub
+    Private Function UseCheck() As Boolean
         If defType <> eDefenceType.Shields AndAlso defType <> eDefenceType.Armour Then Return False
-        If TypeOf target Is ship = False Then Return False
-        Return MyBase.UseCombatCheck(target)
+        Return True
     End Function
 
     Friend Overrides ReadOnly Property typeString As String

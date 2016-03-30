@@ -465,7 +465,7 @@
 
         If TypeOf choice Is hcRepairer Then
             Dim hcr As hcRepairer = CType(choice, hcRepairer)
-            hcr.UseCombat(hcr)
+            hcr.UseCombat(ship)
         End If
     End Sub
     Private Sub cmdScan(ByRef battlefield As battlefield)

@@ -15,8 +15,8 @@
         Return star
     End Function
     Private Shared starNames As New List(Of String)
-    Private Const maxX As Integer = 100
-    Private Const maxY As Integer = 100
+    Friend Const maxX As Integer = 100
+    Friend Const maxY As Integer = 100
 
     Public Overrides Function ToString() As String
         Return name

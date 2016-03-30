@@ -8,12 +8,12 @@
     <SchemaVersion>
     </SchemaVersion>
     <ProjectGuid>{680640BB-7746-4D0B-8AAE-78B3008004A5}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <StartupObject>SpaceTrader.Module1</StartupObject>
+    <OutputType>WinExe</OutputType>
+    <StartupObject>SpaceTrader.frmStarmap</StartupObject>
     <RootNamespace>SpaceTrader</RootNamespace>
     <AssemblyName>SpaceTrader</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <MyType>Console</MyType>
+    <MyType>WindowsFormsWithCustomSubMain</MyType>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
@@ -53,6 +53,8 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -75,7 +77,7 @@
     <Compile Include="alert.vb" />
     <Compile Include="Dev\constants.vb" />
     <Compile Include="Resources\eResource.vb" />
-    <Compile Include="Module1.vb" />
+    <None Include="Module1.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -111,6 +113,12 @@
     <Compile Include="Ship\HullComponent\hcRepairer.vb" />
     <Compile Include="Ship\HullComponent\hcWeapon.vb" />
     <Compile Include="Ship\HullComponent\hullComponent.vb" />
+    <Compile Include="UI\frmStarmap.Designer.vb">
+      <DependentUpon>frmStarmap.vb</DependentUpon>
+    </Compile>
+    <Compile Include="UI\frmStarmap.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="World\battlefield.vb" />
     <Compile Include="World\building.vb" />
     <Compile Include="World\faction.vb" />
@@ -132,6 +140,9 @@
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\frmStarmap.resx">
+      <DependentUpon>frmStarmap.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

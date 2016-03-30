@@ -6,3 +6,4 @@ E:\Visual Studio Projects\SpaceTrader\SpaceTrader\obj\x86\Debug\SpaceTrader.vbpr
 E:\Visual Studio Projects\SpaceTrader\SpaceTrader\obj\x86\Debug\SpaceTrader.exe
 E:\Visual Studio Projects\SpaceTrader\SpaceTrader\obj\x86\Debug\SpaceTrader.xml
 E:\Visual Studio Projects\SpaceTrader\SpaceTrader\obj\x86\Debug\SpaceTrader.pdb
+E:\Visual Studio Projects\SpaceTrader\SpaceTrader\obj\x86\Debug\SpaceTrader.frmStarmap.resources

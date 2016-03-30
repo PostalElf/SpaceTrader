@@ -21,13 +21,6 @@
         End With
         Return total
     End Function
-    Friend Overrides ReadOnly Property alarms As List(Of String)
-        Get
-            Dim total As New List(Of String)(MyBase.alarms)
-            If crewable.isManned = False Then total.Add("Requires crew member(s).")
-            Return total
-        End Get
-    End Property
 
     Private _isCarrier As Boolean
     Friend ReadOnly Property isCarrier As Boolean

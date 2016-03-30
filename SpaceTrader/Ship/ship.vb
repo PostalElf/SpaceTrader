@@ -675,9 +675,9 @@
         Next
         Return False
     End Function
-    Friend Sub allAssignCrewBest()
+    Friend Sub assignCrewBestAll()
         For Each hc In getComponents(Nothing)
-            If hc.crewable.isManned = False Then hc.crewable.assignCrewBest()
+            hc.crewable.assignCrewBest()
         Next
     End Sub
 End Class

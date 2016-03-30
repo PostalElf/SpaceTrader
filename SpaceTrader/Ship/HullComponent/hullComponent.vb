@@ -106,6 +106,7 @@
         Get
             Dim total As New List(Of String)
             If resourceSlot <> Nothing AndAlso resourceQtyRemaining = 0 Then total.Add("Load more " & resourceSlot.ToString & ".")
+            If crewable.isManned = False Then total.Add("Requires crew member(s).")
             Return total
         End Get
     End Property

@@ -8,13 +8,6 @@
     Friend Overrides Function consoleDescription() As String
         Return withSign(jumpSpeed) & " jump speed"
     End Function
-    Friend Overrides ReadOnly Property alarms As List(Of String)
-        Get
-            Dim total As New List(Of String)(MyBase.alarms)
-            If crewable.isManned = False Then total.Add("Requires crew member(s).")
-            Return total
-        End Get
-    End Property
 
     Friend Overrides Sub tickTravel()
         _isActive = useResource()

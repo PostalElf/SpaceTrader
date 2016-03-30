@@ -5,6 +5,7 @@
         aiShip.role = buildRole()
         aiShip.isAggressive = False
         aiShip.outfitShip()
+        aiShip.outfitShipCrew()
         aiShip.allLoadResource()
         aiShip.fullRepair()
         Return aiShip
@@ -72,6 +73,17 @@
             resourcesMaxBase(r) = value
             addResource(r, value)
         End If
+    End Sub
+    Private Sub outfitShipCrew()
+        Dim crewNum As Integer = 0
+        For Each hc As hullComponent In getComponents(Nothing)
+            If hc.crewable.isManned = False Then crewNum += hc.crewable.crewEmpty
+        Next
+        addComponent(New hcCrewQuarters("Crew Closet", 0, crewNum, Nothing))
+        For n = 1 To crewNum
+            addCrew(crew.build(eRace.Human))
+        Next
+        assignCrewBestAll()
     End Sub
     Friend Overrides Sub addComponent(ByRef hc As hullComponent)
         MyBase.addComponent(hc)

@@ -26,9 +26,11 @@
         For n = 1 To 3
             ship.addCrew(crew.build(eRace.Human, starmap.random))
         Next
-        ship.addCrew(crew.build(eRace.Uplifted, starmap.random))
+        For n = 1 To 3
+            ship.addCrew(crew.build(eRace.Uplifted, starmap.random))
+        Next
         ship.allLoadResource()
-        ship.allAssignCrewBest()
+        ship.assignCrewBestAll()
         ship.teleportTo(starmap.stars(0).planets(0))
 
         While True
@@ -181,6 +183,7 @@
                 Dim choice As hullComponent = menu.getListChoice(total, 1, "Select new assignment:")
                 If choice Is Nothing Then Exit Sub
                 If choice.Equals(crew.crewAssignment) Then Exit Sub
+                If crew.crewAssignment Is Nothing = False Then crew.crewAssignment.unassignCrew(crew)
                 choice.crewable.assignCrew(crew)
                 Console.WriteLine("Done.")
                 Console.ReadKey()

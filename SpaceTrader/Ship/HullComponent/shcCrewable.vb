@@ -21,12 +21,12 @@
     End Property
     Private crewMin As Integer
     Private crewMax As Integer
-    Private ReadOnly Property crewOccupied
+    Private ReadOnly Property crewOccupied As Integer
         Get
             Return _crewList.Count
         End Get
     End Property
-    Private ReadOnly Property crewEmpty
+    Friend ReadOnly Property crewEmpty As Integer
         Get
             Return crewMax - crewOccupied
         End Get

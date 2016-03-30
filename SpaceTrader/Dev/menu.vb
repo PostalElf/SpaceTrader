@@ -34,6 +34,32 @@
 
         Return Nothing
     End Function
+    Friend Shared Function getListChoice(ByVal objList As Dictionary(Of Integer, String), ByVal indent As Integer, Optional ByVal str As String = "", Optional ByVal prompt As String = "> ") As Integer
+        If objList.Count = 0 Then Return Nothing
+
+        Dim ind As String = vbSpace(indent)
+        If str <> "" Then Console.WriteLine(str)
+
+        For Each kvp In objList
+            Console.WriteLine(ind & kvp.Key & ") " & kvp.Value)
+        Next
+
+        While True
+            Console.WriteLine()
+            Console.Write(ind & prompt)
+            Dim input As String = Console.ReadLine
+            Dim inputNum As Integer = CInt(input)
+
+            If objList.ContainsKey(inputNum) OrElse inputNum = 0 Then
+                Return inputNum
+            Else
+                Console.WriteLine()
+                Console.WriteLine("Invalid input!")
+            End If
+        End While
+
+        Return Nothing
+    End Function
     Friend Shared Function getListChoice(objList As Dictionary(Of Char, String), indent As Integer, Optional str As String = "", Optional prompt As String = "> ") As Char
         If objList.Count = 0 Then Return Nothing
 

@@ -37,8 +37,9 @@
             End Select
             .role = buildRole(export)
             .type = buildType(r)
-            ._distanceToGate = buildDistanceToGate(.type, .star, r)
             .habitation = buildHabitation(.type, r)
+            .orbitalRing = buildOrbitalRing(.type, r)
+            .xy = buildXy(.type, .star.planets, .orbitalRing, r)
 
             ._prosperity = 100 + lumpyRng(-10, 11, r)
             ._military = 100 + lumpyRng(-10, 11, r)
@@ -171,26 +172,31 @@
                 Return Nothing
         End Select
     End Function
-    Private Shared Function buildDistanceToGate(ByVal planetType As ePlanetType, ByRef star As star, ByRef r As Random) As Integer
-        Dim total As Integer
-        While True
-            Select Case planetType
-                Case ePlanetType.Desert, ePlanetType.Volcanic, ePlanetType.Wasteland : total = r.Next(100, 300)
-                Case ePlanetType.Eden, ePlanetType.Sprawl : total = r.Next(300, 400)
-                Case ePlanetType.Gaseous, ePlanetType.Oceanic : total = r.Next(300, 600)
-                Case ePlanetType.Barren : total = r.Next(600, 700)
-                Case Else
-                    MsgBox("buildDistanceToGate() error: unrecognised planetType")
-                    Return Nothing
-            End Select
+    Private Shared Function buildOrbitalRing(ByVal planetType As ePlanetType, ByRef r As Random) As Integer
+        Dim ring As Integer                     'distance from sun
+        Select Case planetType
+            Case ePlanetType.Desert, ePlanetType.Volcanic, ePlanetType.Wasteland : ring = r.Next(1, 3)
+            Case ePlanetType.Eden, ePlanetType.Sprawl : ring = r.Next(3, 4)
+            Case ePlanetType.Gaseous, ePlanetType.Oceanic : ring = r.Next(3, 6)
+            Case ePlanetType.Barren : ring = r.Next(6, 7)
+            Case Else
+                MsgBox("buildDistanceToGate() error: unrecognised planetType")
+                Return Nothing
+        End Select
+        Return ring
+    End Function
+    Private Shared Function buildXy(ByVal planetType As ePlanetType, ByRef planetList As List(Of planet), ByVal ring As Integer, ByRef r As Random) As xy
+        Dim ringPosition As Integer = 1                         'number of planets in same ring + 1
+        For Each planet In planetList
+            If planet.orbitalRing = ring Then ringPosition += 1
+        Next
 
-            Dim distanceRepeated As Boolean = False
-            For Each planet In star.planets
-                If planet.distanceToGate = total Then distanceRepeated = True
-            Next
-            If distanceRepeated = False Then Exit While
-        End While
-        Return total
+        Const ringMultiplier As Integer = 790 / (7 + 2)         '790 is diag distance of tabpage, 7 is max orbitalRing value; +2 sections for edge buffer
+        Dim radius As Integer = ring * ringMultiplier           'radius is distance from 0,maxY (bottom left corner)
+        Dim x As Integer = 0
+        Dim y As Integer = 0
+
+        Return New xy(x, y)
     End Function
     Private Shared Function buildServiceAvailability(ByVal role As ePlanetRole, ByVal type As ePlanetType) As Dictionary(Of eHcCategory, Integer)
         Dim total As New Dictionary(Of eHcCategory, Integer)
@@ -255,6 +261,9 @@
         End With
         Return total
     End Function
+    Friend Const maxX As Integer = 650
+    Friend Const maxY As Integer = 450
+    Friend Const xySize As Integer = 30
 
     Public Overrides Function ToString() As String
         Return name
@@ -329,17 +338,25 @@
         End Get
     End Property
     Private number As Integer
-    Private _distanceToGate As Integer
+    Friend ReadOnly Property imgString As String
+        Get
+            Return type.ToString
+        End Get
+    End Property
+
+    Friend xy As xy
+    Private orbitalRing As Integer
     Friend ReadOnly Property distanceToGate As Integer
         Get
-            Return _distanceToGate
+            Return getDistanceTo(New xy(0, 0))
         End Get
     End Property
     Friend Function getDistanceTo(ByRef destination As planet) As Integer
         If destination.star.Equals(star) = False Then Return -1
-
-        Dim total As Integer = Math.Abs(distanceToGate - destination.distanceToGate)
-        total = constrain(total, 1, Int32.MaxValue)
+        Return getDistanceTo(destination.xy)
+    End Function
+    Friend Function getDistanceTo(ByVal destination As xy) As Integer
+        Dim total As Integer = pythogoras(xy, xy)
         Return total
     End Function
 

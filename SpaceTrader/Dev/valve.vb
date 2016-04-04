@@ -342,10 +342,14 @@ End Structure
     End Function
 
     Public Shared Operator +(ByVal val1 As xy, ByVal val2 As xy)
-        Return New xy(val1.x + val2.x, _
-                      val2.x + val2.x)
+        Return New xy(val1.x + val2.x, val2.x + val2.x)
     End Operator
-
+    Public Shared Operator -(ByVal val1 As xy, ByVal val2 As xy)
+        Return New xy(val1.x - val2.x, val1.y - val2.y)
+    End Operator
+    Public Shared Operator *(ByVal val1 As xy, ByVal val2 As xy)
+        Return New xy(val1.x * val2.x, val1.y * val2.y)
+    End Operator
 End Structure
 
 Public Enum eGender

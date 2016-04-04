@@ -47,7 +47,7 @@
     Private Shared starNames As New List(Of String)
     Friend Const maxX As Integer = 650
     Friend Const maxY As Integer = 450
-    Friend Const xySize As Integer = 30
+    Friend Const xySize As Integer = 40
 
     Public Overrides Function ToString() As String
         Return name
@@ -61,6 +61,13 @@
             Console.WriteLine()
         Next
     End Sub
+    Friend Function tooltipReport() As String
+        Dim ind As String = vbSpace(1)
+
+        Dim total As String = name & vbCrLf
+        total &= ind & "Planets: " & planets.Count & ind
+        Return total
+    End Function
 
     Private _starmap As starmap
     Friend ReadOnly Property starmap As starmap

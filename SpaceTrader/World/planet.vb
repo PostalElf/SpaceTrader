@@ -186,15 +186,16 @@
         Return ring
     End Function
     Private Shared Function buildXy(ByVal planetType As ePlanetType, ByRef planetList As List(Of planet), ByVal ring As Integer, ByRef r As Random) As xy
-        Dim ringPosition As Integer = 1                         'number of planets in same ring + 1
+        Dim ringPosition As Integer = 1                                 'number of planets in same ring + 1
         For Each planet In planetList
             If planet.orbitalRing = ring Then ringPosition += 1
         Next
 
-        Const ringMultiplier As Integer = 790 / (7 + 2)         '790 is diag distance of tabpage, 7 is max orbitalRing value; +2 sections for edge buffer
-        Dim radius As Integer = ring * ringMultiplier           'radius is distance from 0,maxY (bottom left corner)
-        Dim x As Integer = 0
-        Dim y As Integer = 0
+        Const ringMultiplier As Integer = 790 / (7 + 2)                 '790 is diag distance of tabpage, 7 is max orbitalRing value; +2 sections for edge buffer
+        Dim radius As Integer = (ring + 1) * ringMultiplier             'radius is distance from 0,0 (top left corner)
+        Dim angle As Double = ringPosition * 50
+        Dim x As Integer = Math.Abs(radius * Math.Cos(angle))
+        Dim y As Integer = Math.Abs(radius * Math.Sin(angle))
 
         Return New xy(x, y)
     End Function
@@ -263,7 +264,7 @@
     End Function
     Friend Const maxX As Integer = 650
     Friend Const maxY As Integer = 450
-    Friend Const xySize As Integer = 30
+    Friend Const xySize As Integer = 40
 
     Public Overrides Function ToString() As String
         Return name
@@ -325,6 +326,14 @@
             End With
         Next
     End Sub
+    Friend Function tooltipReport() As String
+        Dim ind As String = vbSpace(1)
+
+        Dim total As String = name & vbCrLf
+        total &= ind & "Type: " & role.ToString & " " & type.ToString & ind & vbCrLf
+        total &= ind & "Ring: " & orbitalRing
+        Return total
+    End Function
 
     Private _star As star
     Friend ReadOnly Property star As star
@@ -345,7 +354,7 @@
     End Property
 
     Friend xy As xy
-    Private orbitalRing As Integer
+    Friend orbitalRing As Integer
     Friend ReadOnly Property distanceToGate As Integer
         Get
             Return getDistanceTo(New xy(0, 0))

@@ -1,8 +1,8 @@
 ﻿Public Class starmap
     Const numFactions As Integer = 5
-    Const numStars As Integer = 5
-    Const numPlanetsMin As Integer = 7
-    Const numPlanetsMax As Integer = 10
+    Const numStars As Integer = 12
+    Const numPlanetsMin As Integer = 3
+    Const numPlanetsMax As Integer = 7
     Friend Shared Function build(ByVal aSeed As Integer) As starmap
 
         Dim starmap As New starmap

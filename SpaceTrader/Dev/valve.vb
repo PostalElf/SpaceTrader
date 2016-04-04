@@ -340,6 +340,12 @@ End Structure
     Public Overrides Function ToString() As String
         Return x & "," & y
     End Function
+
+    Public Shared Operator +(ByVal val1 As xy, ByVal val2 As xy)
+        Return New xy(val1.x + val2.x, _
+                      val2.x + val2.x)
+    End Operator
+
 End Structure
 
 Public Enum eGender
